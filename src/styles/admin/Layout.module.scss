@@ -1,0 +1,9 @@
+.mainContent {
+  padding: 90px 30px 30px 265px;
+}
+
+@media (max-width: 768px) {
+  .mainContent {
+    padding: 90px 30px;
+  }
+}

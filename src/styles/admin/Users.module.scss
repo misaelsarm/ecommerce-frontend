@@ -1,0 +1,50 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  h2 {
+    margin: 0;
+  }
+}
+
+.rolesWrapper {
+  > span {
+    margin-bottom: 10px;
+    display: block;
+    font-weight: bold;
+  }
+  .view {
+    background-color: rgb(235, 238, 241);
+    padding: 10px 20px;
+    h4 {
+      margin: 0;
+    }
+  }
+}
+
+.appsWrapper {
+  >span{
+    display: block;
+    margin-bottom: 20px;
+    font-weight: bold;
+    font-size: 18px;
+  }
+  .apps {
+    display: flex;
+    .app {
+      width: 50%;
+      &:first-child {
+        margin-right: 20px;
+      }
+    }
+  }
+}
+
+.role {
+  padding: 10px;
+  border-bottom: 1px solid rgb(235, 238, 241);
+  input {
+    margin-right: 10px;
+  }
+}

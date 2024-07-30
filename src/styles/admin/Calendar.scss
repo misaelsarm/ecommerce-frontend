@@ -1,0 +1,126 @@
+.calendar-width {
+  min-width: 750px;
+}
+#calendar-component {
+  .calendar-content-mobile {
+    display: none;
+  }
+
+  .calendar-controls {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    > div {
+      cursor: pointer;
+      &:first-child {
+        margin-right: 10px;
+      }
+      &:last-child {
+        margin-left: 10px;
+      }
+      svg {
+        width: 20px;
+        height: 20px;
+      }
+    }
+    h2 {
+      span {
+        text-transform: capitalize;
+      }
+    }
+  }
+
+  .calendar-content {
+    &-header {
+      padding: 15px;
+      background-color: #e6e6e6;
+      display: flex;
+      justify-content: space-between;
+      border-radius: 8px;
+      .header-year-mobile {
+        display: none;
+      }
+      .header-col {
+        width: 25%;
+        &:not(:last-child) {
+          margin-right: 20px;
+        }
+        span {
+          text-align: center;
+          font-weight: bold;
+          font-size: 16px;
+          &.long {
+            display: none;
+          }
+        }
+      }
+    }
+    &-items {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      .col-header {
+        display: grid;
+        grid-template-columns: 107px 58px 107px;
+        justify-content: space-between;
+        span {
+          font-size: 14px;
+          font-weight: 600;
+        }
+      }
+      .item-row {
+        padding: 20px;
+        background-color: white;
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
+        .month-day {
+          width: 100%;
+          margin-bottom: 10px;
+
+          &.disappear {
+            background: transparent;
+            opacity: 0;
+            height: 35px;
+          }
+          
+        }
+
+        .item-col {
+          width: 25%;
+          border-radius: 8px;
+          overflow: hidden;
+          background-color: #e6e6e6;
+
+          &:not(:last-child) {
+            margin-right: 20px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.current-month-day {
+  display: grid;
+  grid-template-columns: 107px 58px 107px;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+
+  &:hover {
+    cursor: pointer;
+  }
+  &-number {
+    font-size: 16px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .calendar-content-items {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}

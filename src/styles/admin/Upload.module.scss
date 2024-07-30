@@ -1,0 +1,79 @@
+.dropZone {
+  border: 2px dashed #cdcdcd;
+  border-radius: 5px;
+  height: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  input {
+    display: none !important;
+  }
+}
+.preview {
+  margin-bottom: 20px;
+  position: relative;
+  cursor: all-scroll;
+  border: 1px solid #cdcdcd;
+  button {
+    background-color: white;
+    &:hover {
+      background-color: #cdcdcd;
+    }
+    outline: 0;
+    border: 0;
+    cursor: pointer;
+    border-radius: 5px;
+    top: 10px;
+    right: 10px;
+    width: 50px;
+    height: 50px;
+    position: absolute;
+
+    z-index: 999;
+    svg {
+      width: 20px;
+      height: 20px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: -10;
+    }
+  }
+  img {
+    width: 100%;
+    object-fit: contain;
+  }
+}
+
+@media (min-width: 768px) {
+  .previews {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    grid-auto-rows: auto;
+    border-radius: 10px;
+    overflow: hidden;
+    .preview {
+      height: 225px;
+      margin: 0;
+      img {
+        height: 100%;
+        object-fit: contain;
+        display: block;
+      }
+      &:first-child {
+        margin: 0;
+        height: 470px;
+        grid-column: 1 / span 2;
+        grid-row: 1 / span 2;
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          display: block;
+        }
+      }
+    }
+  }
+}
