@@ -102,13 +102,13 @@ const OrdersAdminPage = ({ page, limit, size }: Props) => {
               {
                 name: "Action 1",
                 onClick: () => {
-                  console.log('Exportar')
+                  alert('Action 1')
                 }
               },
               {
                 name: "Action 2",
                 onClick: () => {
-                  console.log('Exportar')
+                  alert('Action 2')
                 }
               },
             ]
@@ -119,7 +119,6 @@ const OrdersAdminPage = ({ page, limit, size }: Props) => {
             setSearchTerm('')
           }}
         />
-
         <div className="pageContent">
           <Table
             page={page}

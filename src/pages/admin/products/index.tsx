@@ -1,15 +1,3 @@
-import { api } from '@/api_config/api'
-import Layout from '@/components/admin/Layout'
-import PageLinks from '@/components/admin/PageLinks'
-import Table from '@/components/admin/Table'
-import AddProduct from '@/components/admin/products/AddProduct'
-import { Product } from '@/interfaces'
-import { GetServerSideProps } from 'next'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
-import React, { ReactElement, useCallback, useState } from 'react'
-import debounce from 'lodash.debounce';
-
 interface Props {
   products: Product[],
   page: number,
