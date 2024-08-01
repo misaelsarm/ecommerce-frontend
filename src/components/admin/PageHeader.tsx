@@ -6,9 +6,10 @@ interface Props {
   handleSearch: ChangeEventHandler<HTMLInputElement>
   searchQuery: any,
   onClearSearch: any
+  searchTerm: any
 }
 
-const PageHeader = ({ title, actions, handleSearch, searchQuery, onClearSearch }: Props) => {
+const PageHeader = ({ title, actions, handleSearch, searchTerm, searchQuery, onClearSearch }: Props) => {
   return (
     <div className='pageHeader'>
       <div className="pageHeaderTop">
@@ -31,7 +32,7 @@ const PageHeader = ({ title, actions, handleSearch, searchQuery, onClearSearch }
       <div className="pageHeaderBottom">
         <div className='pageHeaderSearch'>
           <input
-            value={searchQuery}
+            value={searchTerm}
             onChange={handleSearch}
             placeholder='Buscar pedidos...'
             className='input'

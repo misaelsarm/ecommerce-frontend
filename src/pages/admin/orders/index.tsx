@@ -1,41 +1,42 @@
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
 import React, { ReactElement, useCallback, useState } from 'react'
-//import debounce from 'lodash.debounce';
+import debounce from 'lodash.debounce';
 import { useRouter } from 'next/router'
 //import Cookies from 'js-cookie'
 import Layout from '@/components/admin/Layout';
 import Table from '@/components/admin/Table';
 import PageHeader from '@/components/admin/PageHeader';
+import { OrderInterface } from '@/interfaces';
 
 interface Props {
-  //orders: Order[],
+  orders: OrderInterface[],
   page: number,
   limit: number,
   size: number
 }
 
-const OrdersAdminPage = ({ page, limit, size }: Props) => {
+const OrdersAdminPage = ({ page, limit, size, orders }: Props) => {
 
   const { push, query } = useRouter()
 
   const [searchTerm, setSearchTerm] = useState(query.search)
 
-  // const debouncedSearch = useCallback(
-  //   debounce((searchTerm) => {
-  //     if (searchTerm.trim().length === 0) {
-  //       push(`/admin/orders?page=1&limit=20`);
-  //     } else {
-  //       push(`/admin/orders?search=${searchTerm}`);
-  //     }
-  //   }, 500),
-  //   [limit]
-  // );
+  const debouncedSearch = useCallback(
+    debounce((searchTerm) => {
+      if (searchTerm.trim().length === 0) {
+        push(`/admin/orders?page=1&limit=20`);
+      } else {
+        push(`/admin/orders?search=${searchTerm}`);
+      }
+    }, 500),
+    [limit]
+  );
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchTerm = e.target.value;
     setSearchTerm(searchTerm);
-    //debouncedSearch(searchTerm);
+    debouncedSearch(searchTerm);
   };
 
   const columns = [
@@ -114,8 +115,10 @@ const OrdersAdminPage = ({ page, limit, size }: Props) => {
             ]
           }
           handleSearch={handleSearch}
-          searchQuery={searchTerm}
+          searchQuery={query.search}
+          searchTerm={searchTerm}
           onClearSearch={() => {
+            push(`/admin/orders?page=1&limit=20`);
             setSearchTerm('')
           }}
         />
