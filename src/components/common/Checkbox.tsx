@@ -1,22 +1,22 @@
-import React, { CSSProperties, FC } from 'react'
+import React, { ChangeEventHandler, CSSProperties, FC } from 'react'
 import { FieldValues, UseFormRegister } from 'react-hook-form'
 
 interface Props {
-  register: UseFormRegister<FieldValues>,
-  name: string,
+  register?: UseFormRegister<FieldValues>,
+  name?: string,
   label: string,
   value?: any
   id: string
-  onChange?: any
+  onChange?: ChangeEventHandler<HTMLInputElement> | undefined
   style?: CSSProperties
   defaultChecked?: boolean,
   required?: boolean
   errors?: any
 }
 
-const Checkbox: FC<Props> = ({ register, defaultChecked, name, label, value, id, onChange, style, required, errors }) => {
+const Checkbox: FC<Props> = ({ register, defaultChecked, name = 'name', label, value, id, onChange, style, required, errors }) => {
   return (
-    <div className='group'>
+    <div className='checkbox-group'>
       <div
         style={style}
         className='checkbox'
@@ -36,7 +36,7 @@ const Checkbox: FC<Props> = ({ register, defaultChecked, name, label, value, id,
           type="checkbox"
           id={id}
           value={value}
-          onChange={(e)=>{
+          onChange={(e) => {
             onChange && onChange(e)
           }}
         />

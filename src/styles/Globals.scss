@@ -1,7 +1,9 @@
-@import './Utils.scss';
+@import "./Utils.scss";
+@import "./Buttons.scss";
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap");
 
 * {
-  font-family: "Gotham", sans-serif;
+  font-family: "DM Sans", sans-serif;
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -120,6 +122,14 @@ h6 {
   }
 }
 
+.checkbox-group {
+  margin-bottom: 20px;
+  .checkbox {
+    display: flex;
+    align-items: center;
+  }
+}
+
 .clear-search {
   display: flex;
   align-items: center;
@@ -152,7 +162,7 @@ h6 {
   display: flex;
   flex-direction: column;
 
-  >label {
+  > label {
     text-align: left !important;
     margin-bottom: 10px;
   }
@@ -293,7 +303,7 @@ textarea {
         display: none;
 
         &:checked {
-          ~label {
+          ~ label {
             border: 2px solid rgb(109, 109, 109);
           }
         }
@@ -584,7 +594,6 @@ textarea {
 }
 
 @media (min-width: 768px) {
-
   .container-white,
   .container-beige,
   .container-gray {
@@ -593,7 +602,6 @@ textarea {
 }
 
 @media (min-width: 1200px) {
-
   .container-white,
   .container-beige,
   .container-gray {
@@ -792,7 +800,7 @@ textarea {
 }
 
 .specs {
-  >div {
+  > div {
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
@@ -825,7 +833,7 @@ textarea {
     flex-direction: column;
     margin-top: 10px;
 
-    >div {
+    > div {
       display: flex;
     }
 
@@ -848,7 +856,7 @@ textarea {
   flex-direction: column;
   margin-top: 10px;
 
-  >div {
+  > div {
     display: flex;
   }
 
@@ -881,106 +889,8 @@ button {
   }
 }
 
-.btn {
-  padding: 8px 15px;
-  font-size: 16px;
-  border-radius: 5px;
-  outline: none;
-  cursor: pointer;
-  border: none;
-  transition: all 0.3s;
-  height: 42px;
-  text-decoration: none;
-  background-color: #efefef;
-  text-decoration: none;
-  display: block;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.btn-gradient {
-  background: linear-gradient(to right, #81d1c6, #c0d594, #ead170, #b78553);
-}
-
-.btn-auto {
-  width: fit-content;
-}
-
-.btn-pink {
-  color: white;
-  background-color: black;
-}
-
-.btn-block {
-  width: 100%;
-}
-
-.btn-black {
-  color: white;
-  background-color: #232223;
-}
-
-.btn-ghost {
-  background-color: transparent;
-
-  &:hover {
-    background-color: #f6f6f6;
-  }
-}
-
-.btn-icon {
-  display: flex;
-  align-items: center;
-
-  svg {
-    width: 20px;
-  }
-}
-
-.btn-icon-right {
-  svg {
-    margin-left: 10px;
-  }
-}
-
-.btn-icon-left {
-  svg {
-    margin-right: 10px;
-  }
-}
-
-.btn-outlined-light {
-  background-color: transparent;
-  border: 1px solid white;
-  color: white;
-
-  &:hover {
-    background-color: white;
-    color: black;
-  }
-}
-
-.btn-outlined-pink {
-  background-color: transparent;
-  border: 1px solid black;
-  color: black;
-
-  &:hover {
-    background-color: black;
-    color: white;
-  }
-}
-
-.btn-green {
-  background-color: rgb(0, 162, 0);
-  color: white;
-}
-
 .page {
   .pageHeader {
-
     // margin-bottom: 20px;
     // display: flex;
     // justify-content: space-between;

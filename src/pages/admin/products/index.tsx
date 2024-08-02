@@ -1,6 +1,7 @@
-import AddProduct from "@/components/admin/AddProduct"
+
 import Layout from "@/components/admin/Layout"
 import PageHeader from "@/components/admin/PageHeader"
+import AddProduct from "@/components/admin/products/AddProduct"
 import Table from "@/components/admin/Table"
 import { useDebouncedSearch } from "@/hooks/useDebouncedSearch"
 import { ProductInterface } from "@/interfaces"

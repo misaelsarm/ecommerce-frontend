@@ -32,7 +32,12 @@ const index = () => {
       <h1 className='mb-30'>Componentes </h1>
       <div className='mb-30'>
         <h3>Boton</h3>
-        <div><button className='btn btn-black'>Hello world!</button></div>
+        <div className='d-flex'>
+          <button className='btn mr-10'>Hello world!</button>
+          <button className='btn btn-black mr-10'>Hello world!</button>
+          <button className='btn btn-gradient mr-10'>Hello world!</button>
+          <button className='btn btn-ghost'>Hello world!</button>
+        </div>
       </div>
       <div className='mb-30'>
         <h3>Input</h3>
