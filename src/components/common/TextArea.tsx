@@ -2,10 +2,10 @@ import { HTMLInputTypeAttribute } from 'react'
 import { FieldValues, UseFormRegister } from 'react-hook-form'
 
 interface Props {
-  placeholder: string,
+  placeholder?: string,
   type?: HTMLInputTypeAttribute,
-  name: string,
-  register: UseFormRegister<FieldValues>,
+  name?: string,
+  register?: UseFormRegister<FieldValues>,
   required?: boolean,
   defaultValue?: any,
   errors?: any,
@@ -15,6 +15,24 @@ interface Props {
 }
 
 const TextArea = ({ placeholder, pattern, register, required, minLength, name = '', defaultValue, errors, label }: Props) => {
+
+  const registerProps = register
+    ? register(name, {
+      required: {
+        value: required || false,
+        message: 'Campo requerido',
+      },
+      minLength: {
+        value: minLength || 0,
+        message: 'Minimo ' + minLength + ' caracteres',
+      },
+      pattern: {
+        value: pattern,
+        message: 'No valido',
+      },
+    })
+    : {};
+
   return (
     <div className='input-group'>
       <label
@@ -25,21 +43,7 @@ const TextArea = ({ placeholder, pattern, register, required, minLength, name = 
       <textarea
         className='input'
         defaultValue={defaultValue}
-        {...register(name, {
-          required: {
-            value: required || false,
-            message: 'Campo requerido'
-          },
-          minLength: {
-            value: minLength || 0,
-            message: 'Minimo ' + minLength + ' caracteres'
-          },
-          pattern: {
-            value: pattern,
-            message: 'No valido'
-          }
-
-        })}
+        {...registerProps}
         autoComplete='new-password'
         placeholder={placeholder}
       />

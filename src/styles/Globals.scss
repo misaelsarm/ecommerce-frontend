@@ -1,3 +1,5 @@
+@import './Utils.scss';
+
 * {
   font-family: "Gotham", sans-serif;
   box-sizing: border-box;
@@ -8,47 +10,6 @@
 .ReactCrop__crop-selection {
   box-shadow: unset !important;
   border: 1px dashed black !important;
-}
-
-.BeyondTheMountains {
-  font-family: BeyondTheMountains, cursive !important;
-  font-size: 30px;
-}
-.ChocolateFont {
-  font-family: ChocolateFont, cursive;
-  font-size: 30px;
-}
-.JennaSue {
-  font-family: JennaSue, cursive;
-  font-size: 35px;
-}
-.LemonMilk {
-  font-family: LemonMilk, cursive !important;
-  font-size: 20px;
-}
-.PinkyCupid {
-  font-family: PinkyCupid, cursive;
-  font-size: 25px;
-}
-.Bebas {
-  font-family: "Bebas Neue", cursive !important;
-  font-size: 30px;
-}
-.RemachineScript {
-  font-family: RemachineScript, cursive;
-  font-size: 35px;
-}
-.RockyMonkey {
-  font-family: RockyMonkey, cursive;
-  font-size: 16px;
-}
-.Saginaw {
-  font-family: Saginaw, cursive;
-  font-size: 25px;
-}
-.SlightlyMarker {
-  font-family: SlightlyMarker, cursive;
-  font-size: 20px;
 }
 
 body {
@@ -78,6 +39,7 @@ input {
 .font-sm {
   font-size: 14px;
 }
+
 .font-lg {
   font-size: 18px;
 }
@@ -91,6 +53,7 @@ h6 {
   //font-weight: normal;
   text-transform: uppercase;
 }
+
 .logo {
   font-family: BrittanySignature, cursive;
   font-size: 30px;
@@ -142,6 +105,7 @@ h6 {
   outline: none;
   padding: 10px;
   transition: all 0.3s;
+
   &:focus {
     border: 1px solid black;
   }
@@ -149,6 +113,7 @@ h6 {
 
 .input-group {
   margin-bottom: 20px;
+
   label {
     display: block;
     margin-bottom: 5px;
@@ -161,6 +126,7 @@ h6 {
   padding: 5px;
   background-color: #e9e9e9;
   border-radius: 5px;
+
   svg {
     width: 25px;
     height: 25px;
@@ -185,16 +151,20 @@ h6 {
 .reset-password {
   display: flex;
   flex-direction: column;
-  > label {
+
+  >label {
     text-align: left !important;
     margin-bottom: 10px;
   }
+
   input {
     margin-bottom: 20px;
   }
+
   button {
     margin-bottom: 10px;
   }
+
   &-back {
     text-align: center;
   }
@@ -207,24 +177,31 @@ h6 {
 .mb-10 {
   margin-bottom: 10px;
 }
+
 .mb-20 {
   margin-bottom: 20px;
 }
+
 .mb-30 {
   margin-bottom: 30px;
 }
+
 .mb-40 {
   margin-bottom: 40px;
 }
+
 .mb-50 {
   margin-bottom: 50px;
 }
+
 .mb-60 {
   margin-bottom: 60px;
 }
+
 .mb-70 {
   margin-bottom: 70px;
 }
+
 .mb-80 {
   margin-bottom: 80px;
 }
@@ -261,12 +238,15 @@ textarea {
 
   height: fit-content;
   margin-bottom: 20px;
+
   &__item {
     margin-bottom: 20px;
+
     h4 {
       font-weight: 600;
       margin-bottom: 10px;
     }
+
     span {
       display: block;
     }
@@ -277,23 +257,28 @@ textarea {
   margin-bottom: 20px;
   display: flex;
   flex-direction: column;
+
   label,
   span {
     margin-bottom: 10px;
   }
+
   .colors {
     display: flex;
     flex-wrap: wrap;
     margin-bottom: 10px;
+
     .color {
       width: 50px;
       height: 50px;
 
       flex-shrink: 0;
       margin-bottom: 10px;
+
       &:not(:last-child) {
         margin-right: 10px;
       }
+
       label {
         cursor: pointer;
         width: 100%;
@@ -303,10 +288,12 @@ textarea {
         border-radius: 50px;
         border: 1px solid rgb(227, 227, 227);
       }
+
       input {
         display: none;
+
         &:checked {
-          ~ label {
+          ~label {
             border: 2px solid rgb(109, 109, 109);
           }
         }
@@ -330,6 +317,7 @@ textarea {
 
 .productItem {
   margin-bottom: 20px;
+
   &__wrapper {
     width: 100%;
   }
@@ -337,6 +325,7 @@ textarea {
   &__info {
     display: flex;
   }
+
   &__name {
     width: 100%;
     font-weight: 600;
@@ -345,15 +334,19 @@ textarea {
     justify-content: space-between;
     flex-direction: column;
   }
+
   &__img {
     margin-right: 20px;
+
     img {
       width: 100px;
     }
   }
+
   &__attribute {
     margin-bottom: 10px;
   }
+
   &__attributeName {
     font-weight: 600;
   }
@@ -372,6 +365,7 @@ textarea {
     width: 70px;
     height: 70px;
     border-radius: 70px;
+
     &:first-child {
       margin-bottom: 10px;
     }
@@ -415,6 +409,7 @@ textarea {
   flex-direction: column;
   align-items: center;
   padding-top: 100px;
+
   .icon {
     width: 70px;
     height: 70px;
@@ -425,11 +420,13 @@ textarea {
     align-items: center;
     justify-content: center;
     margin-bottom: 20px;
+
     span {
       color: white;
       font-size: 40px;
     }
   }
+
   h3 {
     margin-bottom: 20px;
   }
@@ -441,7 +438,8 @@ textarea {
   //border-top: 5px solid $pink;
   width: 50px;
   height: 50px;
-  -webkit-animation: spin 0.7s linear infinite; /* Safari */
+  -webkit-animation: spin 0.7s linear infinite;
+  /* Safari */
   animation: spin 0.7s linear infinite;
 }
 
@@ -450,6 +448,7 @@ textarea {
   0% {
     -webkit-transform: rotate(0deg);
   }
+
   100% {
     -webkit-transform: rotate(360deg);
   }
@@ -459,6 +458,7 @@ textarea {
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
@@ -471,10 +471,12 @@ textarea {
   justify-content: center;
   height: calc(100vh - 180px);
   text-align: center;
+
   svg {
     //color: $pink;
     width: 150px;
   }
+
   h2 {
     margin-bottom: 15px;
     font-size: 16px;
@@ -491,6 +493,7 @@ textarea {
   border-radius: 7px;
   z-index: 99;
   padding: 20px;
+
   span {
     display: block;
   }
@@ -527,6 +530,7 @@ textarea {
     //max-width: 600px;
     margin: auto;
   }
+
   .confirmation {
     width: 600px;
     height: 400px;
@@ -540,6 +544,7 @@ textarea {
   padding: 20px;
   max-width: 1200px;
   margin: auto;
+
   &__group {
     h2 {
       font-weight: 900;
@@ -548,14 +553,18 @@ textarea {
       text-transform: uppercase;
       text-align: center;
     }
+
     img {
       height: 300px;
     }
+
     p {
       margin-bottom: 20px;
       margin-left: 10px;
     }
+
     margin-bottom: 40px;
+
     .warning {
       font-weight: 600;
       color: red;
@@ -568,12 +577,14 @@ textarea {
     flex-direction: column;
     align-items: center;
   }
+
   .globos {
     flex-direction: column-reverse;
   }
 }
 
 @media (min-width: 768px) {
+
   .container-white,
   .container-beige,
   .container-gray {
@@ -582,6 +593,7 @@ textarea {
 }
 
 @media (min-width: 1200px) {
+
   .container-white,
   .container-beige,
   .container-gray {
@@ -593,15 +605,19 @@ textarea {
   .mobile-slide {
     display: none;
   }
+
   .web-slide {
     display: block;
+
     img {
       width: 100%;
     }
   }
+
   .main__content {
     padding-top: 105px;
   }
+
   .order {
     flex-direction: row;
 
@@ -609,6 +625,7 @@ textarea {
       width: 70%;
       margin-right: 20px;
     }
+
     &__customer {
       width: 100%;
     }
@@ -640,6 +657,7 @@ body {
   border-radius: 5px;
   background-color: white;
   width: 100%;
+
   &:focus {
     outline: 3px solid #1492e6;
     border: 1px solid transparent;
@@ -691,6 +709,7 @@ input[type="checkbox"] {
   .menuWrapper {
     position: relative;
   }
+
   .menu {
     padding: 5px;
     border-radius: 5px;
@@ -704,6 +723,7 @@ input[type="checkbox"] {
       margin-left: 5px;
     }
   }
+
   .menuOverlay {
     position: absolute;
     bottom: -50px;
@@ -716,9 +736,11 @@ input[type="checkbox"] {
     width: 200px;
     right: 0;
     cursor: pointer;
+
     span {
       padding: 10px;
       display: block;
+
       &:hover {
         background-color: #f3f3f3;
       }
@@ -735,10 +757,6 @@ textarea {
   color: red;
   display: block;
   margin-top: 5px;
-}
-
-.group {
-  margin-bottom: 20px;
 }
 
 .detailPage {
@@ -774,14 +792,16 @@ textarea {
 }
 
 .specs {
-  > div {
+  >div {
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
+
     input {
       flex: 1;
       margin-right: 20px;
     }
+
     .icon {
       cursor: pointer;
       flex-shrink: 0;
@@ -793,21 +813,26 @@ textarea {
       justify-content: center;
       align-items: center;
       border-radius: 40px;
+
       svg {
         width: 18px;
       }
     }
   }
+
   .specList {
     display: flex;
     flex-direction: column;
     margin-top: 10px;
-    > div {
+
+    >div {
       display: flex;
     }
+
     .left {
       flex: 1;
     }
+
     .right {
       svg {
         cursor: pointer;
@@ -822,12 +847,15 @@ textarea {
   display: flex;
   flex-direction: column;
   margin-top: 10px;
-  > div {
+
+  >div {
     display: flex;
   }
+
   .left {
     flex: 1;
   }
+
   .right {
     svg {
       cursor: pointer;
@@ -847,6 +875,7 @@ button {
 .filters {
   display: flex;
   margin-bottom: 30px;
+
   .filter {
     margin-right: 50px;
   }
@@ -895,6 +924,7 @@ button {
 
 .btn-ghost {
   background-color: transparent;
+
   &:hover {
     background-color: #f6f6f6;
   }
@@ -903,6 +933,7 @@ button {
 .btn-icon {
   display: flex;
   align-items: center;
+
   svg {
     width: 20px;
   }
@@ -924,6 +955,7 @@ button {
   background-color: transparent;
   border: 1px solid white;
   color: white;
+
   &:hover {
     background-color: white;
     color: black;
@@ -934,6 +966,7 @@ button {
   background-color: transparent;
   border: 1px solid black;
   color: black;
+
   &:hover {
     background-color: black;
     color: white;
@@ -947,6 +980,7 @@ button {
 
 .page {
   .pageHeader {
+
     // margin-bottom: 20px;
     // display: flex;
     // justify-content: space-between;
@@ -956,8 +990,10 @@ button {
       justify-content: space-between;
       margin-bottom: 20px;
       align-items: center;
+
       .pageHeaderActions {
         display: flex;
+
         button {
           &:not(:last-child) {
             margin-right: 10px;
@@ -965,6 +1001,7 @@ button {
         }
       }
     }
+
     .pageHeaderBottom {
       margin-bottom: 20px;
     }
@@ -974,6 +1011,7 @@ button {
 .radio {
   display: flex;
   align-items: center;
+
   input {
     margin-right: 10px;
   }
@@ -994,9 +1032,11 @@ button {
     z-index: 99;
     background-color: black;
     color: white;
+
     &:hover {
       background-color: #a6a6a6 !important;
     }
+
     svg {
       width: 25px;
     }
@@ -1008,25 +1048,31 @@ button {
   margin: auto;
   padding: 20px;
   border: 1px solid rgb(226, 226, 226);
+
   .cardItem {
     margin-bottom: 20px;
     border-bottom: 1px solid rgb(226, 226, 226);
     padding-bottom: 20px;
+
     img {
       width: 300px;
     }
+
     span {
       display: block;
     }
   }
+
   .listItem {
     width: 400px;
     display: flex;
     justify-content: space-between;
     margin-bottom: 5px;
+
     &:last-child {
       font-weight: 600;
     }
+
     span {
       &:last-child {
         text-align: right;
@@ -1041,6 +1087,7 @@ button {
 
 .pageLinks {
   margin-bottom: 20px;
+
   .link {
     display: flex;
     justify-content: space-between;
@@ -1050,6 +1097,7 @@ button {
     border-bottom: 1px solid #e8e8e8;
     color: black;
     text-decoration: none;
+
     svg {
       width: 20px;
       height: 20px;

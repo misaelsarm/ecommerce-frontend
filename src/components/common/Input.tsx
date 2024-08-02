@@ -5,7 +5,7 @@ interface Props {
   placeholder?: string,
   type?: HTMLInputTypeAttribute,
   name?: string,
-  register: UseFormRegister<FieldValues>,
+  register?: UseFormRegister<FieldValues>,
   required?: boolean,
   defaultValue?: any,
   errors?: any,
@@ -17,26 +17,31 @@ interface Props {
 }
 
 const Input = ({ placeholder, type = 'text', pattern, register, required, minLength, name = 'name', defaultValue, errors, disabled, inputMode, label }: Props) => {
+
+  const registerProps = register
+    ? register(name, {
+      required: {
+        value: required || false,
+        message: 'Campo requerido',
+      },
+      minLength: {
+        value: minLength || 0,
+        message: 'Minimo ' + minLength + ' caracteres',
+      },
+      pattern: {
+        value: pattern,
+        message: 'No valido',
+      },
+    })
+    : {};
+
   return (
     <div className='input-group'>
       <label htmlFor={name}>{label}</label>
       <input
         inputMode={inputMode}
         disabled={disabled}
-        {...register(name, {
-          required: {
-            value: required || false,
-            message: 'Campo requerido'
-          },
-          minLength: {
-            value: minLength || 0,
-            message: 'Minimo ' + minLength + ' caracteres'
-          },
-          pattern: {
-            value: pattern,
-            message: 'No valido'
-          }
-        })}
+        {...registerProps}
         className='input'
         defaultValue={defaultValue}
         placeholder={placeholder}

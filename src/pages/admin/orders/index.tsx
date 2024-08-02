@@ -8,6 +8,7 @@ import Layout from '@/components/admin/Layout';
 import Table from '@/components/admin/Table';
 import PageHeader from '@/components/admin/PageHeader';
 import { OrderInterface } from '@/interfaces';
+import { useDebouncedSearch } from '@/hooks/useDebouncedSearch';
 
 interface Props {
   orders: OrderInterface[],
@@ -20,24 +21,7 @@ const OrdersAdminPage = ({ page, limit, size, orders }: Props) => {
 
   const { push, query } = useRouter()
 
-  const [searchTerm, setSearchTerm] = useState(query.search)
-
-  const debouncedSearch = useCallback(
-    debounce((searchTerm) => {
-      if (searchTerm.trim().length === 0) {
-        push(`/admin/orders?page=1&limit=20`);
-      } else {
-        push(`/admin/orders?search=${searchTerm}`);
-      }
-    }, 500),
-    [limit]
-  );
-
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const searchTerm = e.target.value;
-    setSearchTerm(searchTerm);
-    debouncedSearch(searchTerm);
-  };
+  const { searchTerm, setSearchTerm, handleSearch } = useDebouncedSearch({ url: 'orders', limit })
 
   const columns = [
     {
