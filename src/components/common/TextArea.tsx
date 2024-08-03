@@ -41,7 +41,7 @@ const TextArea = ({ placeholder, pattern, register, required, minLength, name = 
         }}
         htmlFor={name}>{label}</label>
       <textarea
-        className='input'
+        className='input text-area'
         defaultValue={defaultValue}
         {...registerProps}
         autoComplete='new-password'

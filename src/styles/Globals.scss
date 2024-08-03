@@ -1,5 +1,6 @@
 @import "./Utils.scss";
 @import "./Buttons.scss";
+@import "./Inputs.scss";
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap");
 
 * {
@@ -100,35 +101,7 @@ h6 {
   transform: translate(-50%, 0);
 }
 
-.input {
-  width: 100%;
-  font-size: 16px;
-  border: 1px solid #d9d9d9;
-  outline: none;
-  padding: 10px;
-  transition: all 0.3s;
 
-  &:focus {
-    border: 1px solid black;
-  }
-}
-
-.input-group {
-  margin-bottom: 20px;
-
-  label {
-    display: block;
-    margin-bottom: 5px;
-  }
-}
-
-.checkbox-group {
-  margin-bottom: 20px;
-  .checkbox {
-    display: flex;
-    align-items: center;
-  }
-}
 
 .clear-search {
   display: flex;
@@ -162,7 +135,7 @@ h6 {
   display: flex;
   flex-direction: column;
 
-  > label {
+  >label {
     text-align: left !important;
     margin-bottom: 10px;
   }
@@ -239,9 +212,6 @@ h6 {
   color: black;
 }
 
-textarea {
-  resize: none !important;
-}
 
 .card {
   background-color: white;
@@ -303,7 +273,7 @@ textarea {
         display: none;
 
         &:checked {
-          ~ label {
+          ~label {
             border: 2px solid rgb(109, 109, 109);
           }
         }
@@ -594,6 +564,7 @@ textarea {
 }
 
 @media (min-width: 768px) {
+
   .container-white,
   .container-beige,
   .container-gray {
@@ -602,6 +573,7 @@ textarea {
 }
 
 @media (min-width: 1200px) {
+
   .container-white,
   .container-beige,
   .container-gray {
@@ -657,26 +629,7 @@ body {
   font-size: 16px !important;
 }
 
-.input {
-  height: 42px;
-  padding: 10px 15px;
-  font-size: 16px;
-  border: 1px solid rgb(224, 224, 224);
-  border-radius: 5px;
-  background-color: white;
-  width: 100%;
 
-  &:focus {
-    outline: 3px solid #1492e6;
-    border: 1px solid transparent;
-  }
-}
-
-input[type="checkbox"] {
-  margin-right: 10px;
-  width: 20px;
-  height: 20px;
-}
 
 .page-actions {
   max-width: 700px;
@@ -756,11 +709,6 @@ input[type="checkbox"] {
   }
 }
 
-textarea {
-  resize: none !important;
-  height: 200px !important;
-}
-
 .error {
   color: red;
   display: block;
@@ -768,9 +716,65 @@ textarea {
 }
 
 .detailPage {
-  //  padding-top: 100px;
-  // max-width: 600px;
   margin: auto;
+}
+
+.sortable-dropzone {
+  border: 2px dashed #cdcdcd;
+  border-radius: 5px;
+  height: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  input {
+    display: none !important;
+  }
+}
+
+.sortable-grid {
+
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  grid-auto-rows: auto;
+  border-radius: 10px;
+  overflow: hidden;
+
+  .sortable-item {
+    height: 225px;
+    margin: 0;
+    border: 1px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 40px;
+    cursor: grab;
+
+    &:active {
+      cursor: grabbing;
+    }
+
+    img {
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    &:first-child {
+      margin: 0;
+      height: 470px;
+      grid-column: 1 / span 2;
+      grid-row: 1 / span 2;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block;
+      }
+    }
+  }
 }
 
 .actions {
@@ -800,7 +804,7 @@ textarea {
 }
 
 .specs {
-  > div {
+  >div {
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
@@ -833,7 +837,7 @@ textarea {
     flex-direction: column;
     margin-top: 10px;
 
-    > div {
+    >div {
       display: flex;
     }
 
@@ -856,7 +860,7 @@ textarea {
   flex-direction: column;
   margin-top: 10px;
 
-  > div {
+  >div {
     display: flex;
   }
 
@@ -891,6 +895,7 @@ button {
 
 .page {
   .pageHeader {
+
     // margin-bottom: 20px;
     // display: flex;
     // justify-content: space-between;

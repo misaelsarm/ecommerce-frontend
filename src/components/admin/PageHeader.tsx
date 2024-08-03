@@ -1,4 +1,5 @@
 import React, { ChangeEventHandler } from 'react'
+import Input from '../common/Input'
 
 interface Props {
   title: string,
@@ -31,12 +32,10 @@ const PageHeader = ({ title, actions, handleSearch, searchTerm, searchQuery, onC
       </div>
       <div className="pageHeaderBottom">
         <div className='pageHeaderSearch'>
-          <input
-            value={searchTerm}
+          <Input
+            placeholder='Buscar...'
             onChange={handleSearch}
-            placeholder='Buscar pedidos...'
-            className='input'
-            type="text"
+            value={searchTerm}
           />
           {
             searchQuery &&

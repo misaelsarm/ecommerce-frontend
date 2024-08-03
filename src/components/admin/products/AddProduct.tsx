@@ -1,29 +1,14 @@
-// import { useEffect, useRef, useState } from 'react'
-// import { api } from '@/api_config/api'
-// import { useForm } from 'react-hook-form';
-// import TextArea from '../../ui/TextArea';
-// // @ts-ignore
-// import { Upload } from '../Upload';
-// import Modal from '../../ui/Modal';
-// import toast from 'react-hot-toast';
-// import { SubCategory } from '@/interfaces/SubCategory';
-// import 'react-image-crop/src/ReactCrop.scss'
-// import ReactCrop, { Crop } from 'react-image-crop'
-// import Select from '@/components/ui/Select';
-// import Input from '@/components/ui/Input';
-// import useFileUpload from '@/hooks/useFileUpload';
-// import { makeRequest } from '@/utils/makeRequest';
-
-import useFileUpload from "@/hooks/useFileUpload"
-import { useRef, useState } from "react"
+import { useState } from "react"
 import toast from "react-hot-toast"
-import Input from "../../common/Input"
 import Modal from "../../common/Modal"
 import { makeRequest } from "@/utils/makeRequest"
 import { useForm } from "react-hook-form"
-import TextArea from "../../common/TextArea"
-import Select from "../../common/Select"
 import ProductFields from "./ProductFields"
+import Input from "@/components/common/Input"
+import TextArea from "@/components/common/TextArea"
+import Checkbox from "@/components/common/Checkbox"
+import Select from "@/components/common/Select"
+import { Sortable } from "../Sortable"
 
 interface Props {
   visible: boolean,
@@ -32,29 +17,22 @@ interface Props {
 }
 
 const AddProduct = ({ visible, setVisible, onOk }: Props) => {
-  const [images, setImages] = useState<string[]>([])
+
   const [saving, setSaving] = useState(false)
-  const { register, handleSubmit, control, resetField, reset, formState: { errors } } = useForm();
-  const subscribeToHasDiscount = register('hasDiscount')
-  const subscribeToIsCustomizable = register('isCustomizable')
+
+  const [items, setItems] = useState(['1', '2', '3', '4', '5', '6', '7', '8', '9']);
 
   const [hasDiscount, setHasDiscount] = useState(false)
 
-  const [image, setImage] = useState('')
+  const [isCustomizable, setIsCustomizable] = useState(false)
 
-  // const [crop, setCrop] = useState<Crop>()
+  const { register, handleSubmit, control, resetField, reset, formState: { errors } } = useForm();
 
-  const imageRef = useRef<any>()
+  const [images, setImages] = useState([])
 
   //const { handleFileUpload, uploading } = useFileUpload();
 
-  const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    // const file = e.target.files?.[0];
-    // if (file) {
-    //   const data = await handleFileUpload(file);
-    //   setImage(data as string)
-    // }
-  };
+  const [uploading, setUploading] = useState(false)
 
   const onSubmit = async (values: any) => {
 
@@ -65,8 +43,7 @@ const AddProduct = ({ visible, setVisible, onOk }: Props) => {
         ...values,
         attributes: values.attributes?.map((attribute: any) => attribute?.value),
         subCategories: values.subCategories?.map((sub: any) => sub.value),
-        images,
-        previewImage: image,
+        images
       }
       await makeRequest('post', '/api/products', product)
       toast.success('Producto agregado')
@@ -82,7 +59,7 @@ const AddProduct = ({ visible, setVisible, onOk }: Props) => {
 
   return (
     <Modal
-      //loadingState={saving || uploading}
+      loadingState={saving /* || uploading */}
       onOk={handleSubmit(onSubmit)}
       onCancel={() => {
         setVisible(false)
@@ -93,7 +70,86 @@ const AddProduct = ({ visible, setVisible, onOk }: Props) => {
       }}
       visible={visible}
     >
-      <ProductFields register={register} errors={errors} />
+      <>
+        <Input
+          register={register}
+          name='name'
+          errors={errors}
+          label='Nombre del producto'
+          required
+        />
+        <TextArea
+          register={register}
+          name='description'
+          errors={errors}
+          label='Descripción del producto'
+          required
+        />
+        <Input
+          register={register}
+          label='Palabras clave'
+          name='keywords'
+        />
+        <Input
+          type='number'
+          register={register}
+          name='price'
+          errors={errors}
+          label='Precio'
+          required
+        />
+        <Checkbox
+          label='Tiene descuento'
+          id='hasDiscount'
+          onChange={(e) => {
+            setHasDiscount(e.target.checked)
+          }}
+          name='hasDiscount'
+        />
+        {
+          hasDiscount &&
+          <div className="group">
+            <Input
+              required
+              register={register}
+              placeholder='Valor del descuento'
+              name='discountValue'
+              errors={errors}
+              label='Valor del descuento'
+            />
+          </div>
+        }
+        <Checkbox
+          label='Activo'
+          id='active'
+          name='active'
+        />
+        <Checkbox
+          label='Es personalizable'
+          id='isCustomizable'
+          name='isCustomizable'
+          onChange={(e) => {
+            setIsCustomizable(e.target.checked)
+          }}
+        />
+        {
+          isCustomizable && <Select
+            control={control}
+            errors={errors}
+            required
+            options={[]}
+            name="attributes"
+            label="Atributos y características del producto"
+            isMulti
+          />
+        }
+        <Sortable
+          label='Agregar imagenes del producto'
+          items={[]}
+          setItems={setItems}
+          uploading={uploading}
+        />
+      </>
     </Modal>
   )
 }

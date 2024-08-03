@@ -1,10 +1,14 @@
 
+import { Sortable } from '@/components/admin/Sortable'
 import Input from '@/components/common/Input'
 import Select from '@/components/common/Select'
 import TextArea from '@/components/common/TextArea'
-import React from 'react'
+import React, { useState } from 'react'
 
-const index = () => {
+const Index = () => {
+
+  const [items, setItems] = useState(['1', '2', '3', '4', '5', '6', '7', '8', '9']);
+
 
   const options = [
     {
@@ -24,7 +28,7 @@ const index = () => {
   return (
     <div
       style={{
-        maxWidth: 500,
+        maxWidth: 800,
         margin: 'auto',
         padding: '50px 0'
       }}
@@ -40,9 +44,15 @@ const index = () => {
         </div>
       </div>
       <div className='mb-30'>
-        <h3>Input</h3>
+        <h3>Text Input</h3>
         <div>
           <Input />
+        </div>
+      </div>
+      <div className='mb-30'>
+        <h3>Password Input</h3>
+        <div>
+          <Input type='password' />
         </div>
       </div>
       <div className='mb-30'>
@@ -57,8 +67,12 @@ const index = () => {
           <Select options={options} />
         </div>
       </div>
+      <div className='mb-30'>
+        <h3>Sortable</h3>
+        <Sortable items={items} label='' setItems={setItems} uploading={false} />
+      </div>
     </div>
   )
 }
 
-export default index
+export default Index

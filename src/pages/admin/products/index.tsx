@@ -65,7 +65,7 @@ const ProductsAdminPage = ({ products, page, limit, size }: Props) => {
   ]
   const [visible, setVisible] = useState(false)
 
-  const { searchTerm, setSearchTerm, handleSearch } = useDebouncedSearch({ url: 'orders', limit })
+  const { searchTerm, setSearchTerm, handleSearch } = useDebouncedSearch({ url: 'products', limit })
 
   const { push, query, replace } = useRouter()
 

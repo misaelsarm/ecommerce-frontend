@@ -20,9 +20,10 @@ interface Props {
   items: any[],
   setItems: any,
   label: string
+  uploading: boolean
 }
 
-export const Sortable = ({ items, setItems, label }: Props) => {
+export const Sortable = ({ items, setItems, label, uploading }: Props) => {
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -41,6 +42,29 @@ export const Sortable = ({ items, setItems, label }: Props) => {
         items={items}
         strategy={rectSortingStrategy}
       >
+        <div>{label}</div>
+        {
+          items.length > 0 && <h3 className='block mb-20'>Puedes arrastrar y ordenar las imagenes.</h3>
+        }
+        {
+          (items.length === 0 && !uploading) &&
+          <div className='sortable-dropzone'>
+            <input
+              accept='image/*'
+              multiple
+              // onChange={handleFileUpload}
+              // ref={fileInputRef}
+              type='file'
+            />
+            <button /* onClick={handleClick} */ className='btn btn-black'>Cargar fotos</button>
+          </div>
+        }
+        {
+          uploading &&
+          <div /* className={styles.dropZone} */>
+            <h2>Cargando imagenes...</h2>
+          </div>
+        }
         <div className='sortable-grid'>
           {items.map(id => <SortableItem key={id} id={id} />)}
         </div>
