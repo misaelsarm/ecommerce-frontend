@@ -18,7 +18,6 @@ const Sidebar = () => {
       <div className={styles.logo}>
         <img src="/logo.png" alt="" />
       </div>
-
       <div className={styles.links}>
         {
           links.map(link => (

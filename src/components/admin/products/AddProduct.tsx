@@ -28,6 +28,8 @@ const AddProduct = ({ visible, setVisible, onOk }: Props) => {
 
   const { register, handleSubmit, control, resetField, reset, formState: { errors } } = useForm();
 
+  const [isTracked, setIsTracked] = useState(false)
+
   const [images, setImages] = useState([])
 
   //const { handleFileUpload, uploading } = useFileUpload();
@@ -98,6 +100,15 @@ const AddProduct = ({ visible, setVisible, onOk }: Props) => {
           label='Precio'
           required
         />
+        <Select
+          control={control}
+          errors={errors}
+          required
+          options={[]}
+          name="collections"
+          label="Colecciones"
+          isMulti
+        />
         <Checkbox
           label='Tiene descuento'
           id='hasDiscount'
@@ -141,6 +152,26 @@ const AddProduct = ({ visible, setVisible, onOk }: Props) => {
             name="attributes"
             label="Atributos y características del producto"
             isMulti
+          />
+        }
+        <Checkbox
+          label='Realizar seguimiento de inventario'
+          id='isTracked'
+          name='isTracked'
+          onChange={(e) => {
+            setIsTracked(e.target.checked)
+            //setIsCustomizable(e.target.checked)
+          }}
+        />
+        {
+          isTracked &&
+          <Input
+            type='number'
+            register={register}
+            name='availableQuantity'
+            errors={errors}
+            label='Cantidad disponible'
+            required
           />
         }
         <Sortable

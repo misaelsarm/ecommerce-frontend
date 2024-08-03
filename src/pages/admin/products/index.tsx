@@ -72,7 +72,6 @@ const ProductsAdminPage = ({ products, page, limit, size }: Props) => {
   return (
     <>
       <div className="page">
-        {/*         <PageLinks /> */}
         <PageHeader
           title='Productos'
           actions={
