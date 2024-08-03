@@ -1,5 +1,6 @@
 
 import { api } from '@/api_config/api'
+import AddCollection from '@/components/admin/collections/AddCollection'
 import Layout from '@/components/admin/Layout'
 import PageHeader from '@/components/admin/PageHeader'
 import Table from '@/components/admin/Table'
@@ -90,15 +91,14 @@ const CollectionsAdminPage = ({ collections = [], page, limit, size }: Props) =>
           />
         </div>
       </div>
-      {/* <AddCategory
+      <AddCollection
         visible={visible}
         setVisible={setVisible}
-        currentEditing={currentEditing}
         onOk={() => {
           setVisible(false)
           replace('/admin/collections?page=1&limit=20')
         }}
-      /> */}
+      />
     </>
   )
 }
