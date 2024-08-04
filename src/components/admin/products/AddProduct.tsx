@@ -18,19 +18,25 @@ interface Props {
 
 const AddProduct = ({ visible, setVisible, onOk }: Props) => {
 
-  const [saving, setSaving] = useState(false)
+  const { register, handleSubmit, control, resetField, reset, formState: { errors } } = useForm();
 
-  const [items, setItems] = useState(['1', '2', '3', '4', '5', '6', '7', '8', '9']);
+  const [saving, setSaving] = useState(false)
 
   const [hasDiscount, setHasDiscount] = useState(false)
 
   const [isCustomizable, setIsCustomizable] = useState(false)
 
-  const { register, handleSubmit, control, resetField, reset, formState: { errors } } = useForm();
-
   const [isTracked, setIsTracked] = useState(false)
 
   const [images, setImages] = useState([])
+
+  const resetForm = () => {
+    reset()
+    setHasDiscount(false)
+    setIsCustomizable(false)
+    setIsTracked(false)
+    setImages([])
+  }
 
   //const { handleFileUpload, uploading } = useFileUpload();
 
@@ -65,10 +71,12 @@ const AddProduct = ({ visible, setVisible, onOk }: Props) => {
       onOk={handleSubmit(onSubmit)}
       onCancel={() => {
         setVisible(false)
+        resetForm()
       }}
       title='Nuevo producto'
       onClose={() => {
         setVisible(false)
+        resetForm()
       }}
       visible={visible}
     >
@@ -160,7 +168,6 @@ const AddProduct = ({ visible, setVisible, onOk }: Props) => {
           name='isTracked'
           onChange={(e) => {
             setIsTracked(e.target.checked)
-            //setIsCustomizable(e.target.checked)
           }}
         />
         {
@@ -176,8 +183,8 @@ const AddProduct = ({ visible, setVisible, onOk }: Props) => {
         }
         <Sortable
           label='Agregar imagenes del producto'
-          items={[]}
-          setItems={setItems}
+          items={images}
+          setItems={setImages}
           uploading={uploading}
         />
       </>

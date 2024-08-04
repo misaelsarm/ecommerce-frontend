@@ -1,71 +1,54 @@
 
+import AddAttribute from "@/components/admin/attributes/AddAttribute"
 import Layout from "@/components/admin/Layout"
 import PageHeader from "@/components/admin/PageHeader"
 import AddProduct from "@/components/admin/products/AddProduct"
 import Table from "@/components/admin/Table"
 import { useDebouncedSearch } from "@/hooks/useDebouncedSearch"
-import { ProductInterface } from "@/interfaces"
+import { AttributeInterface, ProductInterface } from "@/interfaces"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { ReactElement, useState } from "react"
 
 interface Props {
-  products: ProductInterface[],
+  attributes: ProductInterface[],
   page: number,
   limit: number,
   size: number
 }
 
-const ProductsAdminPage = ({ products = [], page, limit, size }: Props) => {
+const AttributesAdminPage = ({ attributes = [], page, limit, size }: Props) => {
 
   const columns = [
     {
-      title: 'Imagen',
-      dataIndex: 'image',
-      key: 'image',
-      render: (_text: string, record: ProductInterface) => (
-        <img
-          loading="lazy"
-          style={{ width: 50, height: 50, objectFit: 'contain' }}
-          src={record.images[0]}
-          alt=''
-        />
-      )
-    },
-    {
       title: 'Nombre',
-      dataIndex: 'name',
-      key: 'name'
+      dataIndex: 'shortName',
+      key: 'shortName'
     },
     {
-      title: 'Código',
-      dataIndex: 'code',
-      key: 'code'
+      title: 'Nombre largo',
+      dataIndex: 'longName',
+      key: 'longName'
     },
     {
-      title: 'Precio',
-      dataIndex: 'price',
-      key: 'price',
-      render: (_text: string, record: ProductInterface) => record.price ? <>{`${record.price} MXN`}</> : 'N/A',
-    },
-    {
-      title: 'Activo',
-      dataIndex: 'active',
-      key: 'active',
-      render: (_text: string, record: ProductInterface) => record.active ? 'Activo' : 'No activo'
+      title: 'Tipo',
+      dataIndex: 'type',
+      key: 'type',
+      render: (text: string, record: AttributeInterface) => record.type.label
     },
     {
       title: 'Detalles',
       dataIndex: 'detalles',
       key: 'detalles',
-      render: (_text: string, record: ProductInterface) => (
-        <Link href={`/admin/products/${record.code}`} className='btn btn-black btn-auto'>Ver</Link>
+      render: (text: string, record: AttributeInterface) => (
+        <Link href={`/attributes/${record.id}`} className='btn btn-black btn-auto'>Ver</Link>
       )
     },
   ]
+
   const [visible, setVisible] = useState(false)
 
-  const { searchTerm, setSearchTerm, handleSearch } = useDebouncedSearch({ url: 'products', limit })
+  const { searchTerm, setSearchTerm, handleSearch } = useDebouncedSearch({ url: 'attributes', limit })
 
   const { push, query, replace } = useRouter()
 
@@ -73,11 +56,11 @@ const ProductsAdminPage = ({ products = [], page, limit, size }: Props) => {
     <>
       <div className="page">
         <PageHeader
-          title='Productos'
+          title='Atributos'
           actions={
             [
               {
-                name: "Nuevo producto",
+                name: "Nuevo atributo",
                 onClick: () => {
                   setVisible(true)
                 }
@@ -88,27 +71,27 @@ const ProductsAdminPage = ({ products = [], page, limit, size }: Props) => {
           searchQuery={query.search}
           searchTerm={searchTerm}
           onClearSearch={() => {
-            push(`/admin/products?page=1&limit=20`);
+            push(`/admin/attributes?page=1&limit=20`);
             setSearchTerm('')
           }}
         />
         <div className="pageContent">
           <Table
             columns={columns}
-            data={products}
-            navigateTo="products"
+            data={attributes}
+            navigateTo="attributes"
             size={size}
             page={page}
             limit={limit}
           />
         </div>
       </div>
-      <AddProduct
+      <AddAttribute
         visible={visible}
         setVisible={setVisible}
         onOk={() => {
           setVisible(false)
-          replace('/admin/products?page=1&limit=20')
+          replace('/admin/attributes?page=1&limit=20')
         }}
       />
     </>
@@ -153,12 +136,12 @@ const ProductsAdminPage = ({ products = [], page, limit, size }: Props) => {
 //   };
 // }
 
-ProductsAdminPage.getLayout = function getLayout(page: ReactElement) {
+AttributesAdminPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <Layout title="Productos">
+    <Layout title="Atributos">
       {page}
     </Layout>
   );
 };
 
-export default ProductsAdminPage
+export default AttributesAdminPage

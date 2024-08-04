@@ -32,6 +32,22 @@ const Sidebar = () => {
                   {link.name}
                 </span>
               </Link>
+              <div className={styles.sub}>
+                {
+                  link.sub.map(sub => (
+                    <Link
+                      style={asPath.includes(sub.path) ? style : undefined}
+                      key={sub.name}
+                      href={`${sub.path}?page=1&limit=20`}
+                      className={styles.link}
+                    >
+                      <span>
+                        {sub.name}
+                      </span>
+                    </Link>
+                  ))
+                }
+              </div>
             </div>
           ))
         }
