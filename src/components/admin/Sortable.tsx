@@ -17,7 +17,7 @@ import {
 import { SortableItem } from './SortableItem';
 
 interface Props {
-  items: any[],
+  items: string[],
   setItems: any,
   label: string
   uploading: boolean
@@ -26,7 +26,11 @@ interface Props {
 export const Sortable = ({ items, setItems, label, uploading }: Props) => {
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor,{
+      activationConstraint: {
+        distance: 1
+      }
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
@@ -66,7 +70,7 @@ export const Sortable = ({ items, setItems, label, uploading }: Props) => {
           </div>
         }
         <div className='sortable-grid'>
-          {items.map(id => <SortableItem key={id} id={id} />)}
+          {items.map((id, index) => <SortableItem index={index} items={items} setItems={setItems} key={id} id={id} />)}
         </div>
       </SortableContext>
     </DndContext>

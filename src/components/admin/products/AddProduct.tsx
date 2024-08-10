@@ -30,6 +30,8 @@ const AddProduct = ({ visible, setVisible, onOk }: Props) => {
 
   const [images, setImages] = useState([])
 
+  const [uploading, setUploading] = useState(false)
+
   const resetForm = () => {
     reset()
     setHasDiscount(false)
@@ -39,8 +41,6 @@ const AddProduct = ({ visible, setVisible, onOk }: Props) => {
   }
 
   //const { handleFileUpload, uploading } = useFileUpload();
-
-  const [uploading, setUploading] = useState(false)
 
   const onSubmit = async (values: any) => {
 

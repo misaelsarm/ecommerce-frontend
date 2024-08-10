@@ -1,4 +1,4 @@
-import { CartInterface, UserInterface } from "."
+import { CartInterface, ProductInterface, UserInterface } from "."
 
 export interface OrderInterface {
 
@@ -37,5 +37,5 @@ export interface OrderInterface {
     apartment: string,
     deliveryInstructions: string
   }
-  products: any[]
+  products: ProductInterface[]
 }

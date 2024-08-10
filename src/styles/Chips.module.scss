@@ -1,0 +1,45 @@
+// Utility Classes for Chips
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  font-size: 14px;
+  margin: 4px;
+  border: 0;
+  border-radius: 16px;
+  //height: 35px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+
+}
+
+.green {
+  color: green;
+  background-color: rgba(27, 182, 27, 0.2);
+}
+
+.blue {
+  color: blue;
+  background-color: rgba(0, 123, 255, 0.2);
+}
+
+.red {
+  color: red;
+  background-color: rgba(220, 53, 69, 0.2);
+}
+
+.yellow {
+  color: rgb(230, 176, 0);
+  background-color: rgba(255, 193, 7, 0.2);
+}
+
+.dark {
+  color: #fff;
+  background-color: #333;
+}
+
+.close {
+  margin-left: 8px;
+  font-size: 16px;
+  cursor: pointer;
+}

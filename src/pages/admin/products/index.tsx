@@ -1,10 +1,12 @@
-
+import { api } from "@/api_config/api"
 import Layout from "@/components/admin/Layout"
 import PageHeader from "@/components/admin/PageHeader"
 import AddProduct from "@/components/admin/products/AddProduct"
 import Table from "@/components/admin/Table"
 import { useDebouncedSearch } from "@/hooks/useDebouncedSearch"
 import { ProductInterface } from "@/interfaces"
+import { GetServerSideProps } from "next"
+import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { ReactElement, useState } from "react"
@@ -24,9 +26,12 @@ const ProductsAdminPage = ({ products = [], page, limit, size }: Props) => {
       dataIndex: 'image',
       key: 'image',
       render: (_text: string, record: ProductInterface) => (
-        <img
-          loading="lazy"
-          style={{ width: 50, height: 50, objectFit: 'contain' }}
+        <Image
+          width={80}
+          height={80}
+          style={{
+            objectFit: 'contain'
+          }}
           src={record.images[0]}
           alt=''
         />
@@ -115,43 +120,43 @@ const ProductsAdminPage = ({ products = [], page, limit, size }: Props) => {
   )
 }
 
-// export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, query }) => {
 
-//   const { page, limit, search = '' } = query;
+  const { page, limit, search = '' } = query;
 
-//   const req = nextReq as any
+  const req = nextReq as any
 
-//   let products = []
+  let products = []
 
-//   try {
-//     const { data } = await api.get(`/api/products?page=${page}&limit=${limit}&search=${search}`, {
-//       headers: {
-//         //@ts-ignore
-//         "x-access-token": req.headers.cookie ? req.headers.cookie.split(';').find(c => c.trim().startsWith('token=')).split('=')[1] : null,
-//         "x-location": "admin"
-//       }
-//     })
-//     products = data.products
+  try {
+    const { data } = await api.get(`/api/products?page=${page}&limit=${limit}&search=${search}`, {
+      headers: {
+        //@ts-ignore
+        // "x-access-token": req.headers.cookie ? req.headers.cookie.split(';').find(c => c.trim().startsWith('token=')).split('=')[1] : null,
+        // "x-location": "admin"
+      }
+    })
+    products = data.products
 
-//   } catch (error) {
-//     console.log({ error })
-//     return {
-//       redirect: {
-//         destination: '/',
-//         permanent: false,
-//       },
-//     };
-//   }
+  } catch (error) {
+    console.log({ error })
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
 
-//   return {
-//     props: {
-//       products,
-//       page: Number(page),
-//       limit: Number(limit),
-//       size: Number(products.length),
-//     },
-//   };
-// }
+  return {
+    props: {
+      products,
+      page: Number(page),
+      limit: Number(limit),
+      size: Number(products.length),
+    },
+  };
+}
 
 ProductsAdminPage.getLayout = function getLayout(page: ReactElement) {
   return (

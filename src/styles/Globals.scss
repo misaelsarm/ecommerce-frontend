@@ -101,8 +101,6 @@ h6 {
   transform: translate(-50%, 0);
 }
 
-
-
 .clear-search {
   display: flex;
   align-items: center;
@@ -135,7 +133,7 @@ h6 {
   display: flex;
   flex-direction: column;
 
-  >label {
+  > label {
     text-align: left !important;
     margin-bottom: 10px;
   }
@@ -212,7 +210,6 @@ h6 {
   color: black;
 }
 
-
 .card {
   background-color: white;
 
@@ -273,7 +270,7 @@ h6 {
         display: none;
 
         &:checked {
-          ~label {
+          ~ label {
             border: 2px solid rgb(109, 109, 109);
           }
         }
@@ -564,7 +561,6 @@ h6 {
 }
 
 @media (min-width: 768px) {
-
   .container-white,
   .container-beige,
   .container-gray {
@@ -573,7 +569,6 @@ h6 {
 }
 
 @media (min-width: 1200px) {
-
   .container-white,
   .container-beige,
   .container-gray {
@@ -628,8 +623,6 @@ html,
 body {
   font-size: 16px !important;
 }
-
-
 
 .page-actions {
   max-width: 700px;
@@ -733,32 +726,62 @@ body {
 }
 
 .sortable-grid {
-
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
   grid-auto-rows: auto;
-  border-radius: 10px;
+
   overflow: hidden;
 
   .sortable-item {
     height: 225px;
     margin: 0;
-    border: 1px solid black;
+    border: 1px solid rgb(130, 78, 78);
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 40px;
     cursor: grab;
-
+    border-radius: 10px;
     &:active {
       cursor: grabbing;
     }
 
-    img {
+    .sortable-item-image {
+      position: relative;
+      width: 100%;
       height: 100%;
-      object-fit: contain;
-      display: block;
+      button {
+        background-color: white;
+        &:hover {
+          background-color: #cdcdcd;
+        }
+        outline: 0;
+        border: 0;
+        cursor: pointer;
+        border-radius: 5px;
+        top: 10px;
+        right: 10px;
+        width: 40px;
+        height: 40px;
+        position: absolute;
+
+        z-index: 999;
+        svg {
+          width: 20px;
+          height: 20px;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          z-index: -10;
+        }
+      }
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
     }
 
     &:first-child {
@@ -804,7 +827,7 @@ body {
 }
 
 .specs {
-  >div {
+  > div {
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
@@ -837,7 +860,7 @@ body {
     flex-direction: column;
     margin-top: 10px;
 
-    >div {
+    > div {
       display: flex;
     }
 
@@ -860,7 +883,7 @@ body {
   flex-direction: column;
   margin-top: 10px;
 
-  >div {
+  > div {
     display: flex;
   }
 
@@ -895,7 +918,6 @@ button {
 
 .page {
   .pageHeader {
-
     // margin-bottom: 20px;
     // display: flex;
     // justify-content: space-between;

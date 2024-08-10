@@ -1,5 +1,6 @@
 
 import { Sortable } from '@/components/admin/Sortable'
+import Chip from '@/components/common/Chip'
 import Input from '@/components/common/Input'
 import Select from '@/components/common/Select'
 import TextArea from '@/components/common/TextArea'
@@ -41,6 +42,16 @@ const Index = () => {
           <button className='btn btn-black mr-10'>Hello world!</button>
           <button className='btn btn-gradient mr-10'>Hello world!</button>
           <button className='btn btn-ghost'>Hello world!</button>
+        </div>
+      </div>
+      <div className='mb-30'>
+        <h3>Chips</h3>
+        <div className='d-flex'>
+          <Chip color='dark' text='Dark chip' />
+          <Chip color='blue' text='Blue chip' />
+          <Chip color='green' text='Green chip' />
+          <Chip color='yellow' text='Yellow chip' />
+          <Chip color='red' text='Red chip' />
         </div>
       </div>
       <div className='mb-30'>

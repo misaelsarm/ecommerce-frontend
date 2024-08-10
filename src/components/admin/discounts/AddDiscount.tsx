@@ -225,34 +225,11 @@ const AddDiscount = ({ visible, setVisible, onOk }: Props) => {
               control={control}
               required
               errors={errors}
-              
+              name="endDate"
             />
 
 
-            {/* <div className="group">
-              <label>Fecha de expiración</label>
-              <Controller
-                rules={{
-                  required: true,
-                }}
-                name='expiry'
-                control={control}
-                render={({ field: { onChange } }) =>
-                  <ReactDatePicker
-                    minDate={new Date()}
-                    dateFormat='dd-MM-yyyy'
-                    selected={startDate}
-                    onChange={(date) => {
-                      onChange(date)
-                      setStartDate(date)
-                    }}
-                  />
-                }
-              />
-              {
-                errors.expiry && <span className="error">Requerido</span>
-              }
-            </div> */}
+
             <Checkbox
               label='Activo'
               id='active'

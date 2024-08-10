@@ -1,69 +1,78 @@
-import { api } from '@/api_config/api'
-import Layout from '@/components/admin/Layout'
-import { Upload } from '@/components/admin/Upload'
-import Input from '@/components/ui/Input'
-import Modal from '@/components/ui/Modal'
-import TextArea from '@/components/ui/TextArea'
-import useFileUpload from '@/hooks/useFileUpload'
-import { Product } from '@/interfaces'
-import { SubCategory } from '@/interfaces/SubCategory'
-import { makeRequest } from '@/utils/makeRequest'
-import { GetServerSideProps } from 'next'
-import { useRouter } from 'next/router'
-import React, { ReactElement, useEffect, useRef, useState } from 'react'
-import { Controller, useForm } from 'react-hook-form'
-import toast from 'react-hot-toast'
-import ReactCrop, { Crop } from 'react-image-crop'
-import Select from 'react-select'
+import { api } from "@/api_config/api"
+import Layout from "@/components/admin/Layout"
+import { Sortable } from "@/components/admin/Sortable"
+import Checkbox from "@/components/common/Checkbox"
+import Input from "@/components/common/Input"
+import Modal from "@/components/common/Modal"
+import Select from "@/components/common/Select"
+import TextArea from "@/components/common/TextArea"
+import { ProductInterface } from "@/interfaces"
+import { GetServerSideProps } from "next"
+import { useRouter } from "next/router"
+import { ReactElement, useEffect, useRef, useState } from "react"
+import { useForm } from "react-hook-form"
+import toast from "react-hot-toast"
+
 
 interface Props {
-  product: Product
+  product: ProductInterface
 }
 
 const ProductDetailsAdminPage = ({ product }: Props) => {
 
   const [editing, setEditing] = useState(false)
-  const [images, setImages] = useState<string[]>([])
+
+  console.log({ product })
+
+  const { register, handleSubmit, control, resetField, formState: { errors }, reset } = useForm<any>({
+    defaultValues: {
+      name: product.name,
+      description: product.description,
+      keywords: product.keywords,
+      price: product.price,
+      collections: product.collections,
+      isCustomizable: product.isCustomizable
+
+    }
+  });
+
   const [saving, setSaving] = useState(false)
 
-  const { register, handleSubmit, control, resetField, formState: { errors }, reset } = useForm();
-  const [hasDiscount, setHasDiscount] = useState(false);
-  const subscribeToHasDiscount = register('hasDiscount')
-  const subscribeToIsCustomizable = register('isCustomizable')
-  const [isCustomizable, setIsCustomizable] = useState(false)
-  const [subCategories, setSubCategories] = useState<SubCategory[]>([])
+  const [hasDiscount, setHasDiscount] = useState(false)
+
+  const [isCustomizable, setIsCustomizable] = useState(product.isCustomizable)
+
+  const [isTracked, setIsTracked] = useState(false)
+
+  const [images, setImages] = useState(product.images)
 
   const { replace, back } = useRouter()
 
-  const { handleFileUpload, uploading } = useFileUpload();
+  const [uploading, setUploading] = useState(false)
+
+  //const { handleFileUpload, uploading } = useFileUpload();
 
   const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const data = await handleFileUpload(file);
-      setImage(data as string)
-    }
+    // const file = e.target.files?.[0];
+    // if (file) {
+    //   const data = await handleFileUpload(file);
+    //   setImage(data as string)
+    // }
   };
 
-  const [crop, setCrop] = useState<Crop>()
-
-  const [image, setImage] = useState('')
-
-  const imageRef = useRef<any>()
-
   useEffect(() => {
-    setCrop(product.crop)
-    setImages(product.images)
-    setHasDiscount(product.hasDiscount)
-    setIsCustomizable(product.isCustomizable)
-    setImage(product.previewImage)
-    reset({
-      ...product,
-      subCategories: product.subCategories.map((sub: any) => ({
-        label: sub.name,
-        value: sub._id
-      }))
-    })
+    // setCrop(product.crop)
+    // setImages(product.images)
+    // setHasDiscount(product.hasDiscount)
+    // setIsCustomizable(product.isCustomizable)
+    // setImage(product.previewImage)
+    // reset({
+    //   ...product,
+    //   subCategories: product.subCategories.map((sub: any) => ({
+    //     label: sub.name,
+    //     value: sub._id
+    //   }))
+    // })
   }, [])
 
   const onSubmit = async (values: any) => {
@@ -76,10 +85,8 @@ const ProductDetailsAdminPage = ({ product }: Props) => {
         attributes: values.attributes?.map((attribute: any) => attribute.value),
         subCategories: values.subCategories?.map((sub: any) => sub.value),
         images,
-        crop,
-        previewImage: image
       }
-      await makeRequest('put', `/api/products/${product.id}`, update)
+      //await makeRequest('put', `/api/products/${product.id}`, update)
       toast.success('Producto actualizado')
       setSaving(false)
       setEditing(false)
@@ -93,78 +100,50 @@ const ProductDetailsAdminPage = ({ product }: Props) => {
   const renderForm = () => {
     return (
       <>
-        <div className="group">
-          <Input
-            register={register}
-            placeholder='Nombre'
-            name='name'
-            errors={errors}
-            label='Nombre del producto'
-            required
-          />
-        </div>
-        <div className="group">
-          <TextArea
-            register={register}
-            placeholder='Descripción'
-            name='description'
-            errors={errors}
-            label='Descripción del producto'
-            required
-          />
-        </div>
-        <div className="group">
-          <Input
-            register={register}
-            label='Palabras clave'
-            placeholder=''
-            name='keywords'
-          />
-        </div>
-        <div className="group">
-          <Input
-            type='number'
-            register={register}
-            placeholder='Precio'
-            name='price'
-            errors={errors}
-            label='Precio'
-            required
-          />
-        </div>
-        <div className="group">
-          <span>Subcategorías</span>
-          <Controller
-            name="subCategories"
-            control={control}
-            render={({ field: { onChange, onBlur, value } }) =>
-              <Select
-                onChange={onChange}
-                onBlur={onBlur}
-                value={value}
-                placeholder='Subcategorías'
-                isSearchable={true}
-                isMulti
-                options={subCategories.map(item => ({
-                  value: item.id,
-                  label: item.name
-                }))}
-              />}
-          />
-        </div>
-        <div className="group">
-          <input
-            {...subscribeToHasDiscount}
-            onChange={(e) => {
-              setHasDiscount(e.target.checked)
-            }}
-            type="checkbox"
-            name="hasDiscount"
-            id="hasDiscount"
-            defaultChecked={hasDiscount}
-          />
-          <label htmlFor="hasDiscount">Tiene descuento</label>
-        </div>
+        <Input
+          register={register}
+          name='name'
+          errors={errors}
+          label='Nombre del producto'
+          required
+        />
+        <TextArea
+          register={register}
+          name='description'
+          errors={errors}
+          label='Descripción del producto'
+          required
+        />
+        <Input
+          register={register}
+          label='Palabras clave'
+          name='keywords'
+        />
+        <Input
+          type='number'
+          register={register}
+          name='price'
+          errors={errors}
+          label='Precio'
+          required
+        />
+        <Select
+          control={control}
+          errors={errors}
+          required
+          options={[]}
+          name="collections"
+          label="Colecciones"
+          isMulti
+        />
+        <Checkbox
+          label='Tiene descuento'
+          id='hasDiscount'
+          onChange={(e) => {
+            setHasDiscount(e.target.checked)
+          }}
+          name='hasDiscount'
+        />
         {
           hasDiscount &&
           <div className="group">
@@ -178,114 +157,57 @@ const ProductDetailsAdminPage = ({ product }: Props) => {
             />
           </div>
         }
-        <div className="group">
-          <input
-            {...register('active')}
-            type="checkbox"
-            name="active"
-            id="active"
-            defaultChecked={product.active}
-          />
-          <label htmlFor="active">Activo</label>
-        </div>
-        <div className="group">
-          <input
-            {...register('soldOut')}
-            type="checkbox"
-            name="soldOut"
-            id="soldOut"
-            defaultChecked={product.soldOut}
-          />
-          <label htmlFor="soldOut">Agotado</label>
-        </div>
-        <div className="group">
-          <input
-            {...subscribeToIsCustomizable}
-            onChange={(e) => {
-              setIsCustomizable(e.target.checked)
-              resetField('attributes')
-            }}
-            defaultChecked={isCustomizable}
-            type="checkbox"
-            name="isCustomizable"
-            id="isCustomizable"
-          />
-          <label htmlFor="isCustomizable">Es personalizable</label>
-        </div>
-        <Upload
-          url={`/api/files/multiple`}
-          images={images}
-          setImages={setImages}
+        <Checkbox
+          label='Activo'
+          id='active'
+          name='active'
+          defaultChecked={product.active}
         />
-        <br />
-        <br />
-        <div className='group'>
-          <label htmlFor="">Cargar imagen para vista previa</label>
-          <input
-            onChange={onFileChange}
-            ref={imageRef}
-            style={{ display: 'none' }}
-            type='file'
-            accept='image/*'
+        <Checkbox
+          label='Es personalizable'
+          id='isCustomizable'
+          name='isCustomizable'
+          onChange={(e) => {
+            setIsCustomizable(e.target.checked)
+          }}
+          defaultChecked={product.isCustomizable}
+        />
+        {
+          isCustomizable && <Select
+            control={control}
+            errors={errors}
+            required
+            options={[]}
+            name="attributes"
+            label="Atributos y características del producto"
+            isMulti
           />
-          <div style={{ marginTop: 20, display: 'flex', alignItems: 'center' }}>
-            {
-              image !== '' &&
-              <div
-                className='imagePreview'>
-                <button onClick={() => imageRef.current.click()} className='btn delete'>Elegir otra imagen</button>
-                <ReactCrop
-                  ruleOfThirds
-                  maxWidth={550}
-                  aspect={1} crop={crop} onChange={c => setCrop(c)}>
-                  <div className='crop-wrapper'>
-                    <img src={image} />
-                    <span
-                      style={{
-                        //@ts-ignore
-                        top: crop?.y
-                      }}
-                      className='guide'>Arriba</span>
-                    <span
-                      style={{
-                        //@ts-ignore
-                        top: crop?.y + ((crop?.height - 20) / 2)
-                      }}
-                      className='guide'>Enmedio</span>
-                    <span
-                      style={{
-                        //@ts-ignore
-                        top: crop?.y + crop?.height - 20
-                      }}
-                      className='guide'>Abajo</span>
-                  </div>
-                </ReactCrop>
-              </div>
-            }
-            {
-              image === '' &&
-              <div onClick={() => { imageRef.current.click() }} style={
-                {
-                  width: 150,
-                  height: 150,
-                  border: '2px dashed #cdcdcd',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  textAlign: 'center',
-                  fontSize: 14,
-                  cursor: 'pointer',
-                  marginLeft: image ? 20 : 0,
-                  flexShrink: 0
-                }
-              }>
-                <span>
-                  Elegir imagen
-                </span>
-              </div>
-            }
-          </div>
-        </div>
+        }
+        <Checkbox
+          label='Realizar seguimiento de inventario'
+          id='isTracked'
+          name='isTracked'
+          onChange={(e) => {
+            setIsTracked(e.target.checked)
+          }}
+        />
+        {
+          isTracked &&
+          <Input
+            type='number'
+            register={register}
+            name='availableQuantity'
+            errors={errors}
+            label='Cantidad disponible'
+            required
+          />
+        }
+        <Sortable
+          label='Agregar imagenes del producto'
+          items={images}
+          setItems={setImages}
+          uploading={uploading}
+        />
       </>
     )
   }
@@ -308,8 +230,8 @@ const ProductDetailsAdminPage = ({ product }: Props) => {
             {
               !editing && <button className='btn btn-black' onClick={async () => {
                 setEditing(true)
-                const { data: subCategoriesData } = await api.get('/api/subcategories')
-                setSubCategories(subCategoriesData.subcategories)
+                //const { data: subCategoriesData } = await api.get('/api/subcategories')
+                //setSubCategories(subCategoriesData.subcategories)
               }}>Editar</button>
             }
           </div>
@@ -322,14 +244,6 @@ const ProductDetailsAdminPage = ({ product }: Props) => {
               <div className="cardItem">
                 <h4>Código</h4>
                 <span>{product.code}</span>
-              </div>
-              <div className="cardItem">
-                <h4>Subcategorías</h4>
-                {
-                  product.subCategories.map(sub => (
-                    <li key={sub.name}>{sub.name}</li>
-                  ))
-                }
               </div>
               <div style={{
                 whiteSpace: 'pre-line'
@@ -363,11 +277,11 @@ const ProductDetailsAdminPage = ({ product }: Props) => {
               </div>
               <div className="cardItem">
                 <h4>Tiene descuento</h4>
-                <span>{product.hasDiscount ? 'Si' : 'No'}</span>
+                <span>{product.discount?.hasDiscount ? 'Si' : 'No'}</span>
               </div>
               <div className="cardItem">
                 <h4>Valor del descuento</h4>
-                <span>{product.discountValue}</span>
+                <span>{product.discount?.discountValue}</span>
               </div>
               <div className="cardItem">
                 <h4>Imagenes</h4>
@@ -387,7 +301,7 @@ const ProductDetailsAdminPage = ({ product }: Props) => {
       </div >
       <Modal
         visible={editing}
-        loadingState={saving || uploading}
+        loadingState={saving /* || uploading */}
         onOk={handleSubmit(onSubmit)}
         onCancel={() => {
           setEditing(false)
