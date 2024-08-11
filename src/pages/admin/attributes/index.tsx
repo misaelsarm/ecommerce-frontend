@@ -1,4 +1,5 @@
 
+import { api } from "@/api_config/api"
 import AddAttribute from "@/components/admin/attributes/AddAttribute"
 import Layout from "@/components/admin/Layout"
 import PageHeader from "@/components/admin/PageHeader"
@@ -6,6 +7,7 @@ import AddProduct from "@/components/admin/products/AddProduct"
 import Table from "@/components/admin/Table"
 import { useDebouncedSearch } from "@/hooks/useDebouncedSearch"
 import { AttributeInterface, ProductInterface } from "@/interfaces"
+import { GetServerSideProps } from "next"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { ReactElement, useState } from "react"
@@ -98,43 +100,43 @@ const AttributesAdminPage = ({ attributes = [], page, limit, size }: Props) => {
   )
 }
 
-// export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, query }) => {
 
-//   const { page, limit, search = '' } = query;
+  const { page, limit, search = '' } = query;
 
-//   const req = nextReq as any
+  const req = nextReq as any
 
-//   let products = []
+  let attributes = []
 
-//   try {
-//     const { data } = await api.get(`/api/products?page=${page}&limit=${limit}&search=${search}`, {
-//       headers: {
-//         //@ts-ignore
-//         "x-access-token": req.headers.cookie ? req.headers.cookie.split(';').find(c => c.trim().startsWith('token=')).split('=')[1] : null,
-//         "x-location": "admin"
-//       }
-//     })
-//     products = data.products
+  try {
+    const { data } = await api.get(`/api/attributes?page=${page}&limit=${limit}&search=${search}`, {
+      // headers: {
+      //   //@ts-ignore
+      //   "x-access-token": req.headers.cookie ? req.headers.cookie.split(';').find(c => c.trim().startsWith('token=')).split('=')[1] : null,
+      //   "x-location": "admin"
+      // }
+    })
+    attributes = data.attributes
 
-//   } catch (error) {
-//     console.log({ error })
-//     return {
-//       redirect: {
-//         destination: '/',
-//         permanent: false,
-//       },
-//     };
-//   }
+  } catch (error) {
+    console.log({ error })
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
 
-//   return {
-//     props: {
-//       products,
-//       page: Number(page),
-//       limit: Number(limit),
-//       size: Number(products.length),
-//     },
-//   };
-// }
+  return {
+    props: {
+      attributes,
+      page: Number(page),
+      limit: Number(limit),
+      size: Number(attributes.length),
+    },
+  };
+}
 
 AttributesAdminPage.getLayout = function getLayout(page: ReactElement) {
   return (

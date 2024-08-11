@@ -10,7 +10,6 @@ const Index = () => {
 
   const [items, setItems] = useState(['1', '2', '3', '4', '5', '6', '7', '8', '9']);
 
-
   const options = [
     {
       label: 'opcion 1',
@@ -80,7 +79,7 @@ const Index = () => {
       </div>
       <div className='mb-30'>
         <h3>Sortable</h3>
-        <Sortable items={items} label='' setItems={setItems} uploading={false} />
+       {/*  <Sortable items={items} label='' setItems={setItems} uploading={false} /> */}
       </div>
     </div>
   )

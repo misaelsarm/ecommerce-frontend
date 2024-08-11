@@ -7,6 +7,7 @@ import Modal from "@/components/common/Modal"
 import Select from "@/components/common/Select"
 import TextArea from "@/components/common/TextArea"
 import { ProductInterface } from "@/interfaces"
+import { numberWithCommas } from "@/utils/numberWithCommas"
 import { GetServerSideProps } from "next"
 import { useRouter } from "next/router"
 import { ReactElement, useEffect, useRef, useState } from "react"
@@ -31,8 +32,13 @@ const ProductDetailsAdminPage = ({ product }: Props) => {
       keywords: product.keywords,
       price: product.price,
       collections: product.collections,
-      isCustomizable: product.isCustomizable
-
+      isCustomizable: product.isCustomizable,
+      attributes: product.attributes.map(att => (
+        {
+          label: att.shortName,
+          value: att.id
+        }
+      ))
     }
   });
 
@@ -257,12 +263,23 @@ const ProductDetailsAdminPage = ({ product }: Props) => {
               </div>
               <div className="cardItem">
                 <h4>Precio</h4>
-                <span>${product.price} MXN</span>
+                <span>${numberWithCommas(product.price.toFixed(2))} </span>
               </div>
               <div className="cardItem">
                 <h4>Es personalizable</h4>
                 <span>{product.isCustomizable ? 'Si' : 'No'}</span>
               </div>
+              {
+                product.attributes && product.attributes.length > 0 &&
+                <div className="cardItem">
+                  <h4>Atributos</h4>
+                  {
+                    product.attributes.map(attribute => (
+                      <span key={attribute.id}>{attribute.shortName}</span>
+                    ))
+                  }
+                </div>
+              }
               <div className="cardItem">
                 <h4>Agotado</h4>
                 <span>{product.soldOut ? 'Si' : 'No'}</span>
