@@ -19,28 +19,48 @@ interface Props {
 
 const modalVariants = {
   hidden: {
-    y: "100vh",
+    transform: 'translate(-50%,0%)',
+    top: '100%',
+    left: '50%',
+    transition: { duration: 0.3 }
+
   },
   visible: {
-    opacity: 1,
-    y: "0",
-    transition: {
-      duration: 0.3,
-    },
+    transform: 'translate(-50%,-50%)',
+    top: '50%',
+    left: '50%',
+    transition: { duration: 0.3 }
   },
   exit: {
-    y: "100vh",
-    transition: {
-      duration: 0.3,
-    },
+    transform: 'translate(-50%,0%)',
+    top: '100%',
+    left: '50%',
+    transition: { duration: 0.3 }
+
   },
 };
 
 const backdropVariants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { duration: 0.3 } },
-  exit: { opacity: 0 }
+  hidden: {
+    opacity: 0,
+    transition: { duration: 0.3 }
+  },
+  visible: {
+    opacity: 1,
+    transition: { duration: 0.3 }
+  },
+  exit: {
+    opacity: 0,
+    transition: { duration: 0.3 }
+  },
 };
+
+// initial={{ transform: 'translate(-50%,0%)', top: '100%', left: '50%' }}
+//               animate={{ transform: 'translate(-50%,-50%)', top: '50%', left: '50%' }}
+//               exit={{ transform: 'translate(-50%,0%)', top: '100%', left: '50%' }}
+//               transition={{ duration: 5 }}
+
+
 
 const Modal = ({ title, showButtons = true, onClose, visible, children, onOk, bodyStyle, onCancel, loadingState, style, headerStyle }: Props) => {
   useEffect(() => {
@@ -53,52 +73,63 @@ const Modal = ({ title, showButtons = true, onClose, visible, children, onOk, bo
 
   return (
     <AnimatePresence>
-
       {
         visible ?
           <div className="modal-root">
             <motion.div
-              initial="hidden" animate="visible" exit="exit"
+              initial="hidden"
+              animate="visible"
+              exit="exit"
               variants={backdropVariants}
-              className={styles.modalBackdrop} />
-            <div className={styles.modalWrap}>
-              <motion.div
-                variants={modalVariants} initial="hidden" animate="visible" exit="exit"
-                style={{
-                  width: bodyStyle ? bodyStyle.width : 600,
-                  ...style
-                }} className={styles.modal}>
-                <div
-                  style={{
-                    ...headerStyle
-                  }}
-                  className={styles.modalHeader}>
-                  <h2>{title}</h2>
-                  <div onClick={() => {
-                    if (loadingState) {
-                      return
-                    }
-                    if (onClose) {
-                      onClose()
-                    }
-                  }} className={styles.modalClose}>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </div>
-                </div>
-                <div style={{ ...bodyStyle }} className={styles.modalBody}>
-                  {children}
-                </div>
-                {
-                  showButtons &&
-                  <div className={styles.modalFooter}>
-                    <button disabled={loadingState} onClick={onCancel} className='btn'>Cancelar</button>
-                    <button disabled={loadingState} onClick={onOk} className='btn btn-black'>Listo</button>
-                  </div>
+              className={styles.modalBackdrop}
+              onClick={() => {
+                if (onClose) {
+                  onClose()
                 }
-              </motion.div>
-            </div>
+              }}
+            />
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              variants={modalVariants}
+              style={{
+                width: bodyStyle ? bodyStyle.width : 600,
+                ...style
+              }}
+              className={styles.modal
+              }>
+              <div
+                style={{
+                  ...headerStyle
+                }}
+                className={styles.modalHeader}>
+                <h2>{title}</h2>
+                <div onClick={() => {
+                  if (loadingState) {
+                    return
+                  }
+                  if (onClose) {
+                    onClose()
+                  }
+                }} className={styles.modalClose}>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </div>
+              </div>
+              <div style={{ ...bodyStyle }} className={styles.modalBody}>
+                {children}
+              </div>
+              {
+                showButtons &&
+                <div className={styles.modalFooter}>
+                  <button disabled={loadingState} onClick={onCancel} className='btn'>Cancelar</button>
+                  <button disabled={loadingState} onClick={onOk} className='btn btn-black'>Listo</button>
+                </div>
+              }
+            </motion.div>
+
           </div> :
           null
       }
