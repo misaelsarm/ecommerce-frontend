@@ -124,15 +124,31 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
 
   const { page, limit, search = '' } = query;
 
-  const req = nextReq as any
-
   let products = []
 
   try {
+
+    // Extract the token from cookies
+    const token = nextReq.headers.cookie
+      ?.split(';')
+      .find(c => c.trim().startsWith('token='))
+      ?.split('=')[1];
+
+
+    if (!token) {
+      // No token found, redirect to login
+      return {
+        redirect: {
+          destination: '/admin/login', // Redirect to your login page
+          permanent: false,
+        },
+      };
+    }
+
+
     const { data } = await api.get(`/api/products?page=${page}&limit=${limit}&search=${search}`, {
       headers: {
-        //@ts-ignore
-        // "x-access-token": req.headers.cookie ? req.headers.cookie.split(';').find(c => c.trim().startsWith('token=')).split('=')[1] : null,
+        "x-access-token": token
         // "x-location": "admin"
       }
     })

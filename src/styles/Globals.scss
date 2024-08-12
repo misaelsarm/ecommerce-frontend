@@ -733,6 +733,22 @@ body {
 
   overflow: hidden;
 
+  .sortable-add {
+    border: 1px dashed rgb(104, 104, 104);
+    background-color: #f6f6f6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column-reverse;
+    border-radius: 10px;
+    cursor: pointer;
+    height: 225px;
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
   .sortable-item {
     height: 225px;
     margin: 0;

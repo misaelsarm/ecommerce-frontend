@@ -1,4 +1,3 @@
-
 import { api } from '@/api_config/api'
 import AddCollection from '@/components/admin/collections/AddCollection'
 import Layout from '@/components/admin/Layout'
@@ -103,43 +102,57 @@ const CollectionsAdminPage = ({ collections = [], page, limit, size }: Props) =>
   )
 }
 
-// export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, query }) => {
 
-//   const { page, limit, search = '' } = query;
+  const { page, limit, search = '' } = query;
 
-//   const req = nextReq as any
+  let collections = []
 
-//   let collections = []
+  try {
 
-//   try {
-//     const { data } = await api.get(`/api/collections?page=${page}&limit=${limit}&search=${search}`, {
-//       headers: {
-//         //@ts-ignore
-//         "x-access-token": req.headers.cookie ? req.headers.cookie.split(';').find(c => c.trim().startsWith('token=')).split('=')[1] : null,
-//         "x-location": "admin"
-//       }
-//     })
-//     collections = data.collections
+    // Extract the token from cookies
+    const token = nextReq.headers.cookie
+      ?.split(';')
+      .find(c => c.trim().startsWith('token='))
+      ?.split('=')[1];
 
-//   } catch (error) {
-//     console.log({ error })
-//     return {
-//       redirect: {
-//         destination: '/',
-//         permanent: false,
-//       },
-//     };
-//   }
+    if (!token) {
+      // No token found, redirect to login
+      return {
+        redirect: {
+          destination: '/admin/login', // Redirect to your login page
+          permanent: false,
+        },
+      };
+    }
 
-//   return {
-//     props: {
-//       collections,
-//       page: Number(page),
-//       limit: Number(limit),
-//       size: Number(collections.length),
-//     },
-//   };
-// }
+    const { data } = await api.get(`/api/collections?page=${page}&limit=${limit}&search=${search}`, {
+      headers: {
+        "x-access-token": token
+        //"x-location": "admin"
+      }
+    })
+    collections = data.collections
+
+  } catch (error) {
+    console.log({ error })
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      collections,
+      page: Number(page),
+      limit: Number(limit),
+      size: Number(collections.length),
+    },
+  };
+}
 
 CollectionsAdminPage.getLayout = function getLayout(page: ReactElement) {
   return (

@@ -25,7 +25,7 @@ const OrderDetailsPage = ({ order }: Props) => {
               cursor: 'pointer'
             }}
             onClick={() => {
-              // back()
+              back()
             }}
             className='back'><svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -127,10 +127,10 @@ const OrderDetailsPage = ({ order }: Props) => {
           </>
         </div>
       </div >
-      {/* <Modal
+      <Modal
         visible={editing}
-        loadingState={saving}
-        onOk={handleSubmit(onSubmit)}
+        //loadingState={saving}
+        //onOk={handleSubmit(onSubmit)}
         onCancel={() => {
           setEditing(false)
         }}
@@ -139,8 +139,9 @@ const OrderDetailsPage = ({ order }: Props) => {
           setEditing(false)
         }}
       >
-        {renderForm()}
-      </Modal> */}
+        <div></div>
+        {/*  {renderForm()} */}
+      </Modal>
     </>
   )
 }
@@ -151,16 +152,32 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req: next
 
   const number = params?.number
 
-  const req = nextReq as any
-
   let order
 
   try {
+
+
+    // Extract the token from cookies
+    const token = nextReq.headers.cookie
+      ?.split(';')
+      .find(c => c.trim().startsWith('token='))
+      ?.split('=')[1];
+
+
+    if (!token) {
+      // No token found, redirect to login
+      return {
+        redirect: {
+          destination: '/admin/login', // Redirect to your login page
+          permanent: false,
+        },
+      };
+    }
+
     const { data } = await axios.get(`${apiUrl}/api/orders/${number}`, {
       headers: {
-        //@ts-ignore
-        // "x-access-token": req.headers.cookie ? req.headers.cookie.split(';').find(c => c.trim().startsWith('token=')).split('=')[1] : null,
-        // "x-location": "admin"
+        "x-access-token": token,
+        "x-location": "admin"
       }
     })
     order = data.order

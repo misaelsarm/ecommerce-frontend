@@ -54,6 +54,7 @@ const OrdersAdminPage = ({ page, limit, size, orders = [] }: Props) => {
       dataIndex: 'status',
       key: 'status',
       render: (text: string) => {
+        //@ts-ignore
         const color = statusColorMap[text];
         return (
           <Chip color={color} text={text} />
@@ -146,25 +147,54 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
 
   const { page, limit, search = '' } = query;
 
-  const req = nextReq as any
-
   let orders = []
 
   try {
+
+    // Extract the token from cookies
+    const token = nextReq.headers.cookie
+      ?.split(';')
+      .find(c => c.trim().startsWith('token='))
+      ?.split('=')[1];
+
+
+    if (!token) {
+      // No token found, redirect to login
+      return {
+        redirect: {
+          destination: '/admin/login', // Redirect to your login page
+          permanent: false,
+        },
+      };
+    }
+
+    // Make API request with the token
     const { data } = await api.get(`/api/orders?page=${page}&limit=${limit}&search=${search}`, {
       headers: {
-        // //@ts-ignore
-        // "x-access-token": req.headers.cookie ? req.headers.cookie.split(';').find(c => c.trim().startsWith('token=')).split('=')[1] : null,
-        // "x-location": "admin"
-      }
-    })
-    orders = data.orders
+        "x-access-token": token,
+      },
+    });
 
-  } catch (error) {
-    console.log({ error })
+    orders = data.orders;
+
+  } catch (error: any) {
+
+    console.error('Error fetching orders:', error.message || error);
+
+    if (error.response && error.response.status === 401) {
+      // Unauthorized error, token might be invalid or expired
+      return {
+        redirect: {
+          destination: '/login', // Redirect to your login page
+          permanent: false,
+        },
+      };
+    }
+
+    // Handle other potential errors
     return {
       redirect: {
-        destination: '/',
+        destination: '/error', // Redirect to an error page or handle appropriately
         permanent: false,
       },
     };
