@@ -148,6 +148,7 @@ const CollectionsAdminPage = ({ collections = [], page, limit, size }: Props) =>
             toast.success(`Se elimino la colección ${deletedCollection.name}`)
             setConfirmDelete(false);
             setDeletedCollection({} as CollectionInterface);
+            replace('/admin/collections?page=1&limit=20')
           } catch (error: any) {
             toast.error(error.response.data.message)
           }

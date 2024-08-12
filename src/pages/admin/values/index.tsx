@@ -112,7 +112,7 @@ const ValuesAdminPage = ({ values = [], page, limit, size }: Props) => {
         }}
       />
       <Modal
-        title="Eliminar colección"
+        title="Eliminar valor de atributo"
         bodyStyle={{
           height: 'auto',
           width: 400
@@ -122,7 +122,7 @@ const ValuesAdminPage = ({ values = [], page, limit, size }: Props) => {
         onCancel={() => setConfirmDelete(false)}
         onOk={async () => {
           try {
-            await api.put(`/api/collections/${deletedValue.id}`, { deleted: true }, {
+            await api.put(`/api/values/${deletedValue.id}`, { deleted: true }, {
               headers: {
                 'x-access-token': Cookies.get('token')
               }
@@ -130,6 +130,7 @@ const ValuesAdminPage = ({ values = [], page, limit, size }: Props) => {
             toast.success(`Se elimino el valor ${deletedValue.label}`)
             setConfirmDelete(false);
             setDeletedValue({} as ValueInterface);
+            replace('/admin/values?page=1&limit=20')
           } catch (error: any) {
             toast.error(error.response.data.message)
           }

@@ -153,6 +153,7 @@ const ProductsAdminPage = ({ products = [], page, limit, size }: Props) => {
             toast.success(`Se elimino el producto ${deletedProduct.name}`)
             setConfirmDelete(false);
             setDeletedProduct({} as ProductInterface);
+            replace('/admin/products?page=1&limit=20')
           } catch (error: any) {
             toast.error(error.response.data.message)
           }

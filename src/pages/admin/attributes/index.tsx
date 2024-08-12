@@ -131,6 +131,7 @@ const AttributesAdminPage = ({ attributes = [], page, limit, size }: Props) => {
             toast.success(`Se elimino el producto ${deletedAttribute.shortName}`)
             setConfirmDelete(false);
             setDeletedAttribute({} as AttributeInterface);
+            replace('/admin/attributes?page=1&limit=20')
           } catch (error: any) {
             toast.error(error.response.data.message)
           }
