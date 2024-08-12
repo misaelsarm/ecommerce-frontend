@@ -16,6 +16,8 @@ interface InventoryInterface {
 
 export interface ProductInterface {
 
+  id: string
+
   name: string,
 
   code: string
@@ -41,5 +43,11 @@ export interface ProductInterface {
   inventory: InventoryInterface,
 
   collections: CollectionInterface[],
+
+  deleted: boolean
+
+  createdAt: any
+
+
 
 }

@@ -3,6 +3,7 @@ import Layout from "@/components/admin/Layout"
 import PageHeader from "@/components/admin/PageHeader"
 import AddProduct from "@/components/admin/products/AddProduct"
 import Table from "@/components/admin/Table"
+import Modal from "@/components/common/Modal"
 import { useDebouncedSearch } from "@/hooks/useDebouncedSearch"
 import { ProductInterface } from "@/interfaces"
 import { GetServerSideProps } from "next"
@@ -10,6 +11,8 @@ import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { ReactElement, useState } from "react"
+import toast from "react-hot-toast"
+import Cookies from "js-cookie";
 
 interface Props {
   products: ProductInterface[],
@@ -19,6 +22,10 @@ interface Props {
 }
 
 const ProductsAdminPage = ({ products = [], page, limit, size }: Props) => {
+
+  const [confirmDelete, setConfirmDelete] = useState(false)
+
+  const [deletedProduct, setDeletedProduct] = useState({} as ProductInterface)
 
   const columns = [
     {
@@ -65,6 +72,17 @@ const ProductsAdminPage = ({ products = [], page, limit, size }: Props) => {
       key: 'detalles',
       render: (_text: string, record: ProductInterface) => (
         <Link href={`/admin/products/${record.code}`} className='btn btn-black btn-auto'>Ver</Link>
+      )
+    },
+    {
+      title: 'Eliminar',
+      dataIndex: 'eliminar',
+      key: 'eliminar',
+      render: (_text: string, record: ProductInterface) => (
+        <button onClick={() => {
+          setConfirmDelete(true)
+          setDeletedProduct(record)
+        }} className="btn">Eliminar</button>
       )
     },
   ]
@@ -116,6 +134,32 @@ const ProductsAdminPage = ({ products = [], page, limit, size }: Props) => {
           replace('/admin/products?page=1&limit=20')
         }}
       />
+      <Modal
+        title="Eliminar producto"
+        bodyStyle={{
+          height: 'auto',
+          width: 400
+        }}
+        visible={confirmDelete}
+        onClose={() => setConfirmDelete(false)}
+        onCancel={() => setConfirmDelete(false)}
+        onOk={async () => {
+          try {
+            await api.put(`/api/products/${deletedProduct.id}`, { deleted: true }, {
+              headers: {
+                'x-access-token': Cookies.get('token')
+              }
+            })
+            toast.success(`Se elimino el producto ${deletedProduct.name}`)
+            setConfirmDelete(false);
+            setDeletedProduct({} as ProductInterface);
+          } catch (error: any) {
+            toast.error(error.response.data.message)
+          }
+        }}
+      >
+        <div><span>¿Confirmar eliminación del producto <b>{deletedProduct.name}</b>? Esta acción no se puede deshacer.</span></div>
+      </Modal>
     </>
   )
 }

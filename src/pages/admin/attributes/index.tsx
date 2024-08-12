@@ -2,23 +2,35 @@ import { api } from "@/api_config/api"
 import AddAttribute from "@/components/admin/attributes/AddAttribute"
 import Layout from "@/components/admin/Layout"
 import PageHeader from "@/components/admin/PageHeader"
-import AddProduct from "@/components/admin/products/AddProduct"
 import Table from "@/components/admin/Table"
+import Modal from "@/components/common/Modal"
 import { useDebouncedSearch } from "@/hooks/useDebouncedSearch"
-import { AttributeInterface, ProductInterface } from "@/interfaces"
+import { AttributeInterface } from "@/interfaces"
 import { GetServerSideProps } from "next"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { ReactElement, useState } from "react"
+import toast from "react-hot-toast"
+import Cookies from "js-cookie";
 
 interface Props {
-  attributes: ProductInterface[],
+  attributes: AttributeInterface[],
   page: number,
   limit: number,
   size: number
 }
 
 const AttributesAdminPage = ({ attributes = [], page, limit, size }: Props) => {
+
+  const [confirmDelete, setConfirmDelete] = useState(false)
+
+  const [deletedAttribute, setDeletedAttribute] = useState({} as AttributeInterface)
+
+  const [visible, setVisible] = useState(false)
+
+  const { searchTerm, setSearchTerm, handleSearch } = useDebouncedSearch({ url: 'attributes', limit })
+
+  const { push, query, replace } = useRouter()
 
   const columns = [
     {
@@ -45,13 +57,18 @@ const AttributesAdminPage = ({ attributes = [], page, limit, size }: Props) => {
         <Link href={`/attributes/${record.id}`} className='btn btn-black btn-auto'>Ver</Link>
       )
     },
+    {
+      title: 'Eliminar',
+      dataIndex: 'eliminar',
+      key: 'eliminar',
+      render: (_text: string, record: AttributeInterface) => (
+        <button onClick={() => {
+          setConfirmDelete(true)
+          setDeletedAttribute(record)
+        }} className="btn">Eliminar</button>
+      )
+    },
   ]
-
-  const [visible, setVisible] = useState(false)
-
-  const { searchTerm, setSearchTerm, handleSearch } = useDebouncedSearch({ url: 'attributes', limit })
-
-  const { push, query, replace } = useRouter()
 
   return (
     <>
@@ -95,6 +112,32 @@ const AttributesAdminPage = ({ attributes = [], page, limit, size }: Props) => {
           replace('/admin/attributes?page=1&limit=20')
         }}
       />
+      <Modal
+        title="Eliminar atributo"
+        bodyStyle={{
+          height: 'auto',
+          width: 400
+        }}
+        visible={confirmDelete}
+        onClose={() => setConfirmDelete(false)}
+        onCancel={() => setConfirmDelete(false)}
+        onOk={async () => {
+          try {
+            await api.put(`/api/attributes/${deletedAttribute.id}`, { deleted: true }, {
+              headers: {
+                'x-access-token': Cookies.get('token')
+              }
+            })
+            toast.success(`Se elimino el producto ${deletedAttribute.shortName}`)
+            setConfirmDelete(false);
+            setDeletedAttribute({} as AttributeInterface);
+          } catch (error: any) {
+            toast.error(error.response.data.message)
+          }
+        }}
+      >
+        <div><span>¿Confirmar eliminación del atributo <b>{deletedAttribute.shortName}</b>? Esta acción no se puede deshacer.</span></div>
+      </Modal>
     </>
   )
 }

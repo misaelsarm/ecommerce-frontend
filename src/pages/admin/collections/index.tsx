@@ -3,12 +3,16 @@ import AddCollection from '@/components/admin/collections/AddCollection'
 import Layout from '@/components/admin/Layout'
 import PageHeader from '@/components/admin/PageHeader'
 import Table from '@/components/admin/Table'
+import Modal from '@/components/common/Modal'
 import { useDebouncedSearch } from '@/hooks/useDebouncedSearch'
 import { CollectionInterface } from '@/interfaces'
-import debounce from 'lodash.debounce'
 import { GetServerSideProps } from 'next'
+import Image from 'next/image'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { ReactElement, useCallback, useState } from 'react'
+import toast from 'react-hot-toast'
+import Cookies from "js-cookie";
 
 interface Props {
   collections: CollectionInterface[],
@@ -18,6 +22,10 @@ interface Props {
 }
 
 const CollectionsAdminPage = ({ collections = [], page, limit, size }: Props) => {
+
+  const [confirmDelete, setConfirmDelete] = useState(false)
+
+  const [deletedCollection, setDeletedCollection] = useState({} as CollectionInterface)
 
   const { searchTerm, setSearchTerm, handleSearch } = useDebouncedSearch({ url: 'collections', limit })
 
@@ -30,13 +38,17 @@ const CollectionsAdminPage = ({ collections = [], page, limit, size }: Props) =>
       title: 'Imagen',
       dataIndex: 'image',
       key: 'image',
-      render: (_text: string, record: any) =>
-        <img
-          loading="lazy"
-          style={{ width: 80 }}
+      render: (_text: string, record: CollectionInterface) => (
+        <Image
+          width={80}
+          height={80}
+          style={{
+            objectFit: 'contain'
+          }}
           src={record.image}
-          alt={record.name}
+          alt=''
         />
+      )
     },
     {
       title: 'Nombre',
@@ -52,8 +64,27 @@ const CollectionsAdminPage = ({ collections = [], page, limit, size }: Props) =>
       title: 'Activa',
       dataIndex: 'active',
       key: 'active',
-      render: (_text: string, record: any) => record.active ? 'Activa' : 'No Publicada'
-    }
+      render: (_text: string, record: CollectionInterface) => record.active ? 'Activa' : 'No Publicada'
+    },
+    {
+      title: 'Detalles',
+      dataIndex: 'detalles',
+      key: 'detalles',
+      render: (_text: string, record: CollectionInterface) => (
+        <Link href={`/admin/collections/${record.code}`} className='btn btn-black btn-auto'>Ver</Link>
+      )
+    },
+    {
+      title: 'Eliminar',
+      dataIndex: 'eliminar',
+      key: 'eliminar',
+      render: (_text: string, record: CollectionInterface) => (
+        <button onClick={() => {
+          setConfirmDelete(true)
+          setDeletedCollection(record)
+        }} className="btn">Eliminar</button>
+      )
+    },
   ]
 
   return (
@@ -98,6 +129,32 @@ const CollectionsAdminPage = ({ collections = [], page, limit, size }: Props) =>
           replace('/admin/collections?page=1&limit=20')
         }}
       />
+      <Modal
+        title="Eliminar colección"
+        bodyStyle={{
+          height: 'auto',
+          width: 400
+        }}
+        visible={confirmDelete}
+        onClose={() => setConfirmDelete(false)}
+        onCancel={() => setConfirmDelete(false)}
+        onOk={async () => {
+          try {
+            await api.put(`/api/collections/${deletedCollection.id}`, { deleted: true }, {
+              headers: {
+                'x-access-token': Cookies.get('token')
+              }
+            })
+            toast.success(`Se elimino la colección ${deletedCollection.name}`)
+            setConfirmDelete(false);
+            setDeletedCollection({} as CollectionInterface);
+          } catch (error: any) {
+            toast.error(error.response.data.message)
+          }
+        }}
+      >
+        <div><span>¿Confirmar eliminación de la colección <b>{deletedCollection.name}</b>? Esta acción no se puede deshacer.</span></div>
+      </Modal>
     </>
   )
 }

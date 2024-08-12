@@ -1,22 +1,23 @@
 import { api } from '@/api_config/api'
 import Layout from '@/components/admin/Layout'
-import { User } from '@/interfaces'
-import moment from 'moment'
+//import moment from 'moment'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { ReactElement, useCallback, useState } from 'react'
 import debounce from 'lodash.debounce';
 import Table from '@/components/admin/Table'
+import { UserInterface } from '@/interfaces'
+import PageHeader from '@/components/admin/PageHeader'
+import moment from 'moment'
 
 interface Props {
-  customers: User[],
+  customers: UserInterface[],
   page: number,
   limit: number,
   size: number
 }
 
 const CustomersAdminPage = ({ customers, page, limit, size }: Props) => {
-
 
   const columns = [
     {
@@ -33,7 +34,13 @@ const CustomersAdminPage = ({ customers, page, limit, size }: Props) => {
       title: 'Miembro desde',
       dataIndex: 'createdAt',
       key: 'createdAt',
-      render: (_text: string, record: User) => moment(record.createdAt).format('lll')
+      render: (_text: string, record: UserInterface) => moment(record.createdAt).format('lll')
+    },
+    {
+      title: 'Ultimo ingreso',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      render: (_text: string, record: UserInterface) => record.lastLogin ? moment(record.lastLogin).format('lll') : null
     },
   ]
 
@@ -60,31 +67,26 @@ const CustomersAdminPage = ({ customers, page, limit, size }: Props) => {
 
   return (
     <div className="page">
-      <div className="pageHeader">
-        <h2>Clientes</h2>
-      </div>
-      <div className="pageHeader">
-        <input
-          value={searchTerm}
-          onChange={handleSearch}
-          placeholder='Buscar clientes...' className='input' type="text" />
-      </div>
-      {
-        query.search &&
-        <div className="pageHeader">
-          <div
-            onClick={() => {
-              push(`/admin/customers?page=1&limit=20`);
-              setSearchTerm('')
-            }}
-            className='clear-search'>
-            <span>Mostrando resultados para: <b>{query.search}</b></span>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-            </svg>
-          </div>
-        </div>
-      }
+      <PageHeader
+        title='Clientes'
+        actions={
+          [
+            {
+              name: "Nuevo cliente",
+              onClick: () => {
+                //setVisible(true)
+              }
+            }
+          ]
+        }
+        handleSearch={handleSearch}
+        searchQuery={query.search}
+        searchTerm={searchTerm}
+        onClearSearch={() => {
+          push(`/admin/customers?page=1&limit=20`);
+          setSearchTerm('')
+        }}
+      />
       <div className="pageContent">
         <Table
           columns={columns}
@@ -102,16 +104,30 @@ const CustomersAdminPage = ({ customers, page, limit, size }: Props) => {
 export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, query }) => {
 
   const { page, limit, search = '' } = query;
-
-  const req = nextReq as any
-
   let users = []
 
   try {
+    // Extract the token from cookies
+    const token = nextReq.headers.cookie
+      ?.split(';')
+      .find(c => c.trim().startsWith('token='))
+      ?.split('=')[1];
+
+
+    if (!token) {
+      // No token found, redirect to login
+      return {
+        redirect: {
+          destination: '/admin/login', // Redirect to your login page
+          permanent: false,
+        },
+      };
+    }
+
     const { data } = await api.get(`/api/users?role=customer&page=${page}&limit=${limit}&search=${search}`, {
       headers: {
         //@ts-ignore
-        "x-access-token": req.headers.cookie ? req.headers.cookie.split(';').find(c => c.trim().startsWith('token=')).split('=')[1] : null,
+        "x-access-token": token,
         "x-location": "admin"
       }
     })
@@ -119,12 +135,12 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
 
   } catch (error) {
     console.log({ error })
-    // return {
-    //   redirect: {
-    //     destination: '/',
-    //     permanent: false,
-    //   },
-    // };
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
   }
 
   return {

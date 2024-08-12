@@ -5,7 +5,6 @@ import PageHeader from '@/components/admin/PageHeader'
 import Table from '@/components/admin/Table'
 import { useDebouncedSearch } from '@/hooks/useDebouncedSearch'
 import { DiscountInterface } from '@/interfaces'
-import debounce from 'lodash.debounce'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -109,43 +108,58 @@ const DiscountsAdminPage = ({ discounts = [], page, limit, size }: Props) => {
   )
 }
 
-// export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, query }) => {
 
-//   const { page, limit, search = '' } = query;
+  const { page, limit, search = '' } = query;
 
-//   const req = nextReq as any
+  let discounts = []
 
-//   let discounts = []
+  try {
 
-//   try {
-//     const { data } = await api.get(`/api/discounts?page=${page}&limit=${limit}&search=${search}`, {
-//       headers: {
-//         //@ts-ignore
-//         "x-access-token": req.headers.cookie ? req.headers.cookie.split(';').find(c => c.trim().startsWith('token=')).split('=')[1] : null,
-//         "x-location": "admin"
-//       }
-//     })
-//     discounts = data.discounts
+    // Extract the token from cookies
+    const token = nextReq.headers.cookie
+      ?.split(';')
+      .find(c => c.trim().startsWith('token='))
+      ?.split('=')[1];
 
-//   } catch (error) {
-//     console.log({ error })
-//     return {
-//       redirect: {
-//         destination: '/',
-//         permanent: false,
-//       },
-//     };
-//   }
 
-//   return {
-//     props: {
-//       discounts,
-//       page: Number(page),
-//       limit: Number(limit),
-//       size: Number(discounts.length),
-//     },
-//   };
-// }
+    if (!token) {
+      // No token found, redirect to login
+      return {
+        redirect: {
+          destination: '/admin/login', // Redirect to your login page
+          permanent: false,
+        },
+      };
+    }
+
+    const { data } = await api.get(`/api/discounts?page=${page}&limit=${limit}&search=${search}`, {
+      headers: {
+        "x-access-token": token
+        // "x-location": "admin"
+      }
+    })
+    discounts = data.discounts
+
+  } catch (error) {
+    console.log({ error })
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      discounts,
+      page: Number(page),
+      limit: Number(limit),
+      size: Number(discounts.length),
+    },
+  };
+}
 
 DiscountsAdminPage.getLayout = function getLayout(page: ReactElement) {
   return (

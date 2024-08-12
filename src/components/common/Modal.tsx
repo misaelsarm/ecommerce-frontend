@@ -125,7 +125,7 @@ const Modal = ({ title, showButtons = true, onClose, visible, children, onOk, bo
                 showButtons &&
                 <div className={styles.modalFooter}>
                   <button disabled={loadingState} onClick={onCancel} className='btn'>Cancelar</button>
-                  <button disabled={loadingState} onClick={onOk} className='btn btn-black'>Listo</button>
+                  <button disabled={loadingState} onClick={onOk} className='btn btn-black'>Aceptar</button>
                 </div>
               }
             </motion.div>

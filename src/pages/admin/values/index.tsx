@@ -3,11 +3,15 @@ import Layout from "@/components/admin/Layout"
 import PageHeader from "@/components/admin/PageHeader"
 import Table from "@/components/admin/Table"
 import AddValue from "@/components/admin/values/AddValue"
+import Modal from "@/components/common/Modal"
 import { useDebouncedSearch } from "@/hooks/useDebouncedSearch"
 import { ValueInterface } from "@/interfaces"
 import { GetServerSideProps } from "next"
+import Link from "next/link"
 import { useRouter } from "next/router"
 import { ReactElement, useState } from "react"
+import toast from "react-hot-toast"
+import Cookies from "js-cookie";
 
 interface Props {
   values: ValueInterface[],
@@ -17,6 +21,10 @@ interface Props {
 }
 
 const ValuesAdminPage = ({ values = [], page, limit, size }: Props) => {
+
+  const [confirmDelete, setConfirmDelete] = useState(false)
+
+  const [deletedValue, setDeletedValue] = useState({} as ValueInterface)
 
   const columns = [
     {
@@ -33,21 +41,27 @@ const ValuesAdminPage = ({ values = [], page, limit, size }: Props) => {
       title: 'Activo',
       dataIndex: 'active',
       key: 'active',
-      render: (text: string, record: any) => record.active ? 'Activo' : 'No Publicado'
+      render: (text: string, record: ValueInterface) => record.active ? 'Activo' : 'No Publicado'
     },
-    // {
-    //   title: 'Editar',
-    //   dataIndex: 'edit',
-    //   key: 'edit',
-    //   render: (text: string, record: any) => (
-    //     <button
-    //       onClick={() => {
-    //         setVisible(true)
-    //         setCurrentEditing(record)
-    //       }}
-    //       className="btn btn-black">Editar</button>
-    //   )
-    // },
+    {
+      title: 'Detalles',
+      dataIndex: 'detalles',
+      key: 'detalles',
+      render: (_text: string, record: ValueInterface) => (
+        <Link href={`/admin/values/${record.id}`} className='btn btn-black btn-auto'>Ver</Link>
+      )
+    },
+    {
+      title: 'Eliminar',
+      dataIndex: 'eliminar',
+      key: 'eliminar',
+      render: (_text: string, record: ValueInterface) => (
+        <button onClick={() => {
+          setConfirmDelete(true)
+          setDeletedValue(record)
+        }} className="btn">Eliminar</button>
+      )
+    },
   ]
   const [visible, setVisible] = useState(false)
 
@@ -97,6 +111,32 @@ const ValuesAdminPage = ({ values = [], page, limit, size }: Props) => {
           replace('/admin/values?page=1&limit=20')
         }}
       />
+      <Modal
+        title="Eliminar colección"
+        bodyStyle={{
+          height: 'auto',
+          width: 400
+        }}
+        visible={confirmDelete}
+        onClose={() => setConfirmDelete(false)}
+        onCancel={() => setConfirmDelete(false)}
+        onOk={async () => {
+          try {
+            await api.put(`/api/collections/${deletedValue.id}`, { deleted: true }, {
+              headers: {
+                'x-access-token': Cookies.get('token')
+              }
+            })
+            toast.success(`Se elimino el valor ${deletedValue.label}`)
+            setConfirmDelete(false);
+            setDeletedValue({} as ValueInterface);
+          } catch (error: any) {
+            toast.error(error.response.data.message)
+          }
+        }}
+      >
+        <div><span>¿Confirmar eliminación del valor <b>{deletedValue.label}</b>? Esta acción no se puede deshacer.</span></div>
+      </Modal>
     </>
   )
 }
