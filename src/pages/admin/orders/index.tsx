@@ -12,6 +12,7 @@ import { useDebouncedSearch } from '@/hooks/useDebouncedSearch';
 import { api } from '@/api_config/api';
 import { numberWithCommas } from '@/utils/numberWithCommas';
 import Chip from '@/components/common/Chip';
+import { getServerSideToken } from '@/utils/getServerSideToken';
 
 interface Props {
   orders: OrderInterface[],
@@ -151,22 +152,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
 
   try {
 
-    // Extract the token from cookies
-    const token = nextReq.headers.cookie
-      ?.split(';')
-      .find(c => c.trim().startsWith('token='))
-      ?.split('=')[1];
-
-
-    if (!token) {
-      // No token found, redirect to login
-      return {
-        redirect: {
-          destination: '/admin/login', // Redirect to your login page
-          permanent: false,
-        },
-      };
-    }
+    const token = getServerSideToken(nextReq)
 
     // Make API request with the token
     const { data } = await api.get(`/api/orders?page=${page}&limit=${limit}&search=${search}`, {

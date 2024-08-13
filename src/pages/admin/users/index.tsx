@@ -8,15 +8,16 @@ import Table from '@/components/admin/Table'
 import { UserInterface } from '@/interfaces'
 import PageHeader from '@/components/admin/PageHeader'
 import moment from 'moment'
+import { getServerSideToken } from '@/utils/getServerSideToken'
 
 interface Props {
-  customers: UserInterface[],
+  users: UserInterface[],
   page: number,
   limit: number,
   size: number
 }
 
-const UsersAdminPage = ({ customers, page, limit, size }: Props) => {
+const UsersAdminPage = ({ users, page, limit, size }: Props) => {
 
   const columns = [
     {
@@ -50,9 +51,9 @@ const UsersAdminPage = ({ customers, page, limit, size }: Props) => {
   const debouncedSearch = useCallback(
     debounce((searchTerm) => {
       if (searchTerm.trim().length === 0) {
-        push(`/admin/customers?page=1&limit=20`);
+        push(`/admin/users?page=1&limit=20`);
       } else {
-        push(`/admin/customers?search=${searchTerm}`);
+        push(`/admin/users?search=${searchTerm}`);
       }
     }, 500),
     [limit]
@@ -82,18 +83,18 @@ const UsersAdminPage = ({ customers, page, limit, size }: Props) => {
         searchQuery={query.search}
         searchTerm={searchTerm}
         onClearSearch={() => {
-          push(`/admin/customers?page=1&limit=20`);
+          push(`/admin/users?page=1&limit=20`);
           setSearchTerm('')
         }}
       />
       <div className="pageContent">
         <Table
           columns={columns}
-          data={customers}
+          data={users}
           page={page}
           limit={limit}
           size={size}
-          navigateTo='customers'
+          navigateTo='users'
         />
       </div>
     </div>
@@ -106,22 +107,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
   let users = []
 
   try {
-    // Extract the token from cookies
-    const token = nextReq.headers.cookie
-      ?.split(';')
-      .find(c => c.trim().startsWith('token='))
-      ?.split('=')[1];
-
-
-    if (!token) {
-      // No token found, redirect to login
-      return {
-        redirect: {
-          destination: '/admin/login', // Redirect to your login page
-          permanent: false,
-        },
-      };
-    }
+    const token = getServerSideToken(nextReq)
 
     const { data } = await api.get(`/api/users?role=admin,user&page=${page}&limit=${limit}&search=${search}`, {
       headers: {
@@ -144,7 +130,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
 
   return {
     props: {
-      customers: users,
+      users: users,
       page: Number(page),
       limit: Number(limit),
       size: Number(users.length),

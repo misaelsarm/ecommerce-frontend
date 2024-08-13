@@ -5,6 +5,7 @@ import PageHeader from '@/components/admin/PageHeader'
 import Table from '@/components/admin/Table'
 import { useDebouncedSearch } from '@/hooks/useDebouncedSearch'
 import { DiscountInterface } from '@/interfaces'
+import { getServerSideToken } from '@/utils/getServerSideToken'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -116,26 +117,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
 
   try {
 
-    // Extract the token from cookies
-    const token = nextReq.headers.cookie
-      ?.split(';')
-      .find(c => c.trim().startsWith('token='))
-      ?.split('=')[1];
-
-
-    // if (!token) {
-    //   const returnUrl = encodeURIComponent(resolvedUrl); // Encode the current URL
-    //   console.log({returnUrl})
-
-    //   console.log('no token found')
-    //   // No token found, redirect to login
-    //   return {
-    //     redirect: {
-    //       destination: `/admin/login?returnUrl=${returnUrl}`, // Append returnUrl to the login route
-    //       permanent: false,
-    //     },
-    //   };
-    // }
+    const token = getServerSideToken(nextReq)
 
     const { data } = await api.get(`/api/discounts?page=${page}&limit=${limit}&search=${search}`, {
       headers: {
@@ -143,6 +125,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
         // "x-location": "admin"
       }
     })
+    
     discounts = data.discounts
 
   } catch (error) {
