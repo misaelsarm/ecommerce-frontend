@@ -13,7 +13,9 @@ const AdminLoginPage = () => {
 
   const { register, handleSubmit, formState: { errors } } = useForm();
 
-  const { replace } = useRouter()
+  const { replace, query } = useRouter()
+
+  const { returnUrl } = query;
 
   const [loading, setLoading] = useState(false)
 
@@ -22,7 +24,9 @@ const AdminLoginPage = () => {
     try {
       const { data } = await api.post(`/api/auth/login`, { email, password, location: 'admin' })
       Cookies.set('token', data.token);
-      replace('/admin/orders?page=1&limit=20')
+      const redirectUrl = returnUrl as string || '/admin/orders?page=1&limit=20'; // Default page after login
+      replace(redirectUrl);
+      //replace('/admin/orders?page=1&limit=20')
       //setUser(data)
       setLoading(false)
 
