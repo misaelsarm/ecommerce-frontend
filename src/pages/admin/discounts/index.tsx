@@ -123,19 +123,19 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
       ?.split('=')[1];
 
 
-    if (!token) {
-      const returnUrl = encodeURIComponent(resolvedUrl); // Encode the current URL
-      console.log({returnUrl})
+    // if (!token) {
+    //   const returnUrl = encodeURIComponent(resolvedUrl); // Encode the current URL
+    //   console.log({returnUrl})
 
-      console.log('no token found')
-      // No token found, redirect to login
-      return {
-        redirect: {
-          destination: `/admin/login?returnUrl=${returnUrl}`, // Append returnUrl to the login route
-          permanent: false,
-        },
-      };
-    }
+    //   console.log('no token found')
+    //   // No token found, redirect to login
+    //   return {
+    //     redirect: {
+    //       destination: `/admin/login?returnUrl=${returnUrl}`, // Append returnUrl to the login route
+    //       permanent: false,
+    //     },
+    //   };
+    // }
 
     const { data } = await api.get(`/api/discounts?page=${page}&limit=${limit}&search=${search}`, {
       headers: {
