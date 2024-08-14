@@ -146,7 +146,7 @@ const ProductsAdminPage = ({ products = [], page, limit, size }: Props) => {
         onCancel={() => setConfirmDelete(false)}
         onOk={async () => {
           try {
-            await api.put(`/api/products/${deletedProduct.id}`, { deleted: true }, {
+            await api.put(`/api/products/${deletedProduct._id}`, { deleted: true }, {
               headers: {
                 'x-access-token': Cookies.get('token')
               }

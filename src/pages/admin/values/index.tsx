@@ -49,7 +49,7 @@ const ValuesAdminPage = ({ values = [], page, limit, size }: Props) => {
       dataIndex: 'detalles',
       key: 'detalles',
       render: (_text: string, record: ValueInterface) => (
-        <Link href={`/admin/values/${record.id}`} className='btn btn-black btn-auto'>Ver</Link>
+        <Link href={`/admin/values/${record._id}`} className='btn btn-black btn-auto'>Ver</Link>
       )
     },
     {
@@ -123,7 +123,7 @@ const ValuesAdminPage = ({ values = [], page, limit, size }: Props) => {
         onCancel={() => setConfirmDelete(false)}
         onOk={async () => {
           try {
-            await api.put(`/api/values/${deletedValue.id}`, { deleted: true }, {
+            await api.put(`/api/values/${deletedValue._id}`, { deleted: true }, {
               headers: {
                 'x-access-token': Cookies.get('token')
               }

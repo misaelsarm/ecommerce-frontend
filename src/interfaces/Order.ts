@@ -2,6 +2,8 @@ import { CartInterface, ProductInterface, UserInterface } from "."
 
 export interface OrderInterface {
 
+  _id: string
+
   number: string,
 
   user: UserInterface,

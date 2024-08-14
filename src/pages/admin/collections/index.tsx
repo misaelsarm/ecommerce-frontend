@@ -141,7 +141,7 @@ const CollectionsAdminPage = ({ collections = [], page, limit, size }: Props) =>
         onCancel={() => setConfirmDelete(false)}
         onOk={async () => {
           try {
-            await api.put(`/api/collections/${deletedCollection.id}`, { deleted: true }, {
+            await api.put(`/api/collections/${deletedCollection._id}`, { deleted: true }, {
               headers: {
                 'x-access-token': Cookies.get('token')
               }

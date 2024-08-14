@@ -16,7 +16,7 @@ interface InventoryInterface {
 
 export interface ProductInterface {
 
-  id: string
+  _id: string
 
   name: string,
 
@@ -47,7 +47,5 @@ export interface ProductInterface {
   deleted: boolean
 
   createdAt: any
-
-
 
 }

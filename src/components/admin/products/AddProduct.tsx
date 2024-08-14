@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import Modal from "../../common/Modal"
 import { makeRequest } from "@/utils/makeRequest"
@@ -9,6 +9,9 @@ import TextArea from "@/components/common/TextArea"
 import Checkbox from "@/components/common/Checkbox"
 import Select from "@/components/common/Select"
 import { Sortable } from "../Sortable"
+import { AttributeInterface, CollectionInterface } from "@/interfaces"
+import { api } from "@/api_config/api"
+import Cookies from "js-cookie"
 
 interface Props {
   visible: boolean,
@@ -17,6 +20,44 @@ interface Props {
 }
 
 const AddProduct = ({ visible, setVisible, onOk }: Props) => {
+
+  const [collections, setCollections] = useState<any[]>([])
+
+  const [attributes, setAttributes] = useState<any[]>([])
+
+  useEffect(() => {
+    if (visible) {
+      console.log('visible')
+      async function fetchData() {
+        try {
+
+          const { data } = await api.get(`/api/collections`, {
+            headers: {
+              //"x-access-token": token
+              //"x-location": "admin"
+            }
+          })
+          const { data: attributesData } = await api.get(`/api/attributes`, {
+            headers: {
+              "x-access-token": Cookies.get('token')
+              //"x-location": "admin"
+            }
+          })
+          setCollections(data.collections.map((col: CollectionInterface) => ({
+            label: col.name,
+            value: col._id
+          })))
+          setAttributes(attributesData.attributes.map((att: AttributeInterface) => ({
+            label: att.shortName,
+            value: att._id
+          })))
+        } catch (error: any) {
+          toast.error(error?.response?.data?.message || 'Error')
+        }
+      }
+      fetchData();
+    }
+  }, [visible]);
 
   const { register, handleSubmit, control, resetField, reset, formState: { errors } } = useForm();
 
@@ -43,16 +84,35 @@ const AddProduct = ({ visible, setVisible, onOk }: Props) => {
   //const { handleFileUpload, uploading } = useFileUpload();
 
   const onSubmit = async (values: any) => {
+    console.log({ values })
 
-    if (images.length === 0) return toast.error('Elige al menos 1 imagen')
-    setSaving(true)
+    //if (images.length === 0) return toast.error('Elige al menos 1 imagen')
+
+    //setSaving(true)
+
     try {
       const product = {
-        ...values,
         attributes: values.attributes?.map((attribute: any) => attribute?.value),
-        subCategories: values.subCategories?.map((sub: any) => sub.value),
-        images
+        collections: values.collections?.map((col: any) => col.value),
+        name: values.name,
+        description: values.description,
+        price: values.price,
+        images,
+        active: values.active,
+        soldOut: values.soldOut,
+        discount: {
+          hasDiscount: values.hasDiscount,
+          discountType: values.discountType,
+          discountValue: values.discountValue
+        },
+        isCustomizable: values.isCustomizable,
+        keywords: values.keywords,
+        inventory: {
+          isTracked: values.isTracked,
+          availableQuantity: values.availableQuantity
+        },
       }
+      //return console.log({ product })
       await makeRequest('post', '/api/products', product)
       toast.success('Producto agregado')
       setSaving(false)
@@ -60,7 +120,7 @@ const AddProduct = ({ visible, setVisible, onOk }: Props) => {
       reset()
     } catch (error: any) {
       console.log(error);
-      toast.error(error.response.data.message)
+      toast.error(error?.response?.data?.message || 'Error')
       setSaving(false)
     }
   }
@@ -112,12 +172,13 @@ const AddProduct = ({ visible, setVisible, onOk }: Props) => {
           control={control}
           errors={errors}
           required
-          options={[]}
+          options={collections}
           name="collections"
           label="Colecciones"
           isMulti
         />
         <Checkbox
+          register={register}
           label='Tiene descuento'
           id='hasDiscount'
           onChange={(e) => {
@@ -139,11 +200,13 @@ const AddProduct = ({ visible, setVisible, onOk }: Props) => {
           </div>
         }
         <Checkbox
+          register={register}
           label='Activo'
           id='active'
           name='active'
         />
         <Checkbox
+          register={register}
           label='Es personalizable'
           id='isCustomizable'
           name='isCustomizable'
@@ -156,13 +219,14 @@ const AddProduct = ({ visible, setVisible, onOk }: Props) => {
             control={control}
             errors={errors}
             required
-            options={[]}
+            options={attributes}
             name="attributes"
             label="Atributos y características del producto"
             isMulti
           />
         }
         <Checkbox
+          register={register}
           label='Realizar seguimiento de inventario'
           id='isTracked'
           name='isTracked'

@@ -1,6 +1,7 @@
 import { CollectionInterface, ProductInterface } from "."
 
 export interface DiscountInterface {
+  _id: string
   name: string,
   type: {
     label: string,

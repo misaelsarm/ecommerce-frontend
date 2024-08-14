@@ -274,7 +274,7 @@ const AddDiscount = ({ visible, setVisible, onOk }: Props) => {
                 required
                 options={collections.map(collection => ({
                   label: collection.name,
-                  value: collection.id
+                  value: collection._id
                 }))}
                 errors={errors}
                 control={control}
@@ -289,7 +289,7 @@ const AddDiscount = ({ visible, setVisible, onOk }: Props) => {
                 required
                 options={products.map(product => ({
                   label: product.name,
-                  value: product.id
+                  value: product._id
                 }))}
                 errors={errors}
                 control={control}

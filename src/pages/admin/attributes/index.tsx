@@ -55,7 +55,7 @@ const AttributesAdminPage = ({ attributes = [], page, limit, size }: Props) => {
       dataIndex: 'detalles',
       key: 'detalles',
       render: (text: string, record: AttributeInterface) => (
-        <Link href={`/attributes/${record.id}`} className='btn btn-black btn-auto'>Ver</Link>
+        <Link href={`/attributes/${record._id}`} className='btn btn-black btn-auto'>Ver</Link>
       )
     },
     {
@@ -124,7 +124,7 @@ const AttributesAdminPage = ({ attributes = [], page, limit, size }: Props) => {
         onCancel={() => setConfirmDelete(false)}
         onOk={async () => {
           try {
-            await api.put(`/api/attributes/${deletedAttribute.id}`, { deleted: true }, {
+            await api.put(`/api/attributes/${deletedAttribute._id}`, { deleted: true }, {
               headers: {
                 'x-access-token': Cookies.get('token')
               }

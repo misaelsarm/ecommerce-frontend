@@ -6,14 +6,15 @@ import Input from "@/components/common/Input"
 import Modal from "@/components/common/Modal"
 import Select from "@/components/common/Select"
 import TextArea from "@/components/common/TextArea"
-import { ProductInterface } from "@/interfaces"
+import { AttributeInterface, CollectionInterface, ProductInterface } from "@/interfaces"
+import { makeRequest } from "@/utils/makeRequest"
 import { numberWithCommas } from "@/utils/numberWithCommas"
 import { GetServerSideProps } from "next"
 import { useRouter } from "next/router"
 import { ReactElement, useEffect, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
-
+import Cookies from "js-cookie"
 
 interface Props {
   product: ProductInterface
@@ -21,9 +22,43 @@ interface Props {
 
 const ProductDetailsAdminPage = ({ product }: Props) => {
 
+  console.log({ product })
+
   const [editing, setEditing] = useState(false)
 
-  console.log({ product })
+  const [collections, setCollections] = useState([])
+
+  const [attributes, setAttributes] = useState([])
+
+  console.log({ collections, attributes })
+
+  async function fetchData() {
+    try {
+
+      const { data } = await api.get(`/api/collections`, {
+        headers: {
+          //"x-access-token": token
+          //"x-location": "admin"
+        }
+      })
+      const { data: attributesData } = await api.get(`/api/attributes`, {
+        headers: {
+          "x-access-token": Cookies.get('token')
+          //"x-location": "admin"
+        }
+      })
+      setCollections(data.collections.map((col: CollectionInterface) => ({
+        label: col.name,
+        value: col._id
+      })))
+      setAttributes(attributesData.attributes.map((att: AttributeInterface) => ({
+        label: att.shortName,
+        value: att._id
+      })))
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || 'Error')
+    }
+  }
 
   const { register, handleSubmit, control, resetField, formState: { errors }, reset } = useForm<any>({
     defaultValues: {
@@ -31,24 +66,37 @@ const ProductDetailsAdminPage = ({ product }: Props) => {
       description: product.description,
       keywords: product.keywords,
       price: product.price,
-      collections: product.collections,
+
       isCustomizable: product.isCustomizable,
       attributes: product.attributes.map(att => (
         {
           label: att.shortName,
-          value: att.id
+          value: att._id
         }
-      ))
+      )),
+      collections: product.collections.map(col => (
+        {
+          label: col.name,
+          value: col._id
+        }
+      )),
+      active: product.active,
+      soldOut: product.soldOut,
+      hasDiscount: product.discount?.hasDiscount,
+      discountType: product.discount?.discountType,
+      discountValue: product.discount?.discountValue,
+      isTracked: product.inventory.isTracked,
+      availableQuantity: product.inventory.availableQuantity
     }
   });
 
   const [saving, setSaving] = useState(false)
 
-  const [hasDiscount, setHasDiscount] = useState(false)
+  const [hasDiscount, setHasDiscount] = useState(product.discount?.hasDiscount)
 
   const [isCustomizable, setIsCustomizable] = useState(product.isCustomizable)
 
-  const [isTracked, setIsTracked] = useState(false)
+  const [isTracked, setIsTracked] = useState(product.inventory.isTracked)
 
   const [images, setImages] = useState(product.images)
 
@@ -66,33 +114,37 @@ const ProductDetailsAdminPage = ({ product }: Props) => {
     // }
   };
 
-  useEffect(() => {
-    // setCrop(product.crop)
-    // setImages(product.images)
-    // setHasDiscount(product.hasDiscount)
-    // setIsCustomizable(product.isCustomizable)
-    // setImage(product.previewImage)
-    // reset({
-    //   ...product,
-    //   subCategories: product.subCategories.map((sub: any) => ({
-    //     label: sub.name,
-    //     value: sub._id
-    //   }))
-    // })
-  }, [])
-
   const onSubmit = async (values: any) => {
 
-    if (images.length === 0) return toast.error('Elige al menos 1 imagen')
-    setSaving(true)
+    console.log({ values })
+
+    //if (images.length === 0) return toast.error('Elige al menos 1 imagen')
+
+    //setSaving(true)
+
     try {
       const update = {
-        ...values,
-        attributes: values.attributes?.map((attribute: any) => attribute.value),
-        subCategories: values.subCategories?.map((sub: any) => sub.value),
+        attributes: values.attributes?.map((attribute: any) => attribute?.value),
+        collections: values.collections?.map((col: any) => col.value),
+        name: values.name,
+        description: values.description,
+        price: values.price,
         images,
+        active: values.active,
+        soldOut: values.soldOut,
+        discount: {
+          hasDiscount: values.hasDiscount,
+          discountType: values.discountType,
+          discountValue: values.discountValue
+        },
+        isCustomizable: values.isCustomizable,
+        keywords: values.keywords,
+        inventory: {
+          isTracked: values.isTracked,
+          availableQuantity: values.availableQuantity
+        },
       }
-      //await makeRequest('put', `/api/products/${product.id}`, update)
+      await makeRequest('put', `/api/products/${product._id}`, update)
       toast.success('Producto actualizado')
       setSaving(false)
       setEditing(false)
@@ -137,18 +189,20 @@ const ProductDetailsAdminPage = ({ product }: Props) => {
           control={control}
           errors={errors}
           required
-          options={[]}
+          options={collections}
           name="collections"
           label="Colecciones"
           isMulti
         />
         <Checkbox
+          register={register}
           label='Tiene descuento'
           id='hasDiscount'
           onChange={(e) => {
             setHasDiscount(e.target.checked)
           }}
           name='hasDiscount'
+          defaultChecked={product.discount?.hasDiscount}
         />
         {
           hasDiscount &&
@@ -164,12 +218,14 @@ const ProductDetailsAdminPage = ({ product }: Props) => {
           </div>
         }
         <Checkbox
+          register={register}
           label='Activo'
           id='active'
           name='active'
           defaultChecked={product.active}
         />
         <Checkbox
+          register={register}
           label='Es personalizable'
           id='isCustomizable'
           name='isCustomizable'
@@ -183,19 +239,21 @@ const ProductDetailsAdminPage = ({ product }: Props) => {
             control={control}
             errors={errors}
             required
-            options={[]}
+            options={attributes}
             name="attributes"
             label="Atributos y características del producto"
             isMulti
           />
         }
         <Checkbox
+          register={register}
           label='Realizar seguimiento de inventario'
           id='isTracked'
           name='isTracked'
           onChange={(e) => {
             setIsTracked(e.target.checked)
           }}
+          defaultChecked={product.inventory.isTracked}
         />
         {
           isTracked &&
@@ -236,8 +294,7 @@ const ProductDetailsAdminPage = ({ product }: Props) => {
             {
               !editing && <button className='btn btn-black' onClick={async () => {
                 setEditing(true)
-                //const { data: subCategoriesData } = await api.get('/api/subcategories')
-                //setSubCategories(subCategoriesData.subcategories)
+                await fetchData()
               }}>Editar</button>
             }
           </div>
@@ -270,12 +327,12 @@ const ProductDetailsAdminPage = ({ product }: Props) => {
                 <span>{product.isCustomizable ? 'Si' : 'No'}</span>
               </div>
               {
-                product.attributes && product.attributes.length > 0 &&
+                product.isCustomizable &&
                 <div className="cardItem">
                   <h4>Atributos</h4>
                   {
                     product.attributes.map(attribute => (
-                      <span key={attribute.id}>{attribute.shortName}</span>
+                      <span key={attribute._id}>{attribute.shortName}</span>
                     ))
                   }
                 </div>
@@ -289,17 +346,23 @@ const ProductDetailsAdminPage = ({ product }: Props) => {
                 <span>{product.active ? 'Si' : 'No'}</span>
               </div>
               <div className="cardItem">
-                <h4>Agotado</h4>
-                <span>{product.soldOut ? 'Si' : 'No'}</span>
-              </div>
-              <div className="cardItem">
                 <h4>Tiene descuento</h4>
                 <span>{product.discount?.hasDiscount ? 'Si' : 'No'}</span>
               </div>
-              <div className="cardItem">
-                <h4>Valor del descuento</h4>
-                <span>{product.discount?.discountValue}</span>
-              </div>
+              {
+                product.discount?.hasDiscount &&
+                <div className="cardItem">
+                  <h4>Valor del descuento</h4>
+                  <span>{product.discount?.discountValue}</span>
+                </div>
+              }
+              {
+                product.inventory.isTracked &&
+                <div className="cardItem">
+                  <h4>Inventario disponible</h4>
+                  <span>{product.inventory.availableQuantity}</span>
+                </div>
+              }
               <div className="cardItem">
                 <h4>Imagenes</h4>
                 <div className='flex wrap'>

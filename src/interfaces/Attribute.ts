@@ -1,7 +1,7 @@
 import { ValueInterface } from "."
 
 export interface AttributeInterface {
-  id: string
+  _id: string
   shortName: string,
   longName: string,
   type: {

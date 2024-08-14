@@ -42,23 +42,7 @@ const AddCollection = ({ visible, setVisible, onOk }: Props) => {
         image,
         banner
       }
-      // if (current.id) {
-      //   // await api.put(`/api/categories/${current.id}`, collection, {
-      //   //   headers: {
-      //   //     "x-access-token": Cookies.get('token')
-      //   //   }
-      //   // })
-      //   await makeRequest('put', `/api/categories/${current.id}`, collection)
-      //   toast.success('Categoría actualizada')
-      // } else {
-      //   // await api.post('/api/categories', collection, {
-      //   //   headers: {
-      //   //     "x-access-token": Cookies.get('token')
-      //   //   }
-      //   // })
-      //   await makeRequest('post', '/api/categories', collection)
-      //   toast.success('Categoría creada')
-      // }
+      
       reset()
       setSaving(false)
       setVisible(false)

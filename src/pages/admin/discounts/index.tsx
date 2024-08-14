@@ -59,7 +59,7 @@ const DiscountsAdminPage = ({ discounts = [], page, limit, size }: Props) => {
     },
     {
       title: 'Detalles',
-      render: (_text: string, record: DiscountInterface) => <Link className="btn btn-black btn-auto" href={`/admin/discounts/${record.id}`}>Ver</Link>
+      render: (_text: string, record: DiscountInterface) => <Link className="btn btn-black btn-auto" href={`/admin/discounts/${record._id}`}>Ver</Link>
     }
   ]
 

@@ -132,9 +132,9 @@ const AddAttribute = ({ visible, setVisible, onOk }: Props) => {
             label="Valores de atributo"
             options={values.filter((option) => {
               return option.type?.value === 'color'
-            }).map((item: any) => ({
+            }).map((item) => ({
               label: item.label,
-              value: item.id
+              value: item._id
             }))}
             name="values"
             control={control}
