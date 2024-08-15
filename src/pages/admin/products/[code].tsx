@@ -15,6 +15,7 @@ import { ReactElement, useEffect, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import Cookies from "js-cookie"
+import Chip from "@/components/common/Chip"
 
 interface Props {
   product: ProductInterface
@@ -315,6 +316,15 @@ const ProductDetailsAdminPage = ({ product }: Props) => {
                 <span>{product.description}</span>
               </div>
               <div className="cardItem">
+                <h4>Colecciones</h4>
+                <div>{
+                  product.collections.map(col => (
+                    <Chip key={col._id} text={col.name} />
+                  ))
+                }
+                </div>
+              </div>
+              <div className="cardItem">
                 <h4>Palabras clave</h4>
                 <span>{product.keywords}</span>
               </div>
@@ -332,7 +342,7 @@ const ProductDetailsAdminPage = ({ product }: Props) => {
                   <h4>Atributos</h4>
                   {
                     product.attributes.map(attribute => (
-                      <span key={attribute._id}>{attribute.shortName}</span>
+                      <Chip text={attribute.shortName} key={attribute._id} />
                     ))
                   }
                 </div>

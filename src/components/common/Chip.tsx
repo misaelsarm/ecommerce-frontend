@@ -3,11 +3,11 @@ import styles from '@/styles/Chips.module.scss';
 
 interface ChipProps {
   text: string;
-  color: 'green' | 'blue' | 'red' | 'yellow' | 'dark';
+  color?: 'green' | 'blue' | 'red' | 'yellow' | 'dark' | 'grey';
   onClose?: () => void;
 }
 
-const Chip: React.FC<ChipProps> = ({ text, color, onClose }) => {
+const Chip: React.FC<ChipProps> = ({ text, color = 'grey', onClose }) => {
   return (
     <div className={`${styles.chip} ${styles[color]}`}>
       {text}
