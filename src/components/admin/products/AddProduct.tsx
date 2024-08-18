@@ -25,41 +25,41 @@ const AddProduct = ({ visible, setVisible, onOk }: Props) => {
 
   const [attributes, setAttributes] = useState<any[]>([])
 
+  async function fetchData() {
+    try {
+
+      const { data } = await api.get(`/api/collections`, {
+        headers: {
+          //"x-access-token": token
+          //"x-location": "admin"
+        }
+      })
+      const { data: attributesData } = await api.get(`/api/attributes`, {
+        headers: {
+          "x-access-token": Cookies.get('token')
+          //"x-location": "admin"
+        }
+      })
+      setCollections(data.collections.map((col: CollectionInterface) => ({
+        label: col.name,
+        value: col._id
+      })))
+      setAttributes(attributesData.attributes.map((att: AttributeInterface) => ({
+        label: att.shortName,
+        value: att._id
+      })))
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || 'Error')
+    }
+  }
+
   useEffect(() => {
     if (visible) {
-      console.log('visible')
-      async function fetchData() {
-        try {
-
-          const { data } = await api.get(`/api/collections`, {
-            headers: {
-              //"x-access-token": token
-              //"x-location": "admin"
-            }
-          })
-          const { data: attributesData } = await api.get(`/api/attributes`, {
-            headers: {
-              "x-access-token": Cookies.get('token')
-              //"x-location": "admin"
-            }
-          })
-          setCollections(data.collections.map((col: CollectionInterface) => ({
-            label: col.name,
-            value: col._id
-          })))
-          setAttributes(attributesData.attributes.map((att: AttributeInterface) => ({
-            label: att.shortName,
-            value: att._id
-          })))
-        } catch (error: any) {
-          toast.error(error?.response?.data?.message || 'Error')
-        }
-      }
       fetchData();
     }
   }, [visible]);
 
-  const { register, handleSubmit, control, resetField, reset, formState: { errors } } = useForm();
+  const { register, handleSubmit, control, reset, formState: { errors } } = useForm();
 
   const [saving, setSaving] = useState(false)
 
@@ -112,12 +112,12 @@ const AddProduct = ({ visible, setVisible, onOk }: Props) => {
           availableQuantity: values.availableQuantity
         },
       }
-      //return console.log({ product })
+      
       await makeRequest('post', '/api/products', product)
       toast.success('Producto agregado')
       setSaving(false)
       onOk && onOk()
-      reset()
+      resetForm()
     } catch (error: any) {
       console.log(error);
       toast.error(error?.response?.data?.message || 'Error')

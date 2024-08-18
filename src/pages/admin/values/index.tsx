@@ -31,12 +31,25 @@ const ValuesAdminPage = ({ values = [], page, limit, size }: Props) => {
     {
       title: 'Nombre',
       dataIndex: 'label',
-      key: 'label'
+      key: 'label',
+      render: (text: string, record: ValueInterface) => record.type.value === 'color' ? <div className="d-flex align-center">
+        <div
+          style={{
+            width: 30,
+            height: 30,
+            backgroundColor: record.value,
+            borderRadius: 5,
+            marginRight: 15
+          }}
+        ></div>
+        <span>{text}</span>
+      </div> : text
     },
     {
-      title: 'Código',
-      dataIndex: 'value',
-      key: 'value'
+      title: 'Tipo',
+      dataIndex: 'type',
+      key: 'type',
+      render: (text: string, record: ValueInterface) => record.type.label
     },
     {
       title: 'Activo',

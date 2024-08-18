@@ -1,43 +1,19 @@
+import { api } from "@/api_config/api"
 import Input from "@/components/common/Input"
 import Modal from "@/components/common/Modal"
 import Select from "@/components/common/Select"
 import { ValueInterface } from "@/interfaces"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
+import toast from "react-hot-toast"
+import Cookies from "js-cookie"
+import { attributeTypes } from "@/utils/attributeTypes"
 
 interface Props {
   visible: boolean,
   setVisible: (visible: boolean) => void,
   onOk?: () => void
 }
-
-const options = [
-  {
-    id: 1,
-    label: 'Lista desplegable',
-    value: 'dropdown'
-  },
-  {
-    id: 2,
-    label: 'Color',
-    value: 'color'
-  },
-  {
-    id: 3,
-    label: 'Texto largo',
-    value: 'long-text'
-  },
-  {
-    id: 4,
-    label: 'Texto corto',
-    value: 'short-text'
-  },
-  /*   {
-      id: 5,
-      label: 'Font',
-      value: 'font'
-    } */
-]
 
 const AddAttribute = ({ visible, setVisible, onOk }: Props) => {
 
@@ -54,34 +30,50 @@ const AddAttribute = ({ visible, setVisible, onOk }: Props) => {
     setType('')
   }
 
-  // useEffect(() => {
-  //   fetchData();
-  // }, []); // Or [] if effect doesn't need props or state
+  useEffect(() => {
+    if (visible) {
+      fetchData();
+    }
+  }, [visible]);
 
-  // async function fetchData() {
-  //   try {
-  //     const { data } = await api.get('/api/values')
-  //     setValues(data.values)
-  //   } catch (error) {
-  //   }
-  // }
+  async function fetchData() {
+    try {
+      const { data } = await api.get('/api/values',
+        {
+          headers: {
+            "x-access-token": Cookies.get('token')
+            //"x-location": "admin"
+          }
+        }
+      )
+      setValues(data.values)
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || 'Error')
+    }
+  }
 
-  const onSubmit = async (data: any) => {
-    // setSaving(true)
-    // try {
-    //   const attribute = {
-    //     ...data,
-    //     values: data.values?.map((value: any) => value.value)
-    //   }
-    //   await api.post('/api/attributes', attribute)
-    //   toast.success('Atributo agregado')
-    //   setSaving(false)
-    //   onOk && onOk()
-    //   reset()
-    // } catch (error: any) {
-    //   setSaving(false)
-    //   toast.error(error.response.data.message)
-    // }
+  const onSubmit = async (values: any) => {
+
+    setSaving(true)
+    try {
+      const attribute = {
+        ...values,
+        values: values.values?.map((value: any) => value.value)
+      }
+      await api.post('/api/attributes', attribute, {
+        headers: {
+          "x-access-token": Cookies.get('token')
+          //"x-location": "admin"
+        }
+      })
+      toast.success('Atributo agregado')
+      setSaving(false)
+      onOk && onOk()
+      resetForm()
+    } catch (error: any) {
+      setSaving(false)
+      toast.error(error.response.data.message)
+    }
   }
 
   return (
@@ -116,7 +108,7 @@ const AddAttribute = ({ visible, setVisible, onOk }: Props) => {
         />
         <Select
           label="Tipo de atributo"
-          options={options}
+          options={attributeTypes}
           name="type"
           control={control}
           required
@@ -140,10 +132,7 @@ const AddAttribute = ({ visible, setVisible, onOk }: Props) => {
             control={control}
             required
             errors={errors}
-            onChange={(e: any) => {
-              setType(e.value)
-              resetField('values')
-            }}
+            isMulti
           />
         }
         {
@@ -152,18 +141,14 @@ const AddAttribute = ({ visible, setVisible, onOk }: Props) => {
             label="Valores de atributo"
             options={values.filter((option) => {
               return option.type?.value === 'option'
-            }).map((item: any) => ({
+            }).map((item) => ({
               label: item.label,
-              value: item.id
+              value: item._id
             }))}
             name="values"
             control={control}
             required
             errors={errors}
-            onChange={(e: any) => {
-              setType(e.value)
-              resetField('values')
-            }}
             isMulti
           />
         }

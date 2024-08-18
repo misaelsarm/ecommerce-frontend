@@ -36,8 +36,6 @@ const DiscountDetailsPage = ({ discount }: Props) => {
 
   const [categories, setCategories] = useState<Category[]>([])
 
-  const [subcategories, setSubcategories] = useState<SubCategory[]>([])
-
   const { query: { id }, back, replace } = useRouter()
 
   const [startDate, setStartDate] = useState<Date | null>(new Date());
@@ -54,14 +52,6 @@ const DiscountDetailsPage = ({ discount }: Props) => {
     try {
       const { data } = await api.get('/api/categories?active=true')
       setCategories(data.categories)
-    } catch (error) {
-      console.log({ error })
-    }
-  }
-  const fetchSubcategories = async () => {
-    try {
-      const { data } = await api.get('/api/subcategories?active=true')
-      setSubcategories(data.subcategories)
     } catch (error) {
       console.log({ error })
     }
@@ -84,10 +74,6 @@ const DiscountDetailsPage = ({ discount }: Props) => {
           categories: discount?.categories?.map((category: any) => ({
             label: category.name,
             value: category._id
-          })),
-          subcategories: discount?.subcategories?.map((subcategory: any) => ({
-            label: subcategory.name,
-            value: subcategory._id
           }))
         })
       } catch (error) {
@@ -101,8 +87,6 @@ const DiscountDetailsPage = ({ discount }: Props) => {
 
     let validProducts = []
 
-    let validSubcategories = []
-
     let validCategories = []
 
     let foundProducts = []
@@ -110,23 +94,10 @@ const DiscountDetailsPage = ({ discount }: Props) => {
     if (limitBy === 'category') {
       let selectedCategories = values.categories.map((cat: any) => cat.value)
 
-      let foundsubcats = []
-
-      for (const subcategory of subcategories) {
-        for (const cat of subcategory.categories) {
-          if (selectedCategories.includes(cat._id)) {
-            foundsubcats.push(subcategory.id)
-          }
-        }
-      }
 
       for (const product of products) {
 
-        for (const subcat of product.subCategories) {
-          if (foundsubcats.includes(subcat._id)) {
-            foundProducts.push(product.id)
-          }
-        }
+        
       }
 
       validProducts = foundProducts

@@ -1,9 +1,12 @@
+import { api } from "@/api_config/api";
 import Checkbox from "@/components/common/Checkbox";
 import Input from "@/components/common/Input";
 import Modal from "@/components/common/Modal";
 import Select from "@/components/common/Select";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import Cookies from "js-cookie";
 
 interface Props {
   visible: boolean,
@@ -25,23 +28,27 @@ const AddValue = ({ visible, setVisible, onOk }: Props) => {
   }
 
   const onSubmit = async (values: any) => {
-
-    // const post = {
-    //   ...values,
-    //   value: type === 'color' ? values.value : values.label.trim().toLowerCase().split(' ').join('-')
-    // }
-    // setSaving(true)
-    // try {
-    //   await api.post('/api/values', post)
-    //   toast.success('Valor creado.')
-    //   setSaving(false)
-    //   setVisible(false)
-    //   onOk && onOk()
-    //   reset()
-    // } catch (error: any) {
-    //   toast.error(error.response.data.message)
-    //   setSaving(false)
-    // }
+    const post = {
+      ...values,
+      value: type === 'color' ? values.value : values.label.trim().toLowerCase().split(' ').join('-')
+    }
+    setSaving(true)
+    try {
+      await api.post('/api/values', post, {
+        headers: {
+          "x-access-token": Cookies.get('token')
+          //"x-location": "admin"
+        }
+      })
+      toast.success('Valor creado.')
+      setSaving(false)
+      setVisible(false)
+      onOk && onOk()
+      reset()
+    } catch (error: any) {
+      toast.error(error.response.data.message)
+      setSaving(false)
+    }
   }
 
   return (
@@ -107,6 +114,7 @@ const AddValue = ({ visible, setVisible, onOk }: Props) => {
           label='Activo'
           id='active'
           name='active'
+          register={register}
         />
       </>
     </Modal>

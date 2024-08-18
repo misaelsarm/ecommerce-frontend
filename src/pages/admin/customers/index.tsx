@@ -10,6 +10,8 @@ import { UserInterface } from '@/interfaces'
 import PageHeader from '@/components/admin/PageHeader'
 import moment from 'moment'
 import { getServerSideToken } from '@/utils/getServerSideToken'
+import Link from 'next/link'
+import Chip from '@/components/common/Chip'
 
 interface Props {
   customers: UserInterface[],
@@ -20,9 +22,13 @@ interface Props {
 
 const CustomersAdminPage = ({ customers, page, limit, size }: Props) => {
 
+  const [confirmDelete, setConfirmDelete] = useState(false)
+
+  const [deletedUser, setDeletedUser] = useState({} as UserInterface)
+
   const columns = [
     {
-      title: 'Nombre de cliente',
+      title: 'Nombre',
       dataIndex: 'name',
       key: 'name'
     },
@@ -42,6 +48,27 @@ const CustomersAdminPage = ({ customers, page, limit, size }: Props) => {
       dataIndex: 'createdAt',
       key: 'createdAt',
       render: (_text: string, record: UserInterface) => record.lastLogin ? moment(record.lastLogin).format('lll') : null
+    },
+    {
+      title: 'Estado',
+      dataIndex: 'status',
+      key: 'status',
+      render: (_text: string, record: UserInterface) => <div className='d-flex flex-column align-start'>
+        {
+          record.active ? <Chip text='activo' color='green' /> : <Chip text='no activo' />
+        }
+        {
+          record.verified ? <Chip text='verificado' color='green' /> : <Chip text='no verificado' />
+        }
+      </div>
+    },
+    {
+      title: 'Detalles',
+      dataIndex: 'detalles',
+      key: 'detalles',
+      render: (_text: string, record: UserInterface) => (
+        <Link href={`/admin/users/${record._id}`} className='btn btn-black btn-auto'>Ver</Link>
+      )
     },
   ]
 

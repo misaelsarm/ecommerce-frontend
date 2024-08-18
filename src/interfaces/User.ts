@@ -26,4 +26,12 @@ export interface UserInterface {
   generatePasswordReset: any,
 
   active: boolean
+
+  deleted: boolean
+
+  lastLogin: Date,
+
+  createdAt: Date
+
+  verified: boolean
 }

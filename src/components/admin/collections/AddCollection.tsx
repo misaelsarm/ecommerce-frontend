@@ -8,6 +8,8 @@ import Input from '@/components/common/Input';
 import TextArea from '@/components/common/TextArea';
 import Checkbox from '@/components/common/Checkbox';
 import Select from '@/components/common/Select';
+import { api } from '@/api_config/api';
+import { CollectionInterface } from '@/interfaces';
 
 interface Props {
   visible: boolean,
@@ -19,6 +21,8 @@ const AddCollection = ({ visible, setVisible, onOk }: Props) => {
 
   const { register, handleSubmit, reset, control, formState: { errors } } = useForm();
 
+  const [collections, setCollections] = useState<any[]>([])
+
   //const { handleFileUpload, uploading } = useFileUpload();
 
   const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,10 +33,41 @@ const AddCollection = ({ visible, setVisible, onOk }: Props) => {
     // }
   };
 
+  async function fetchData() {
+    try {
+
+      const { data } = await api.get(`/api/collections`, {
+        headers: {
+          //"x-access-token": token
+          //"x-location": "admin"
+        }
+      })
+
+      setCollections(data.collections.map((col: CollectionInterface) => ({
+        label: col.name,
+        value: col._id
+      })))
+
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || 'Error')
+    }
+  }
+
+  useEffect(() => {
+    if (visible) {
+      fetchData();
+    }
+  }, [visible]);
+
   const imageRef = useRef<any>()
   const [image, setImage] = useState('')
-  const [banner, setBanner] = useState('')
+
   const [saving, setSaving] = useState(false)
+
+  const resetForm = () => {
+    reset()
+    setImage('')
+  }
 
   const onSubmit = async (data: any) => {
     setSaving(true)
@@ -40,10 +75,11 @@ const AddCollection = ({ visible, setVisible, onOk }: Props) => {
       const collection = {
         ...data,
         image,
-        banner
       }
-      
-      reset()
+
+      await makeRequest('post', '/api/collections', collection)
+
+      resetForm()
       setSaving(false)
       setVisible(false)
       onOk && onOk()
@@ -60,10 +96,12 @@ const AddCollection = ({ visible, setVisible, onOk }: Props) => {
       onOk={handleSubmit(onSubmit)}
       onCancel={() => {
         setVisible(false)
+        resetForm()
       }}
       title='Nueva colección'
       onClose={() => {
         setVisible(false)
+        resetForm()
       }}
       visible={visible}
     >
@@ -86,7 +124,7 @@ const AddCollection = ({ visible, setVisible, onOk }: Props) => {
         />
         <Select
           control={control}
-          options={[]}
+          options={collections}
           name="parentCollection"
           label="Colección padre"
         />
@@ -95,13 +133,12 @@ const AddCollection = ({ visible, setVisible, onOk }: Props) => {
           label='Palabras clave'
           placeholder=''
           name='keywords'
-          errors={errors}
-          required
         />
         <Checkbox
           label='Activa'
           id='active'
           name='active'
+          register={register}
         />
 
         <div className="input-group">

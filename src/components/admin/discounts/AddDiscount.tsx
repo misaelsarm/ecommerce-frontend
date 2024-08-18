@@ -52,14 +52,6 @@ const AddDiscount = ({ visible, setVisible, onOk }: Props) => {
   //     console.log({ error })
   //   }
   // }
-  // const fetchSubcategories = async () => {
-  //   try {
-  //     const { data } = await api.get('/api/subcategories?active=true')
-  //     setSubcategories(data.subcategories)
-  //   } catch (error) {
-  //     console.log({ error })
-  //   }
-  // }
 
   // useEffect(() => {
   //   fetchProducts()
@@ -227,15 +219,14 @@ const AddDiscount = ({ visible, setVisible, onOk }: Props) => {
               errors={errors}
               name="endDate"
             />
-
-
-
             <Checkbox
               label='Activo'
               id='active'
               name='active'
+              register={register}
             />
             <Checkbox
+              register={register}
               label='Limitar a productos o colecciones'
               id='limited'
               name='limited'

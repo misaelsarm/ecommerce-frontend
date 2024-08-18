@@ -55,7 +55,7 @@ const AttributesAdminPage = ({ attributes = [], page, limit, size }: Props) => {
       dataIndex: 'detalles',
       key: 'detalles',
       render: (text: string, record: AttributeInterface) => (
-        <Link href={`/attributes/${record._id}`} className='btn btn-black btn-auto'>Ver</Link>
+        <Link href={`/admin/attributes/${record._id}`} className='btn btn-black btn-auto'>Ver</Link>
       )
     },
     {
