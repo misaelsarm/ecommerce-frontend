@@ -2,9 +2,9 @@ import { useState, useCallback } from 'react';
 import { EditorState, RichUtils } from 'draft-js';
 
 export const useDraftEditor = () => {
+  
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
 
-  // Handler for changing editor state
   const handleEditorChange = useCallback(
     (newState: EditorState) => {
       setEditorState(newState);
@@ -12,7 +12,6 @@ export const useDraftEditor = () => {
     [setEditorState]
   );
 
-  // Function to apply inline style (e.g., bold, italic)
   const applyInlineStyle = useCallback(
     (style: string) => {
       setEditorState(RichUtils.toggleInlineStyle(editorState, style));
@@ -20,7 +19,6 @@ export const useDraftEditor = () => {
     [editorState]
   );
 
-  // Function to apply block style (e.g., header, blockquote)
   const applyBlockStyle = useCallback(
     (blockType: string) => {
       setEditorState(RichUtils.toggleBlockType(editorState, blockType));
@@ -28,7 +26,6 @@ export const useDraftEditor = () => {
     [editorState]
   );
 
-  // Function to check if an inline style is currently active
   const isInlineStyleActive = useCallback(
     (style: string) => {
       const currentStyle = editorState.getCurrentInlineStyle();
@@ -37,7 +34,6 @@ export const useDraftEditor = () => {
     [editorState]
   );
 
-  // Function to check if a block style is currently active
   const isBlockStyleActive = useCallback(
     (blockType: string) => {
       const selection = editorState.getSelection();

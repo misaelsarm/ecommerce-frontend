@@ -1,7 +1,27 @@
-import React from 'react';
-import { Editor } from 'draft-js';
-import styles from '@/styles/MyEditorComponent.module.scss'; // Assuming you're using CSS modules
+import React, { useRef } from 'react';
+import { Editor, convertToRaw } from 'draft-js';
+import styles from '@/styles/MyEditorComponent.module.css';
 import { useDraftEditor } from '@/hooks/useDraftEditor';
+
+const BLOCK_TYPES = [
+  { label: 'H1', style: 'header-one' },
+  { label: 'H2', style: 'header-two' },
+  { label: 'H3', style: 'header-three' },
+  { label: 'H4', style: 'header-four' },
+  { label: 'H5', style: 'header-five' },
+  { label: 'H6', style: 'header-six' },
+  { label: 'Blockquote', style: 'blockquote' },
+  { label: 'UL', style: 'unordered-list-item' },
+  { label: 'OL', style: 'ordered-list-item' },
+  { label: 'Code Block', style: 'code-block' },
+];
+
+const INLINE_STYLES = [
+  { label: 'Bold', style: 'BOLD' },
+  { label: 'Italic', style: 'ITALIC' },
+  { label: 'Underline', style: 'UNDERLINE' },
+  { label: 'Monospace', style: 'CODE' },
+];
 
 const MyEditorComponent = () => {
   const {
@@ -13,32 +33,45 @@ const MyEditorComponent = () => {
     isBlockStyleActive,
   } = useDraftEditor();
 
+  const editorRef = useRef()
+
   return (
     <div>
-      <div>
-        <button
-          className={isInlineStyleActive('BOLD') ? `${styles.activeButton} ${styles.editorButton}` : styles.editorButton}
-          onClick={() => applyInlineStyle('BOLD')}
-        >
-          Bold
-        </button>
-        <button
-          className={isInlineStyleActive('ITALIC') ? `${styles.activeButton} ${styles.editorButton}` : styles.editorButton}
-          onClick={() => applyInlineStyle('ITALIC')}
-        >
-          Italic
-        </button>
-        <button
-          className={isBlockStyleActive('header-one') ? `${styles.activeButton} ${styles.editorButton}` : styles.editorButton}
-          onClick={() => applyBlockStyle('header-one')}
-        >
-          Header
-        </button>
+      <div className={styles.toolbar}>
+        {INLINE_STYLES.map((type) => (
+          <button
+            key={type.style}
+            className={`${styles.button} ${isInlineStyleActive(type.style) ? styles.activeButton : ''
+              }`}
+            onClick={() => applyInlineStyle(type.style)}
+          >
+            {type.label}
+          </button>
+        ))}
+        {BLOCK_TYPES.map((type) => (
+          <button
+            key={type.style}
+            className={`${styles.button} ${isBlockStyleActive(type.style) ? styles.activeButton : ''
+              }`}
+            onClick={() => applyBlockStyle(type.style)}
+          >
+            {type.label}
+          </button>
+        ))}
       </div>
-      <Editor
-        editorState={editorState}
-        onChange={handleEditorChange}
-      />
+      <div 
+      onClick={()=>{editorRef.current.focus()}}
+      className={styles.editor}>
+        <Editor ref={editorRef} editorState={editorState} onChange={handleEditorChange} />
+      </div>
+
+      <button onClick={() => {
+        const contentState = editorState.getCurrentContent();
+        const rawContent = convertToRaw(contentState);
+        const jsonContent = JSON.stringify(rawContent);
+
+        console.log({ jsonContent })
+      }}>Show content</button>
     </div>
   );
 };
