@@ -12,6 +12,8 @@ import { Sortable } from "../Sortable"
 import { AttributeInterface, CollectionInterface } from "@/interfaces"
 import { api } from "@/api_config/api"
 import Cookies from "js-cookie"
+import MyEditorComponent from "@/components/common/Editor"
+
 
 interface Props {
   visible: boolean,
@@ -155,6 +157,7 @@ const AddProduct = ({ visible, setVisible, onOk }: Props) => {
           label='Descripción del producto'
           required
         />
+        <MyEditorComponent />
         <Input
           register={register}
           label='Palabras clave'
