@@ -1,0 +1,30 @@
+/* Define a class for the button */
+.button {
+  background-color: white;
+  color: black;
+  border: 1px solid #ccc;
+  padding: 5px 10px;
+  margin: 0 5px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: #f0f0f0;
+}
+
+.activeButton {
+  background-color: #0070f3;
+  color: white;
+  border: none;
+}
+
+.toolbar {
+  margin-bottom: 10px;
+}
+
+.editor {
+  border: 1px solid #ddd;
+  padding: 10px;
+  min-height: 200px;
+  cursor: text;
+}
