@@ -1,11 +1,14 @@
+import { api } from "@/api_config/api";
 import Checkbox from "@/components/common/Checkbox";
 import DatePicker from "@/components/common/DatePicker";
 import Input from "@/components/common/Input";
 import Modal from "@/components/common/Modal";
 import Select from "@/components/common/Select";
 import { CollectionInterface, ProductInterface } from "@/interfaces";
-import { useState } from "react";
+import { makeRequest } from "@/utils/makeRequest";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 
 interface Props {
   visible: boolean,
@@ -36,111 +39,84 @@ const AddDiscount = ({ visible, setVisible, onOk }: Props) => {
     setLimited(false)
   }
 
-  // const fetchProducts = async () => {
-  //   try {
-  //     const { data } = await api.get('/api/products?active=true')
-  //     setProducts(data.products)
-  //   } catch (error) {
-  //     console.log({ error })
-  //   }
-  // }
-  // const fetchCategories = async () => {
-  //   try {
-  //     const { data } = await api.get('/api/categories?active=true')
-  //     setCategories(data.categories)
-  //   } catch (error) {
-  //     console.log({ error })
-  //   }
-  // }
+  const fetchProducts = async () => {
+    try {
+      const { data } = await api.get('/api/products?active=true')
+      setProducts(data.products)
+    } catch (error: any) {
+      toast.error(error.response.data.message)
+      console.log({ error })
+    }
+  }
 
-  // useEffect(() => {
-  //   fetchProducts()
-  //   fetchCategories()
-  //   fetchSubcategories()
-  // }, [])
+  const fetchCollections = async () => {
+    try {
+      const { data } = await api.get('/api/collections?active=true')
+      setCollections(data.collections)
+    } catch (error: any) {
+      toast.error(error.response.data.message)
+      console.log({ error })
+    }
+  }
 
-  const [startDate, setStartDate] = useState<Date | null>(new Date());
+  useEffect(() => {
+    if (visible) {
+      fetchProducts()
+      fetchCollections()
+    }
+  }, [visible])
 
   const onSubmit = async (values: any) => {
 
-    // let validProducts = []
+    let validProducts: string[] = []
 
-    // let validSubcategories = []
+    let validCollections: string[] = []
 
-    // let validCategories = []
+    let foundProducts = []
 
-    // let foundProducts = []
+    if (limitBy === 'collection') {
 
-    // if (limitBy === 'category') {
-    //   let selectedCategories = values.categories.map((cat: any) => cat.value)
+      let selectedCollections: string[] = values.collections.map((cat: any) => cat.value)
 
-    //   let foundsubcats = []
+      for (const product of products) {
 
-    //   for (const subcategory of subcategories) {
-    //     for (const cat of subcategory.categories) {
-    //       if (selectedCategories.includes(cat._id)) {
-    //         foundsubcats.push(subcategory.id)
-    //       }
-    //     }
-    //   }
+        for (const col of product.collections) {
+          if (selectedCollections.includes(col._id)) {
+            foundProducts.push(product._id)
+          }
+        }
+      }
 
-    //   for (const product of products) {
+      validProducts = foundProducts
+      validCollections = selectedCollections
 
-    //     for (const subcat of product.subCategories) {
-    //       if (foundsubcats.includes(subcat._id)) {
-    //         foundProducts.push(product.id)
-    //       }
-    //     }
-    //   }
+    } else {
+      validProducts = values.products?.map((product: any) => product.value)
+      validCollections = []
+    }
 
-    //   validProducts = foundProducts
-    //   validSubcategories = foundsubcats
-    //   validCategories = selectedCategories
+    const discount = {
+      ...values,
+      products: validProducts,
+      collections: validCollections,
+    }
 
-    // } else if (limitBy === 'subcategory') {
-    //   let selectedSubcategories = values.subcategories.map((cat: any) => cat.value)
+    setSaving(true)
+    
+    try {
 
-    //   for (const product of products) {
+      await makeRequest('post', `/api/discounts`, discount);
 
-    //     for (const subcat of product.subCategories) {
-    //       if (selectedSubcategories.includes(subcat._id)) {
-    //         foundProducts.push(product.id)
-    //       }
-    //     }
-    //   }
-
-    //   validProducts = foundProducts
-    //   validSubcategories = selectedSubcategories
-
-    // } else {
-
-    //   validProducts = values.products?.map((product: any) => product.value)
-    // }
-
-    // const discount = {
-    //   ...values,
-    //   products: validProducts,
-    //   categories: validCategories,
-    //   subcategories: validSubcategories
-    // }
-
-    // setSaving(true)
-    // try {
-    //   //await api.post('/api/discounts', discount)
-
-    //   await makeRequest('post', `/api/discounts`, discount);
-
-
-    //   toast.success('Descuento creado')
-    //   onOk && onOk()
-    //   setSaving(false)
-    //   reset()
-    // } catch (error: any) {
-    //   if (error) {
-    //     toast.error(error.response.data.message)
-    //     setSaving(false)
-    //   }
-    // }
+      toast.success('Descuento creado')
+      onOk && onOk()
+      setSaving(false)
+      reset()
+    } catch (error: any) {
+      if (error) {
+        toast.error(error.response.data.message)
+        setSaving(false)
+      }
+    }
   }
 
   return (
@@ -158,7 +134,7 @@ const AddDiscount = ({ visible, setVisible, onOk }: Props) => {
       }}
       visible={visible}
     >
-      <div>
+      <>
         <div className="group">
           <Input
             register={register}
@@ -172,7 +148,6 @@ const AddDiscount = ({ visible, setVisible, onOk }: Props) => {
           <Select
             required
             onChange={(e: any) => {
-              console.log({ e })
               setDiscountType(e.value)
             }}
             options={[
@@ -194,7 +169,6 @@ const AddDiscount = ({ visible, setVisible, onOk }: Props) => {
         {
           discountType !== '' &&
           <>
-
             <div className="d-flex align-center">
               <Input
                 type='number'
@@ -211,7 +185,6 @@ const AddDiscount = ({ visible, setVisible, onOk }: Props) => {
                 fontSize: 20
               }}>{discountType === 'percentage' ? '%' : '$'}</span>
             </div>
-
             <DatePicker
               label="Fecha de expiración"
               control={control}
@@ -291,7 +264,7 @@ const AddDiscount = ({ visible, setVisible, onOk }: Props) => {
             }
           </>
         }
-      </div>
+      </>
     </Modal>
   )
 }

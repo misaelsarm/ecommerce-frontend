@@ -6,6 +6,7 @@ import Table from '@/components/admin/Table'
 import { useDebouncedSearch } from '@/hooks/useDebouncedSearch'
 import { DiscountInterface } from '@/interfaces'
 import { getServerSideToken } from '@/utils/getServerSideToken'
+import moment from 'moment'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -25,7 +26,6 @@ const DiscountsAdminPage = ({ discounts = [], page, limit, size }: Props) => {
   const { push, query, replace } = useRouter()
 
   const { searchTerm, setSearchTerm, handleSearch } = useDebouncedSearch({ url: 'discounts', limit })
-
 
   const columns = [
     {
@@ -49,7 +49,7 @@ const DiscountsAdminPage = ({ discounts = [], page, limit, size }: Props) => {
       title: 'Fecha de expiración',
       dataIndex: 'expiry',
       key: 'expiry',
-      //render: (text: string) => moment(text).format('ll')
+      render: (text: string) => moment(text).format('ll')
     },
     {
       title: 'Activo',
@@ -125,7 +125,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
         // "x-location": "admin"
       }
     })
-    
+
     discounts = data.discounts
 
   } catch (error) {

@@ -67,7 +67,7 @@ const CustomersAdminPage = ({ customers, page, limit, size }: Props) => {
       dataIndex: 'detalles',
       key: 'detalles',
       render: (_text: string, record: UserInterface) => (
-        <Link href={`/admin/users/${record._id}`} className='btn btn-black btn-auto'>Ver</Link>
+        <Link href={`/admin/customers/${record._id}`} className='btn btn-black btn-auto'>Ver</Link>
       )
     },
   ]

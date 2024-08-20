@@ -1,21 +1,22 @@
 import { api } from '@/api_config/api';
 import Layout from '@/components/admin/Layout'
-import Input from '@/components/ui/Input';
-import Modal from '@/components/ui/Modal';
-import Select from '@/components/ui/Select';
-import { Category, Discount, Product } from '@/interfaces';
-import { SubCategory } from '@/interfaces/SubCategory';
+import Checkbox from '@/components/common/Checkbox';
+import DatePicker from '@/components/common/DatePicker';
+import Input from '@/components/common/Input';
+import Modal from '@/components/common/Modal';
+import Select from '@/components/common/Select';
+import { CollectionInterface, DiscountInterface, ProductInterface } from '@/interfaces';
+
 import { makeRequest } from '@/utils/makeRequest';
 import moment from 'moment';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import React, { ReactElement, useEffect, useState } from 'react'
-import ReactDatePicker from 'react-datepicker';
 import { Controller, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
 interface Props {
-  discount: Discount
+  discount: DiscountInterface
 }
 
 const DiscountDetailsPage = ({ discount }: Props) => {
@@ -26,109 +27,97 @@ const DiscountDetailsPage = ({ discount }: Props) => {
 
   const { register, handleSubmit, control, reset, formState: { errors }, watch } = useForm();
 
-  const limited = watch("limited")
-
-  const [products, setProducts] = useState<Product[]>([])
-
   const [limitBy, setLimitBy] = useState('')
 
   const [discountType, setDiscountType] = useState('')
 
-  const [categories, setCategories] = useState<Category[]>([])
+  const [products, setProducts] = useState<ProductInterface[]>([])
+
+  const [limited, setLimited] = useState(false)
+
+  const [collections, setCollections] = useState<CollectionInterface[]>([])
 
   const { query: { id }, back, replace } = useRouter()
-
-  const [startDate, setStartDate] = useState<Date | null>(new Date());
 
   const fetchProducts = async () => {
     try {
       const { data } = await api.get('/api/products?active=true')
       setProducts(data.products)
-    } catch (error) {
+    } catch (error: any) {
+      toast.error(error.response.data.message)
       console.log({ error })
     }
   }
-  const fetchCategories = async () => {
+
+  const fetchCollections = async () => {
     try {
-      const { data } = await api.get('/api/categories?active=true')
-      setCategories(data.categories)
-    } catch (error) {
+      const { data } = await api.get('/api/collections?active=true')
+      setCollections(data.collections)
+    } catch (error: any) {
+      toast.error(error.response.data.message)
       console.log({ error })
     }
   }
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
 
 
-        setStartDate(new Date(discount.expiry))
-        setDiscountType(discount.type?.value)
-        setLimitBy(discount.limitBy?.value)
-        reset({
-          ...discount,
-          products: discount.products.map((product: any) => ({
-            label: product.name,
-            value: product._id
-          })),
-          categories: discount?.categories?.map((category: any) => ({
-            label: category.name,
-            value: category._id
-          }))
-        })
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    fetchData()
-  }, [id, reset])
+  //       setStartDate(new Date(discount.expiry))
+  //       setDiscountType(discount.type?.value)
+  //       setLimitBy(discount.limitBy?.value)
+  //       reset({
+  //         ...discount,
+  //         products: discount.products.map((product: any) => ({
+  //           label: product.name,
+  //           value: product._id
+  //         })),
+  //         categories: discount?.categories?.map((category: any) => ({
+  //           label: category.name,
+  //           value: category._id
+  //         }))
+  //       })
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   }
+  //   fetchData()
+  // }, [id, reset])
 
   const onSubmit = async (values: any) => {
 
-    let validProducts = []
+    let validProducts: string[] = []
 
-    let validCategories = []
+    let validCollections: string[] = []
 
     let foundProducts = []
 
-    if (limitBy === 'category') {
-      let selectedCategories = values.categories.map((cat: any) => cat.value)
+    if (limitBy === 'collection') {
 
-
-      for (const product of products) {
-
-        
-      }
-
-      validProducts = foundProducts
-      validSubcategories = foundsubcats
-      validCategories = selectedCategories
-
-    } else if (limitBy === 'subcategory') {
-      let selectedSubcategories = values.subcategories.map((cat: any) => cat.value)
+      let selectedCollections: string[] = values.collections.map((cat: any) => cat.value)
 
       for (const product of products) {
 
-        for (const subcat of product.subCategories) {
-          if (selectedSubcategories.includes(subcat._id)) {
-            foundProducts.push(product.id)
+        for (const col of product.collections) {
+          if (selectedCollections.includes(col._id)) {
+            foundProducts.push(product._id)
           }
         }
       }
 
       validProducts = foundProducts
-      validSubcategories = selectedSubcategories
+      validCollections = selectedCollections
 
     } else {
-
       validProducts = values.products?.map((product: any) => product.value)
+      validCollections = []
     }
 
     const discount = {
       ...values,
       products: validProducts,
-      categories: validCategories,
-      subcategories: validSubcategories
+      collections: validCollections,
     }
 
     setSaving(true)
@@ -159,7 +148,6 @@ const DiscountDetailsPage = ({ discount }: Props) => {
             required
           />
         </div>
-
         <div className="group">
           <Select
             required
@@ -186,142 +174,99 @@ const DiscountDetailsPage = ({ discount }: Props) => {
         {
           discountType !== '' &&
           <>
-            <div className="group">
-              <div style={{
-                display: 'flex',
-                alignItems: 'center'
-              }}>
-                <Input
-                  type='number'
-                  register={register}
-                  label='Valor del descuento'
-                  placeholder=''
-                  name='value'
-                  errors={errors}
-                  required
-                />
-                <span style={{
-                  display: 'block',
-                  marginLeft: 10,
-                  fontSize: 20
-                }}>{discountType === 'percentage' ? '%' : '$'}</span>
-              </div>
-            </div>
-            <div className="group">
-              <label>Fecha de expiración</label>
-              <Controller
-                rules={{
-                  required: true,
-                }}
-                name='expiry'
-                control={control}
-                render={({ field: { onChange } }) =>
-                  <ReactDatePicker
-                    minDate={new Date()}
-                    dateFormat='dd-MM-yyyy'
-                    selected={startDate}
-                    onChange={(date) => {
-                      onChange(date)
-                      setStartDate(date)
-                    }}
-                  />
-                }
+            <div className="d-flex align-center">
+              <Input
+                type='number'
+                register={register}
+                label='Valor del descuento'
+                placeholder=''
+                name='value'
+                errors={errors}
+                required
               />
-              {
-                errors.expiry && <span className="error">Requerido</span>
-              }
+              <span style={{
+                display: 'block',
+                marginLeft: 10,
+                fontSize: 20
+              }}>{discountType === 'percentage' ? '%' : '$'}</span>
             </div>
-            <div className="group">
-              <input {...register('active')} type="checkbox" name="active" id="active" />
-              <label htmlFor="active">Activo</label>
-            </div>
-            <div className="group">
-              <input {...register('limited')} type="checkbox" name="limited" id="limited" />
-              <label htmlFor="limited">Limitar por categoría, subcategoría o producto</label>
-            </div>
+            <DatePicker
+              label="Fecha de expiración"
+              control={control}
+              required
+              errors={errors}
+              name="endDate"
+            />
+            <Checkbox
+              label='Activo'
+              id='active'
+              name='active'
+              register={register}
+            />
+            <Checkbox
+              register={register}
+              label='Limitar a productos o colecciones'
+              id='limited'
+              name='limited'
+              onChange={(e) => {
+                setLimited(e.target.checked)
+              }}
+            />
           </>
         }
         {
           limited &&
           <>
-            <div className="group">
+            <Select
+              onChange={(e: any) => {
+                setLimitBy(e.value)
+              }}
+              required
+              options={[
+                {
+                  label: 'Colección',
+                  value: 'collection'
+                },
+                {
+                  label: 'Producto',
+                  value: 'product'
+                },
+              ]}
+              errors={errors}
+              control={control}
+              name='limitBy'
+              label='Limitar por'
+            />
+            {
+              limitBy === 'collection' &&
               <Select
-                onChange={(e: any) => {
-                  setLimitBy(e.value)
-                }}
                 required
-                options={[
-                  {
-                    label: 'Categoría',
-                    value: 'category'
-                  },
-                  {
-                    label: 'Subcategoría',
-                    value: 'subcategory'
-                  },
-                  {
-                    label: 'Producto',
-                    value: 'product'
-                  },
-                ]}
+                options={collections.map(collection => ({
+                  label: collection.name,
+                  value: collection._id
+                }))}
                 errors={errors}
                 control={control}
-                name='limitBy'
-                label='Limitar por'
+                isMulti
+                name='collections'
+                label='Colecciones que aplican'
               />
-            </div>
-            {
-              limitBy === 'category' && <div className="group">
-                <Select
-                  required
-                  options={categories.map(category => ({
-                    label: category.name,
-                    value: category.id
-                  }))}
-                  errors={errors}
-                  control={control}
-                  isMulti
-                  name='categories'
-                  label='Categorías que aplican'
-                />
-              </div>
             }
             {
-              limitBy === 'subcategory' && <div className="group">
-                <Select
-                  required
-                  options={subcategories.map(subcategory => ({
-                    label: subcategory.name,
-                    value: subcategory.id
-                  }))}
-                  errors={errors}
-                  control={control}
-                  isMulti
-                  name='subcategories'
-                  label='Subcategorías que aplican'
-                />
-              </div>
+              limitBy === 'product' &&
+              <Select
+                required
+                options={products.map(product => ({
+                  label: product.name,
+                  value: product._id
+                }))}
+                errors={errors}
+                control={control}
+                isMulti
+                name='products'
+                label='Productos que aplican'
+              />
             }
-            {
-              limitBy === 'product' && <div className="group">
-                <Select
-                  required
-                  options={products.map(product => ({
-                    label: product.name,
-                    value: product.id
-                  }))}
-                  errors={errors}
-                  control={control}
-                  isMulti
-                  name='products'
-                  label='Productos que aplican'
-                />
-              </div>
-            }
-            <div className="group">
-              <input {...register('customOnly')} type="checkbox" name="customOnly" id="customOnly" />
-              <label htmlFor="customOnly">Solo aplica si el producto es personalizado</label>
-            </div>
           </>
         }
       </>
@@ -347,8 +292,7 @@ const DiscountDetailsPage = ({ discount }: Props) => {
               !editing && <button className='btn btn-black' onClick={() => {
                 setEditing(true)
                 fetchProducts()
-                fetchCategories()
-                fetchSubcategories()
+                fetchCollections()
               }}>Editar</button>
             }
           </div>
@@ -367,7 +311,7 @@ const DiscountDetailsPage = ({ discount }: Props) => {
             </div>
             <div className="cardItem">
               <h4>Fecha de expiración</h4>
-              <span>{moment(discount.expiry).format('ll')}</span>
+              <span>{moment(discount.endDate).format('ll')}</span>
             </div>
             <div className="cardItem">
               <h4>Activo</h4>
@@ -376,12 +320,10 @@ const DiscountDetailsPage = ({ discount }: Props) => {
             {
               discount.limited && <div className="cardItem">
                 <h4>Elegibilidad</h4>
-                {
-                  discount.customOnly ? <span style={{ color: 'red' }}>Este descuento solo aplica para los siguientes productos y que hayan sido personalizados: </span> : <span>Este descuento solo aplica para los siguientes productos: </span>
-                }
+                <span>Este descuento solo aplica para los siguientes productos: </span>
                 <br />
                 {
-                  discount.products.map(product => (
+                  discount.applicableProducts.map(product => (
                     <span key={product.name}>{product.name}</span>
                   ))
                 }
