@@ -14,6 +14,7 @@ import React, { ReactElement, useCallback, useState } from 'react'
 import toast from 'react-hot-toast'
 import Cookies from "js-cookie";
 import { getServerSideToken } from '@/utils/getServerSideToken'
+import Chip from '@/components/common/Chip'
 
 interface Props {
   collections: CollectionInterface[],
@@ -62,10 +63,24 @@ const CollectionsAdminPage = ({ collections = [], page, limit, size }: Props) =>
       key: 'code'
     },
     {
-      title: 'Activa',
-      dataIndex: 'active',
-      key: 'active',
-      render: (_text: string, record: CollectionInterface) => record.active ? 'Activa' : 'No Publicada'
+      title: 'Estado',
+      dataIndex: 'status',
+      key: 'status',
+      render: (_text: string, record: CollectionInterface) => <div className='d-flex flex-column align-start'>
+        {
+          record.active ? <Chip text='activo' color='green' /> : <Chip text='no activo' />
+        }
+      </div>
+    },
+    {
+      title: 'Colección agrupadora',
+      dataIndex: 'parentCollection',
+      key: 'parentCollection',
+      render: (_text: string, record: CollectionInterface) => <div className='d-flex flex-column align-start'>
+        {
+          record.parentCollection && <Chip text={record.parentCollection.name} />
+        }
+      </div>
     },
     {
       title: 'Detalles',

@@ -14,6 +14,7 @@ import { ReactElement, useState } from "react"
 import toast from "react-hot-toast"
 import Cookies from "js-cookie";
 import { getServerSideToken } from "@/utils/getServerSideToken"
+import Chip from "@/components/common/Chip"
 
 interface Props {
   products: ProductInterface[],
@@ -62,10 +63,14 @@ const ProductsAdminPage = ({ products = [], page, limit, size }: Props) => {
       render: (_text: string, record: ProductInterface) => record.price ? <>{`${record.price} MXN`}</> : 'N/A',
     },
     {
-      title: 'Activo',
-      dataIndex: 'active',
-      key: 'active',
-      render: (_text: string, record: ProductInterface) => record.active ? 'Activo' : 'No activo'
+      title: 'Estado',
+      dataIndex: 'status',
+      key: 'status',
+      render: (_text: string, record: ProductInterface) => <div className='d-flex flex-column align-start'>
+        {
+          record.active ? <Chip text='activo' color='green' /> : <Chip text='no activo' />
+        }
+      </div>
     },
     {
       title: 'Detalles',

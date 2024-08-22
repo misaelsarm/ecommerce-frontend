@@ -86,13 +86,10 @@ const AddProduct = ({ visible, setVisible, onOk }: Props) => {
   //const { handleFileUpload, uploading } = useFileUpload();
 
   const onSubmit = async (values: any) => {
-    console.log({ values })
 
     //if (images.length === 0) return toast.error('Elige al menos 1 imagen')
-
-    //setSaving(true)
-
     try {
+      setSaving(true)
       const product = {
         attributes: values.attributes?.map((attribute: any) => attribute?.value),
         collections: values.collections?.map((col: any) => col.value),
@@ -114,7 +111,7 @@ const AddProduct = ({ visible, setVisible, onOk }: Props) => {
           availableQuantity: values.availableQuantity
         },
       }
-      
+
       await makeRequest('post', '/api/products', product)
       toast.success('Producto agregado')
       setSaving(false)
@@ -122,7 +119,7 @@ const AddProduct = ({ visible, setVisible, onOk }: Props) => {
       resetForm()
     } catch (error: any) {
       console.log(error);
-      toast.error(error?.response?.data?.message || 'Error')
+      toast.error(error?.response?.data?.message || 'Error al añadir producto. ' + error)
       setSaving(false)
     }
   }
@@ -157,7 +154,7 @@ const AddProduct = ({ visible, setVisible, onOk }: Props) => {
           label='Descripción del producto'
           required
         />
-        <MyEditorComponent />
+        {/* <MyEditorComponent /> */}
         <Input
           register={register}
           label='Palabras clave'

@@ -11,7 +11,7 @@ import { makeRequest } from "@/utils/makeRequest"
 import { numberWithCommas } from "@/utils/numberWithCommas"
 import { GetServerSideProps } from "next"
 import { useRouter } from "next/router"
-import { ReactElement, useEffect, useRef, useState } from "react"
+import { ReactElement, useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import Cookies from "js-cookie"
@@ -23,15 +23,11 @@ interface Props {
 
 const ProductDetailsAdminPage = ({ product }: Props) => {
 
-  console.log({ product })
-
   const [editing, setEditing] = useState(false)
 
   const [collections, setCollections] = useState([])
 
   const [attributes, setAttributes] = useState([])
-
-  console.log({ collections, attributes })
 
   async function fetchData() {
     try {
@@ -61,7 +57,7 @@ const ProductDetailsAdminPage = ({ product }: Props) => {
     }
   }
 
-  const { register, handleSubmit, control, resetField, formState: { errors }, reset } = useForm<any>({
+  const { register, handleSubmit, control, formState: { errors } } = useForm<any>({
     defaultValues: {
       name: product.name,
       description: product.description,

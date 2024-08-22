@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import Cookies from "js-cookie"
 import { attributeTypes } from "@/utils/attributeTypes"
+import Checkbox from "@/components/common/Checkbox"
 
 interface Props {
   visible: boolean,
@@ -166,6 +167,12 @@ const AddAttribute = ({ visible, setVisible, onOk }: Props) => {
             />
           </div>
         }
+        <Checkbox
+          register={register}
+          label='Activo'
+          id='active'
+          name='active'
+        />
       </>
     </Modal >
   )

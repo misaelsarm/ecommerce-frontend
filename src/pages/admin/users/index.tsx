@@ -9,6 +9,8 @@ import { UserInterface } from '@/interfaces'
 import PageHeader from '@/components/admin/PageHeader'
 import moment from 'moment'
 import { getServerSideToken } from '@/utils/getServerSideToken'
+import Chip from '@/components/common/Chip'
+import Link from 'next/link'
 
 interface Props {
   users: UserInterface[],
@@ -31,16 +33,37 @@ const UsersAdminPage = ({ users, page, limit, size }: Props) => {
       key: 'email',
     },
     {
-      title: 'Miembro desde',
-      dataIndex: 'createdAt',
-      key: 'createdAt',
-      render: (_text: string, record: UserInterface) => moment(record.createdAt).format('lll')
+      title: 'Tipo de usuario',
+      dataIndex: 'role',
+      key: 'role',
+      render: (text: string, record: UserInterface) => record.role.label
     },
     {
       title: 'Ultimo ingreso',
       dataIndex: 'createdAt',
       key: 'createdAt',
       render: (_text: string, record: UserInterface) => record.lastLogin ? moment(record.lastLogin).format('lll') : null
+    },
+    {
+      title: 'Estado',
+      dataIndex: 'status',
+      key: 'status',
+      render: (_text: string, record: UserInterface) => <div className='d-flex flex-column align-start'>
+        {
+          record.active ? <Chip text='activo' color='green' /> : <Chip text='no activo' />
+        }
+        {
+          record.verified ? <Chip text='verificado' color='green' /> : <Chip text='no verificado' />
+        }
+      </div>
+    },
+    {
+      title: 'Detalles',
+      dataIndex: 'detalles',
+      key: 'detalles',
+      render: (_text: string, record: UserInterface) => (
+        <Link href={`/admin/users/${record._id}`} className='btn btn-black btn-auto'>Ver</Link>
+      )
     },
   ]
 

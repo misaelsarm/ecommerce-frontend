@@ -60,6 +60,7 @@ const AddCollection = ({ visible, setVisible, onOk }: Props) => {
   }, [visible]);
 
   const imageRef = useRef<any>()
+
   const [image, setImage] = useState('')
 
   const [saving, setSaving] = useState(false)
@@ -69,11 +70,12 @@ const AddCollection = ({ visible, setVisible, onOk }: Props) => {
     setImage('')
   }
 
-  const onSubmit = async (data: any) => {
-    setSaving(true)
+  const onSubmit = async (values: any) => {
     try {
+      setSaving(true)
       const collection = {
-        ...data,
+        ...values,
+        parentCollection: values.parentCollection?.value,
         image,
       }
 
@@ -85,7 +87,7 @@ const AddCollection = ({ visible, setVisible, onOk }: Props) => {
       onOk && onOk()
     } catch (error: any) {
       console.log({ error })
-      toast.error(error.response.data.message)
+      toast.error(error?.response?.data?.message || 'Error al añadir la colección.' + error)
       setSaving(false)
     }
   }
@@ -126,7 +128,7 @@ const AddCollection = ({ visible, setVisible, onOk }: Props) => {
           control={control}
           options={collections}
           name="parentCollection"
-          label="Colección padre"
+          label="Colección agrupadora"
         />
         <Input
           register={register}

@@ -40,14 +40,6 @@ const OrderDetailsPage = ({ order }: Props) => {
               <h4>Numero de pedido</h4>
               <span>{order.number}</span>
             </div>
-            {/* <div className="cardItem">
-              <h4>Numero de guía</h4>
-              <span>{order.guideNumber}</span>
-            </div>
-            <div className="cardItem">
-              <h4>Paquetería</h4>
-              <span>{order.shippingName}</span>
-            </div> */}
             <div className="cardItem">
               <h4>Estado</h4>
               <span>{order.status}</span>

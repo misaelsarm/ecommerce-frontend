@@ -1,17 +1,13 @@
 import { api } from "@/api_config/api"
 import Layout from "@/components/admin/Layout"
-import { Sortable } from "@/components/admin/Sortable"
 import Checkbox from "@/components/common/Checkbox"
 import Input from "@/components/common/Input"
 import Modal from "@/components/common/Modal"
 import Select from "@/components/common/Select"
-import TextArea from "@/components/common/TextArea"
-import { AttributeInterface, CollectionInterface, ProductInterface, ValueInterface } from "@/interfaces"
-import { makeRequest } from "@/utils/makeRequest"
-import { numberWithCommas } from "@/utils/numberWithCommas"
+import { AttributeInterface, ValueInterface } from "@/interfaces"
 import { GetServerSideProps } from "next"
 import { useRouter } from "next/router"
-import { ReactElement, useEffect, useRef, useState } from "react"
+import { ReactElement, useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import Cookies from "js-cookie"
@@ -24,8 +20,6 @@ interface Props {
 }
 
 const AttributeDetailsAdminPage = ({ attribute }: Props) => {
-
-  console.log({ attribute })
 
   async function fetchData() {
     try {
@@ -48,11 +42,6 @@ const AttributeDetailsAdminPage = ({ attribute }: Props) => {
   const [values, setValues] = useState([] as ValueInterface[])
 
   const [type, setType] = useState<'dropdown' | 'color' | 'long-text' | 'short-text' | ''>(attribute.type.value)
-
-  const resetForm = () => {
-    reset()
-    setType('')
-  }
 
   useEffect(() => {
     if (editing) {
@@ -92,12 +81,12 @@ const AttributeDetailsAdminPage = ({ attribute }: Props) => {
       await api.put(`/api/attributes/${attribute._id}`, update, {
         headers: {
           "x-access-token": Cookies.get('token')
-          //"x-location": "admin"
         }
       })
-      toast.success('Atributo agregado')
+      toast.success('Atributo actualizado')
+      setEditing(false)
       setSaving(false)
-      reset()
+      replace(`/admin/attributes/${attribute._id}`)
     } catch (error: any) {
       setSaving(false)
       toast.error(error.response.data.message)
@@ -169,18 +158,23 @@ const AttributeDetailsAdminPage = ({ attribute }: Props) => {
         }
         {
           (type === 'short-text' || type === 'long-text') &&
-          <div className="group">
-            <Input
-              type='number'
-              inputMode='numeric'
-              register={register}
-              label='Máximo de caracteres'
-              placeholder='Máximo de caracteres'
-              name='max'
-              errors={errors}
-            />
-          </div>
+          <Input
+            type='number'
+            inputMode='numeric'
+            register={register}
+            label='Máximo de caracteres'
+            placeholder='Máximo de caracteres'
+            name='max'
+            errors={errors}
+          />
         }
+        <Checkbox
+          register={register}
+          label='Activo'
+          id='active'
+          name='active'
+          defaultChecked={attribute.active}
+        />
       </>
     )
   }
@@ -236,6 +230,14 @@ const AttributeDetailsAdminPage = ({ attribute }: Props) => {
                       ))
                     }
                   </div>
+                </div>
+              }
+              {
+                (type === 'short-text' || type === 'long-text') &&
+
+                <div className="cardItem">
+                  <h4>Máximo de caracteres permitidos</h4>
+                  <span>{attribute.max}</span>
                 </div>
               }
               <div className="cardItem">

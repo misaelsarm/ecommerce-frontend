@@ -3,6 +3,7 @@ import AddDiscount from '@/components/admin/discounts/AddDiscount'
 import Layout from '@/components/admin/Layout'
 import PageHeader from '@/components/admin/PageHeader'
 import Table from '@/components/admin/Table'
+import Chip from '@/components/common/Chip'
 import { useDebouncedSearch } from '@/hooks/useDebouncedSearch'
 import { DiscountInterface } from '@/interfaces'
 import { getServerSideToken } from '@/utils/getServerSideToken'
@@ -52,10 +53,14 @@ const DiscountsAdminPage = ({ discounts = [], page, limit, size }: Props) => {
       render: (text: string) => moment(text).format('ll')
     },
     {
-      title: 'Activo',
-      dataIndex: 'active',
-      key: 'active',
-      render: (_text: string, record: DiscountInterface) => record.active ? 'Activo' : 'No activo'
+      title: 'Estado',
+      dataIndex: 'status',
+      key: 'status',
+      render: (_text: string, record: DiscountInterface) => <div className='d-flex flex-column align-start'>
+        {
+          record.active ? <Chip text='activo' color='green' /> : <Chip text='no activo' />
+        }
+      </div>
     },
     {
       title: 'Detalles',
