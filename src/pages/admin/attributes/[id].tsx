@@ -241,8 +241,10 @@ const AttributeDetailsAdminPage = ({ attribute }: Props) => {
                 </div>
               }
               <div className="cardItem">
-                <h4>Activo</h4>
-                <span>{attribute.active ? 'Si' : 'No'}</span>
+                <h4>Estado</h4>
+                {
+                  attribute.active ? <Chip text='activo' color='green' /> : <Chip text='no activo' />
+                }
               </div>
             </>
           </div>

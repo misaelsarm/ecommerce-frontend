@@ -1,21 +1,18 @@
 import { api } from "@/api_config/api"
 import Layout from "@/components/admin/Layout"
-import { Sortable } from "@/components/admin/Sortable"
 import Checkbox from "@/components/common/Checkbox"
+import Chip from "@/components/common/Chip"
 import Input from "@/components/common/Input"
 import Modal from "@/components/common/Modal"
 import Select from "@/components/common/Select"
 import TextArea from "@/components/common/TextArea"
-import { AttributeInterface, CollectionInterface, ProductInterface } from "@/interfaces"
+import { CollectionInterface } from "@/interfaces"
 import { makeRequest } from "@/utils/makeRequest"
-import { numberWithCommas } from "@/utils/numberWithCommas"
 import { GetServerSideProps } from "next"
 import { useRouter } from "next/router"
 import { ReactElement, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
-import Cookies from "js-cookie"
-import Chip from "@/components/common/Chip"
 
 interface Props {
   collection: CollectionInterface,
@@ -24,6 +21,8 @@ interface Props {
 
 const CollectionDetailsPage = ({ collection, collections }: Props) => {
 
+  console.log({ collection, collections })
+
   const [editing, setEditing] = useState(false)
 
   const { register, handleSubmit, control, formState: { errors } } = useForm<any>({
@@ -31,7 +30,10 @@ const CollectionDetailsPage = ({ collection, collections }: Props) => {
       name: collection.name,
       description: collection.description,
       keywords: collection.keywords,
-      parentCollection: collection.parentCollection?._id,
+      parentCollection: {
+        label: collection.parentCollection?.name,
+        value: collection.parentCollection?._id
+      },
       active: collection.active,
     }
   });
@@ -208,7 +210,7 @@ const CollectionDetailsPage = ({ collection, collections }: Props) => {
                 collection.parentCollection &&
                 <div className="cardItem">
                   <h4>Colección agrupadora</h4>
-                  <span>{collection.parentCollection?.name}</span>
+                  <Chip text={collection.parentCollection?.name} />
                 </div>
               }
               <div className="cardItem">
@@ -216,10 +218,11 @@ const CollectionDetailsPage = ({ collection, collections }: Props) => {
                 <span>{collection.keywords}</span>
               </div>
               <div className="cardItem">
-                <h4>Activo</h4>
-                <span>{collection.active ? 'Si' : 'No'}</span>
+                <h4>Estado</h4>
+                {
+                  collection.active ? <Chip text='activo' color='green' /> : <Chip text='no activo' />
+                }
               </div>
-
               <div className="cardItem">
                 <h4>Imagenes</h4>
                 <div className='flex wrap'>
