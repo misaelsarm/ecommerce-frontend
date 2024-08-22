@@ -1,6 +1,7 @@
 import { api } from '@/api_config/api';
 import Layout from '@/components/admin/Layout'
 import Checkbox from '@/components/common/Checkbox';
+import Chip from '@/components/common/Chip';
 import DatePicker from '@/components/common/DatePicker';
 import Input from '@/components/common/Input';
 import Modal from '@/components/common/Modal';
@@ -25,7 +26,11 @@ const DiscountDetailsPage = ({ discount }: Props) => {
 
   const [saving, setSaving] = useState(false)
 
-  const { register, handleSubmit, control, reset, formState: { errors }, watch } = useForm();
+  const { register, handleSubmit, control, reset, formState: { errors }, watch } = useForm({
+    defaultValues: {
+      
+    }
+  });
 
   const [limitBy, setLimitBy] = useState('')
 
@@ -314,8 +319,10 @@ const DiscountDetailsPage = ({ discount }: Props) => {
               <span>{moment(discount.endDate).format('ll')}</span>
             </div>
             <div className="cardItem">
-              <h4>Activo</h4>
-              <span>{discount.active ? 'Si' : 'No'}</span>
+              <h4>Estado</h4>
+              {
+                discount.active ? <Chip text='activo' color='green' /> : <Chip text='no activo' />
+              }
             </div>
             {
               discount.limited && <div className="cardItem">
