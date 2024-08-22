@@ -7,13 +7,12 @@ import Input from '@/components/common/Input';
 import Modal from '@/components/common/Modal';
 import Select from '@/components/common/Select';
 import { CollectionInterface, DiscountInterface, ProductInterface } from '@/interfaces';
-
 import { makeRequest } from '@/utils/makeRequest';
 import moment from 'moment';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import React, { ReactElement, useEffect, useState } from 'react'
-import { Controller, useForm } from 'react-hook-form';
+import React, { ReactElement, useState } from 'react'
+import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
 interface Props {
@@ -22,23 +21,41 @@ interface Props {
 
 const DiscountDetailsPage = ({ discount }: Props) => {
 
+  console.log({ discount })
+
   const [editing, setEditing] = useState(false)
 
   const [saving, setSaving] = useState(false)
 
-  const { register, handleSubmit, control, reset, formState: { errors }, watch } = useForm({
-    defaultValues: {
-      
+  const { register, handleSubmit, control, reset, formState: { errors }, watch } = useForm<any>({
+    defaultValues:
+    {
+      "name": discount.name,
+      "type": discount.type,
+      "value": discount.value,
+      "active": discount.active,
+      "endDate": discount.endDate,
+      "applicableProducts": discount.applicableProducts?.map(item => ({
+        label: item.name,
+        value: item._id
+      })),
+      "applicableCollections": discount.applicableCollections?.map(item => ({
+        label: item.name,
+        value: item._id
+      })),
+      limitBy: discount.limitBy,
+      limited: discount.limited
     }
+
   });
 
-  const [limitBy, setLimitBy] = useState('')
+  const [limitBy, setLimitBy] = useState(discount.limitBy?.value)
 
-  const [discountType, setDiscountType] = useState('')
+  const [discountType, setDiscountType] = useState(discount.type?.value)
 
   const [products, setProducts] = useState<ProductInterface[]>([])
 
-  const [limited, setLimited] = useState(false)
+  const [limited, setLimited] = useState(discount.limited)
 
   const [collections, setCollections] = useState<CollectionInterface[]>([])
 
@@ -64,69 +81,44 @@ const DiscountDetailsPage = ({ discount }: Props) => {
     }
   }
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-
-
-  //       setStartDate(new Date(discount.expiry))
-  //       setDiscountType(discount.type?.value)
-  //       setLimitBy(discount.limitBy?.value)
-  //       reset({
-  //         ...discount,
-  //         products: discount.products.map((product: any) => ({
-  //           label: product.name,
-  //           value: product._id
-  //         })),
-  //         categories: discount?.categories?.map((category: any) => ({
-  //           label: category.name,
-  //           value: category._id
-  //         }))
-  //       })
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   }
-  //   fetchData()
-  // }, [id, reset])
-
   const onSubmit = async (values: any) => {
+    try {
 
-    let validProducts: string[] = []
+      let validProducts: string[] = []
 
-    let validCollections: string[] = []
+      let validCollections: string[] = []
 
-    let foundProducts = []
+      let foundProducts = []
 
-    if (limitBy === 'collection') {
+      if (limitBy === 'collection') {
 
-      let selectedCollections: string[] = values.collections.map((cat: any) => cat.value)
+        let selectedCollections: string[] = values.applicableCollections.map((cat: any) => cat.value)
 
-      for (const product of products) {
+        for (const product of products) {
 
-        for (const col of product.collections) {
-          if (selectedCollections.includes(col._id)) {
-            foundProducts.push(product._id)
+          for (const col of product.collections) {
+            if (selectedCollections.includes(col._id)) {
+              foundProducts.push(product._id)
+            }
           }
         }
+
+        validProducts = foundProducts
+        validCollections = selectedCollections
+
+      } else {
+        validProducts = values.applicableProducts?.map((product: any) => product.value)
+        validCollections = []
       }
 
-      validProducts = foundProducts
-      validCollections = selectedCollections
+      const discount = {
+        ...values,
+        applicableProducts: [...new Set(validProducts)],
+        applicableCollections: validCollections,
+      }
 
-    } else {
-      validProducts = values.products?.map((product: any) => product.value)
-      validCollections = []
-    }
+      setSaving(true)
 
-    const discount = {
-      ...values,
-      products: validProducts,
-      collections: validCollections,
-    }
-
-    setSaving(true)
-    try {
       await makeRequest('put', `/api/discounts/${id}`, discount);
 
       toast.success('Descuento actualizado')
@@ -135,7 +127,7 @@ const DiscountDetailsPage = ({ discount }: Props) => {
       replace(`/admin/discounts/${id}`)
     } catch (error: any) {
       if (error) {
-        toast.error(error.response.data.message)
+        toast.error(error?.response?.data?.message || 'Error al guardar descuento. ' + error)
         setSaving(false)
       }
     }
@@ -253,7 +245,7 @@ const DiscountDetailsPage = ({ discount }: Props) => {
                 errors={errors}
                 control={control}
                 isMulti
-                name='collections'
+                name='applicableCollections'
                 label='Colecciones que aplican'
               />
             }
@@ -268,7 +260,7 @@ const DiscountDetailsPage = ({ discount }: Props) => {
                 errors={errors}
                 control={control}
                 isMulti
-                name='products'
+                name='applicableProducts'
                 label='Productos que aplican'
               />
             }
@@ -330,7 +322,7 @@ const DiscountDetailsPage = ({ discount }: Props) => {
                 <span>Este descuento solo aplica para los siguientes productos: </span>
                 <br />
                 {
-                  discount.applicableProducts.map(product => (
+                  discount?.applicableProducts?.map(product => (
                     <span key={product.name}>{product.name}</span>
                   ))
                 }

@@ -68,42 +68,44 @@ const AddDiscount = ({ visible, setVisible, onOk }: Props) => {
 
   const onSubmit = async (values: any) => {
 
-    let validProducts: string[] = []
+    try {
 
-    let validCollections: string[] = []
+      let validProducts: string[] = []
 
-    let foundProducts = []
+      let validCollections: string[] = []
 
-    if (limitBy === 'collection') {
+      let foundProducts = []
 
-      let selectedCollections: string[] = values.collections.map((cat: any) => cat.value)
+      if (limitBy === 'collection') {
 
-      for (const product of products) {
+        let selectedCollections: string[] = values.collections.map((cat: any) => cat.value)
 
-        for (const col of product.collections) {
-          if (selectedCollections.includes(col._id)) {
-            foundProducts.push(product._id)
+        for (const product of products) {
+
+          for (const col of product.collections) {
+            if (selectedCollections.includes(col._id)) {
+              foundProducts.push(product._id)
+            }
           }
         }
+
+        validProducts = foundProducts
+        validCollections = selectedCollections
+
+      } else {
+        validProducts = values.products?.map((product: any) => product.value)
+        validCollections = []
       }
 
-      validProducts = foundProducts
-      validCollections = selectedCollections
+      const discount = {
+        ...values,
+        applicableProducts: [...new Set(validProducts)],
+        applicableCollections: validCollections,
+      }
 
-    } else {
-      validProducts = values.products?.map((product: any) => product.value)
-      validCollections = []
-    }
+      //return console.log({ discount })
 
-    const discount = {
-      ...values,
-      products: validProducts,
-      collections: validCollections,
-    }
-
-    setSaving(true)
-    
-    try {
+      setSaving(true)
 
       await makeRequest('post', `/api/discounts`, discount);
 
@@ -243,7 +245,7 @@ const AddDiscount = ({ visible, setVisible, onOk }: Props) => {
                 errors={errors}
                 control={control}
                 isMulti
-                name='collections'
+                name='applicableCollections'
                 label='Colecciones que aplican'
               />
             }
@@ -258,7 +260,7 @@ const AddDiscount = ({ visible, setVisible, onOk }: Props) => {
                 errors={errors}
                 control={control}
                 isMulti
-                name='products'
+                name='applicableProducts'
                 label='Productos que aplican'
               />
             }

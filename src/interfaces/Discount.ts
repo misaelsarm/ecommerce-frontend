@@ -11,6 +11,11 @@ export interface DiscountInterface {
   active: boolean
   startDate: string
   endDate: string
+  limited?: boolean
+  limitBy: {
+    label: string,
+    value: string
+  }
   applicableProducts?: ProductInterface[]; // List of products the discount applies to
   applicableCollections?: CollectionInterface[]; // List of collections the discount applies to
 }

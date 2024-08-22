@@ -72,7 +72,7 @@ const CollectionsAdminPage = ({ collections = [], page, limit, size }: Props) =>
         }
       </div>
     },
-    {
+/*     {
       title: 'Colección agrupadora',
       dataIndex: 'parentCollection',
       key: 'parentCollection',
@@ -81,7 +81,7 @@ const CollectionsAdminPage = ({ collections = [], page, limit, size }: Props) =>
           record.parentCollection && <Chip text={record.parentCollection.name} />
         }
       </div>
-    },
+    }, */
     {
       title: 'Detalles',
       dataIndex: 'detalles',
