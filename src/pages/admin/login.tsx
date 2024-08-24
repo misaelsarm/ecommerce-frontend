@@ -6,10 +6,11 @@ import Cookies from 'js-cookie';
 import { useContext, useState } from 'react';
 import { useRouter } from 'next/router';
 import Input from '@/components/common/Input';
+import { AuthContext } from '@/context/auth/AuthContext';
 
 const AdminLoginPage = () => {
 
-  //const { setUser } = useContext(AuthContext)
+  const { setUser } = useContext(AuthContext)
 
   const { register, handleSubmit, formState: { errors } } = useForm();
 
@@ -26,8 +27,7 @@ const AdminLoginPage = () => {
       Cookies.set('token', data.token);
       const redirectUrl = returnUrl as string || '/admin/orders?page=1&limit=20'; // Default page after login
       replace(redirectUrl);
-      //replace('/admin/orders?page=1&limit=20')
-      //setUser(data)
+      setUser(data)
       setLoading(false)
 
     } catch (error: any) {

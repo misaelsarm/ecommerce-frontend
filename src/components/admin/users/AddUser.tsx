@@ -7,7 +7,7 @@ import { makeRequest } from "@/utils/makeRequest";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-
+import styles from '@/styles/admin/Users.module.scss'
 
 interface Props {
   visible: boolean,
@@ -19,51 +19,51 @@ const AddUser = ({ visible, setVisible, onOk }: Props) => {
 
   const views = [
     {
-      view: '/orders',
+      view: '/admin/orders',
       name: 'Pedidos',
     },
     {
-      view: '/products',
+      view: '/admin/products',
       name: 'Productos',
     },
     {
-      view: '/attributes',
+      view: '/admin/attributes',
       name: 'Atributos de producto',
     },
     {
-      view: '/values',
+      view: '/admin/values',
       name: 'Valores de atributo',
     },
     {
-      view: '/collections',
+      view: '/admin/collections',
       name: 'Colecciones',
     },
     {
-      view: '/customers',
+      view: '/admin/customers',
       name: 'Clientes',
     },
     {
-      view: '/users',
+      view: '/admin/users',
       name: 'Usuarios',
     },
     {
-      view: '/discounts',
+      view: '/admin/discounts',
       name: 'Descuentos',
     },
     {
-      view: '/reportes/rutas',
+      view: '/admin/reportes/rutas',
       name: 'Reporte de rutas',
     },
     {
-      view: '/reportes/repartidores',
+      view: '/admin/reportes/repartidores',
       name: 'Reporte de repartidores',
     },
     {
-      view: '/reportes/ventas',
+      view: '/admin/reportes/ventas',
       name: 'Reporte de ventas',
     },
     {
-      view: '/general',
+      view: '/admin/general',
       name: 'General',
     },
   ]
@@ -82,7 +82,7 @@ const AddUser = ({ visible, setVisible, onOk }: Props) => {
 
       if (permissions) {
         mapped = Object.keys(permissions).map(role => ({
-          view: role,
+          page: role,
           permissions: permissions[role] || [],
         }))
       }
@@ -94,7 +94,7 @@ const AddUser = ({ visible, setVisible, onOk }: Props) => {
         permissions: access.filter(role => role.permissions.length > 0),
       }
 
-       console.log({postedUser})
+      //return console.log({ postedUser })
 
       setSaving(true)
 
@@ -121,7 +121,7 @@ const AddUser = ({ visible, setVisible, onOk }: Props) => {
       }}
       visible={visible}
     >
-      <div>
+      <>
         <Input
           register={register}
           label='Nombre'
@@ -166,38 +166,7 @@ const AddUser = ({ visible, setVisible, onOk }: Props) => {
           name="role"
           label="Tipo de acceso"
         />
-        {/* <div className="group">
-          <span>Tipo de acceso</span>
-          <Controller
-            name="role"
-            control={control}
-            render={({ field: { onChange, onBlur, value } }) =>
-              <Select
-                onChange={onChange}
-                onBlur={onBlur}
-                value={value}
-                placeholder='Tipo de acceso'
-                isSearchable={true}
-                options={[
-                  {
-                    label: 'Administrador',
-                    value: 'admin'
-                  },
-                  {
-                    label: 'Usuario',
-                    value: 'user'
-                  },
-                  {
-                    label: 'Repartidor',
-                    value: 'delivery'
-                  },
-                ]}
-              />}
-          />
-          {errors.category && <span className='error'>Campo requerido</span>}
-        </div> */}
-
-        {/* <div className={styles.rolesWrapper}>
+        <div className={styles.rolesWrapper}>
           <span>Elegir accesos de usuario</span>
           {
             views.map(role => (
@@ -237,14 +206,14 @@ const AddUser = ({ visible, setVisible, onOk }: Props) => {
               </div>
             ))
           }
-        </div> */}
+        </div>
         <Checkbox
           register={register}
           label='Activo'
           id='active'
           name='active'
         />
-      </div>
+      </>
     </Modal >
   )
 }

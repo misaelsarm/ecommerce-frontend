@@ -35,6 +35,6 @@ export interface UserInterface {
 
   verified: boolean
 
-  permissions: [{ type: String }]  // Store permissions directly
+  permissions: any[]  // Store permissions directly
 
 }
