@@ -12,6 +12,7 @@ import moment from 'moment'
 import { getServerSideToken } from '@/utils/getServerSideToken'
 import Link from 'next/link'
 import Chip from '@/components/common/Chip'
+import { useDebouncedSearch } from '@/hooks/useDebouncedSearch'
 
 interface Props {
   customers: UserInterface[],
@@ -25,6 +26,8 @@ const CustomersAdminPage = ({ customers, page, limit, size }: Props) => {
   const [confirmDelete, setConfirmDelete] = useState(false)
 
   const [deletedUser, setDeletedUser] = useState({} as UserInterface)
+
+  const [visible, setVisible] = useState(false)
 
   const columns = [
     {
@@ -72,26 +75,9 @@ const CustomersAdminPage = ({ customers, page, limit, size }: Props) => {
     },
   ]
 
-  const { push, query } = useRouter()
+  const { searchTerm, setSearchTerm, handleSearch } = useDebouncedSearch({ url: 'customers', limit })
 
-  const [searchTerm, setSearchTerm] = useState(query.search)
-
-  const debouncedSearch = useCallback(
-    debounce((searchTerm) => {
-      if (searchTerm.trim().length === 0) {
-        push(`/admin/customers?page=1&limit=20`);
-      } else {
-        push(`/admin/customers?search=${searchTerm}`);
-      }
-    }, 500),
-    [limit]
-  );
-
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const searchTerm = e.target.value;
-    setSearchTerm(searchTerm);
-    debouncedSearch(searchTerm);
-  };
+  const { push, query, replace } = useRouter()
 
   return (
     <div className="page">
@@ -102,7 +88,7 @@ const CustomersAdminPage = ({ customers, page, limit, size }: Props) => {
             {
               name: "Nuevo cliente",
               onClick: () => {
-                //setVisible(true)
+                setVisible(true)
               }
             }
           ]

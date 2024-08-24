@@ -8,6 +8,7 @@ import { useRouter } from 'next/router'
 //import { User } from '@/interfaces'
 import Head from 'next/head'
 import { useWindowWidth } from '@/hooks/useWindowWidth'
+import Cookies from 'js-cookie'
 
 interface Props {
   title: string
@@ -51,8 +52,8 @@ const Layout: FC<Props> = ({ children, title }) => {
               <span
                 onClick={() => {
                   setVisible(false)
-                  // Cookies.remove('token')
-                  replace('/login')
+                  Cookies.remove('token')
+                  replace('/admin/login')
                   // setUser({} as User)
                 }}
               > Cerrar sesión</span>

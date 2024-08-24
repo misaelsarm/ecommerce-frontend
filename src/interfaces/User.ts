@@ -34,4 +34,7 @@ export interface UserInterface {
   createdAt: Date
 
   verified: boolean
+
+  permissions: [{ type: String }]  // Store permissions directly
+
 }

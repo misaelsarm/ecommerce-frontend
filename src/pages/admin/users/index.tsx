@@ -11,6 +11,8 @@ import moment from 'moment'
 import { getServerSideToken } from '@/utils/getServerSideToken'
 import Chip from '@/components/common/Chip'
 import Link from 'next/link'
+import { useDebouncedSearch } from '@/hooks/useDebouncedSearch'
+import AddUser from '@/components/admin/users/AddUser'
 
 interface Props {
   users: UserInterface[],
@@ -23,7 +25,7 @@ const UsersAdminPage = ({ users, page, limit, size }: Props) => {
 
   const columns = [
     {
-      title: 'Nombre de cliente',
+      title: 'Nombre',
       dataIndex: 'name',
       key: 'name'
     },
@@ -67,60 +69,55 @@ const UsersAdminPage = ({ users, page, limit, size }: Props) => {
     },
   ]
 
-  const { push, query } = useRouter()
+  const { searchTerm, setSearchTerm, handleSearch } = useDebouncedSearch({ url: 'users', limit })
 
-  const [searchTerm, setSearchTerm] = useState(query.search)
+  const { push, query, replace } = useRouter()
 
-  const debouncedSearch = useCallback(
-    debounce((searchTerm) => {
-      if (searchTerm.trim().length === 0) {
-        push(`/admin/users?page=1&limit=20`);
-      } else {
-        push(`/admin/users?search=${searchTerm}`);
-      }
-    }, 500),
-    [limit]
-  );
-
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const searchTerm = e.target.value;
-    setSearchTerm(searchTerm);
-    debouncedSearch(searchTerm);
-  };
+  const [visible, setVisible] = useState(false)
 
   return (
-    <div className="page">
-      <PageHeader
-        title='Clientes'
-        actions={
-          [
-            {
-              name: "Nuevo cliente",
-              onClick: () => {
-                //setVisible(true)
+    <>
+      <div className="page">
+        <PageHeader
+          title='Usuarios'
+          actions={
+            [
+              {
+                name: "Nuevo usuario",
+                onClick: () => {
+                  setVisible(true)
+                }
               }
-            }
-          ]
-        }
-        handleSearch={handleSearch}
-        searchQuery={query.search}
-        searchTerm={searchTerm}
-        onClearSearch={() => {
-          push(`/admin/users?page=1&limit=20`);
-          setSearchTerm('')
+            ]
+          }
+          handleSearch={handleSearch}
+          searchQuery={query.search}
+          searchTerm={searchTerm}
+          onClearSearch={() => {
+            push(`/admin/users?page=1&limit=20`);
+            setSearchTerm('')
+          }}
+        />
+        <div className="pageContent">
+          <Table
+            columns={columns}
+            data={users}
+            page={page}
+            limit={limit}
+            size={size}
+            navigateTo='users'
+          />
+        </div>
+      </div>
+      <AddUser
+        visible={visible}
+        setVisible={setVisible}
+        onOk={() => {
+          setVisible(false)
+          replace('/admin/users?page=1&limit=20')
         }}
       />
-      <div className="pageContent">
-        <Table
-          columns={columns}
-          data={users}
-          page={page}
-          limit={limit}
-          size={size}
-          navigateTo='users'
-        />
-      </div>
-    </div>
+    </>
   )
 }
 
@@ -163,7 +160,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
 
 UsersAdminPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <Layout title="Clientes">
+    <Layout title="Usuarios">
       {page}
     </Layout>
   );
