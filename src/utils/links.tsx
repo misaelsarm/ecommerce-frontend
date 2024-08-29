@@ -1,3 +1,5 @@
+import { ReactNode } from 'react';
+
 export const links = [
   {
     name: 'Pedidos',
@@ -72,3 +74,16 @@ export const links = [
     sub: [],
   }
 ]
+
+export interface SubLinkInterface {
+  name: string;
+  path: string;
+}
+
+export interface LinkInterface {
+  name: string;
+  icon: ReactNode; // Use ReactNode for rendering JSX elements
+  path: string;
+  root: string;
+  sub: SubLinkInterface[]; // Array of sub-links
+}

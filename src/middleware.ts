@@ -25,8 +25,17 @@ export default async function Middleware(req: NextRequest) {
         // Decode and verify the JWT token using Web Crypto API
         const decodedToken = await verifyJwt(token.value, process.env.JWT_SECRET as string);
 
-
         const userRole = decodedToken.role?.value;
+
+        const validUser = decodedToken.active && decodedToken.verified
+
+        if (!validUser) {
+            console.log('Usuario no valido');
+            // const url = req.nextUrl.clone();
+            // url.pathname = '/admin/403';
+            // return NextResponse.redirect(url);
+        }
+
         const userPermissions: {
             "page": string,
             "permissions": string[]

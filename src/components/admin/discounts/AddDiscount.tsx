@@ -93,7 +93,8 @@ const AddDiscount = ({ visible, setVisible, onOk }: Props) => {
         validCollections = selectedCollections
 
       } else {
-        validProducts = values.products?.map((product: any) => product.value)
+        validProducts = values.applicableProducts?.map((product: any) => product.value)
+        console.log({ validProducts })
         validCollections = []
       }
 
@@ -103,7 +104,7 @@ const AddDiscount = ({ visible, setVisible, onOk }: Props) => {
         applicableCollections: validCollections,
       }
 
-      //return console.log({ discount })
+      console.log({ discount })
 
       setSaving(true)
 

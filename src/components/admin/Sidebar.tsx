@@ -1,19 +1,21 @@
 import { CSSProperties, useContext, useEffect, useState } from 'react';
-import { links } from '@/utils/links';
+import { LinkInterface, links } from '@/utils/links';
 import styles from '@/styles/admin/Sidebar.module.scss';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { AuthContext } from '@/context/auth/AuthContext';
 
 const Sidebar = () => {
+
   const { asPath } = useRouter();
+
   const { user } = useContext(AuthContext);
 
   // Extract pages from user permissions
   const pages = user.permissions?.map(item => item.page);
 
   // State for filtered links
-  const [filtered, setFiltered] = useState([]);
+  const [filtered, setFiltered] = useState<LinkInterface[]>([]);
 
   useEffect(() => {
     if (user.role?.value === 'admin') {

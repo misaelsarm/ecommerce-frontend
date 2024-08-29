@@ -48,8 +48,8 @@ const DiscountsAdminPage = ({ discounts = [], page, limit, size }: Props) => {
     },
     {
       title: 'Fecha de expiración',
-      dataIndex: 'expiry',
-      key: 'expiry',
+      dataIndex: 'endDate',
+      key: 'endDate',
       render: (text: string) => moment(text).format('ll')
     },
     {
