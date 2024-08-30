@@ -6,11 +6,13 @@ import Input from "@/components/common/Input"
 import Modal from "@/components/common/Modal"
 import Select from "@/components/common/Select"
 import TextArea from "@/components/common/TextArea"
+import { AuthContext } from "@/context/auth/AuthContext"
 import { CollectionInterface } from "@/interfaces"
+import { hasPermission } from "@/utils/hasPermission"
 import { makeRequest } from "@/utils/makeRequest"
 import { GetServerSideProps } from "next"
 import { useRouter } from "next/router"
-import { ReactElement, useRef, useState } from "react"
+import { ReactElement, useContext, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 
@@ -20,8 +22,6 @@ interface Props {
 }
 
 const CollectionDetailsPage = ({ collection, collections }: Props) => {
-
-  console.log({ collection, collections })
 
   const [editing, setEditing] = useState(false)
 
@@ -40,7 +40,11 @@ const CollectionDetailsPage = ({ collection, collections }: Props) => {
 
   const [saving, setSaving] = useState(false)
 
-  const { replace, back } = useRouter()
+  const { replace, back, pathname } = useRouter()
+
+  const { user } = useContext(AuthContext)
+
+  const canCreateEdit = user.role?.value === 'admin' ? true : hasPermission(pathname, 'create-edit', user.permissions)
 
   const [uploading, setUploading] = useState(false)
 
@@ -185,7 +189,8 @@ const CollectionDetailsPage = ({ collection, collections }: Props) => {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg></button>
             {
-              !editing && <button className='btn btn-black' onClick={async () => {
+              !editing && canCreateEdit &&
+              <button className='btn btn-black' onClick={async () => {
                 setEditing(true)
               }}>Editar</button>
             }

@@ -6,12 +6,14 @@ import DatePicker from '@/components/common/DatePicker';
 import Input from '@/components/common/Input';
 import Modal from '@/components/common/Modal';
 import Select from '@/components/common/Select';
+import { AuthContext } from '@/context/auth/AuthContext';
 import { CollectionInterface, DiscountInterface, ProductInterface } from '@/interfaces';
+import { hasPermission } from '@/utils/hasPermission';
 import { makeRequest } from '@/utils/makeRequest';
 import moment from 'moment';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import React, { ReactElement, useState } from 'react'
+import React, { ReactElement, useContext, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
@@ -20,8 +22,6 @@ interface Props {
 }
 
 const DiscountDetailsPage = ({ discount }: Props) => {
-
-  console.log({ discount })
 
   const [editing, setEditing] = useState(false)
 
@@ -59,7 +59,7 @@ const DiscountDetailsPage = ({ discount }: Props) => {
 
   const [collections, setCollections] = useState<CollectionInterface[]>([])
 
-  const { query: { id }, back, replace } = useRouter()
+  const { query: { id }, back, replace, pathname } = useRouter()
 
   const fetchProducts = async () => {
     try {
@@ -132,6 +132,10 @@ const DiscountDetailsPage = ({ discount }: Props) => {
       }
     }
   }
+
+  const { user } = useContext(AuthContext)
+
+  const canCreateEdit = user.role?.value === 'admin' ? true : hasPermission(pathname, 'create-edit', user.permissions)
 
   const renderForm = () => {
     return (
@@ -286,7 +290,7 @@ const DiscountDetailsPage = ({ discount }: Props) => {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg></button>
             {
-              !editing && <button className='btn btn-black' onClick={() => {
+              !editing && canCreateEdit && <button className='btn btn-black' onClick={() => {
                 setEditing(true)
                 fetchProducts()
                 fetchCollections()

@@ -34,8 +34,6 @@ function transformResponseToDefaultValues(dbResponse) {
 
 const UserDetailsAdminPage = ({ user }: Props) => {
 
-  console.log({ user })
-
   const [editing, setEditing] = useState(false)
 
   const [collections, setCollections] = useState([])
@@ -315,25 +313,25 @@ const UserDetailsAdminPage = ({ user }: Props) => {
               <div className="cardItem">
                 <h4>Contraseña</h4>
                 <button
+                  disabled={saving}
                   onClick={async () => {
                     try {
+                      setSaving(true)
                       await makeRequest('post', '/api/auth/recover', {
                         email: "misael@wearerethink.mx"
                       })
                       toast.success('Se envió un correo con las instrucciones para restablecer la contraseña', {
                         duration: 6000
                       })
+                      setSaving(false)
                     } catch (error: any) {
                       toast.error(error.response.data.message, {
                         duration: 6000
                       })
+                      setSaving(false)
                     }
                   }}
                   className="btn btn-black mt-10">Restablecer contraseña</button>
-              </div>
-              <div className="cardItem">
-                <h4>Pedidos</h4>
-                {/*    <span>{user.orders}</span> */}
               </div>
               {
                 user.permissions && user.permissions.length > 0 &&

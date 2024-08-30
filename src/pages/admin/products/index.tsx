@@ -92,7 +92,7 @@ const ProductsAdminPage = ({ products = [], page, limit, size }: Props) => {
 
   const { push, query, replace, pathname } = useRouter()
 
-  if (hasPermission(pathname, 'delete', user.permissions)) {
+  if (hasPermission(pathname, 'delete', user.permissions) || user.role?.value === 'admin') {
     columns.push({
       title: 'Eliminar',
       dataIndex: 'eliminar',

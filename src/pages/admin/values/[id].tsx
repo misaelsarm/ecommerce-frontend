@@ -3,17 +3,18 @@ import Layout from "@/components/admin/Layout"
 import Input from "@/components/common/Input"
 import Modal from "@/components/common/Modal"
 import Select from "@/components/common/Select"
-import { AttributeInterface, ValueInterface } from "@/interfaces"
+import { ValueInterface } from "@/interfaces"
 import { GetServerSideProps } from "next"
 import { useRouter } from "next/router"
-import { ReactElement, useEffect, useState } from "react"
+import { ReactElement, useContext, useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import Cookies from "js-cookie"
 import Chip from "@/components/common/Chip"
 import { getServerSideToken } from "@/utils/getServerSideToken"
-import { attributeTypes } from "@/utils/attributeTypes"
 import Checkbox from "@/components/common/Checkbox"
+import { AuthContext } from "@/context/auth/AuthContext"
+import { hasPermission } from "@/utils/hasPermission"
 
 interface Props {
   value: ValueInterface
@@ -21,11 +22,15 @@ interface Props {
 
 const ValueDetailsAdminPage = ({ value }: Props) => {
 
-  console.log({ value })
-
   const [editing, setEditing] = useState(false)
 
   const [type, setType] = useState<'option' | 'color' | ''>(value.type.value)
+
+  const { user } = useContext(AuthContext)
+
+  const { replace, back, pathname } = useRouter()
+
+  const canCreateEdit = user.role?.value === 'admin' ? true : hasPermission(pathname, 'create-edit', user.permissions)
 
   const { register, handleSubmit, control, resetField, formState: { errors }, reset } = useForm<any>({
     defaultValues: {
@@ -37,8 +42,6 @@ const ValueDetailsAdminPage = ({ value }: Props) => {
   });
 
   const [saving, setSaving] = useState(false)
-
-  const { replace, back } = useRouter()
 
   const onSubmit = async (values: any) => {
 
@@ -136,7 +139,8 @@ const ValueDetailsAdminPage = ({ value }: Props) => {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg></button>
             {
-              !editing && <button className='btn btn-black' onClick={async () => {
+              !editing && canCreateEdit &&
+              <button className='btn btn-black' onClick={async () => {
                 setEditing(true)
               }}>Editar</button>
             }

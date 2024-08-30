@@ -178,76 +178,6 @@ const CustomerDetailsAdminPage = ({ user }: Props) => {
           errors={errors}
           required
         />
-        {/* <Input
-          type='password'
-          register={register}
-          label='Contraseña'
-          name='password'
-          errors={errors}
-          required
-        /> */}
-        <Select
-          control={control}
-          errors={errors}
-          required
-          options={[
-            {
-              label: 'Administrador',
-              value: 'admin'
-            },
-            {
-              label: 'Usuario',
-              value: 'user'
-            },
-            {
-              label: 'Repartidor',
-              value: 'delivery'
-            },
-          ]}
-          name="role"
-          label="Tipo de acceso"
-        />
-        <div className={styles.rolesWrapper}>
-          <span>Elegir accesos de usuario</span>
-          {
-            views.map(role => (
-              <div key={role.view} className={styles.viewWrapper}>
-                <div className={styles.view}>
-                  <h4>{role.name}</h4>
-                </div>
-                <div className={styles.roles}>
-                  <div className={styles.role}>
-                    <Checkbox
-                      register={register}
-                      name={`permissions[${role.view}]`}
-                      label='Ver'
-                      id={`permissions[${role.view}]-view`}
-                      value='view'
-                    />
-                  </div>
-                  <div className={styles.role}>
-                    <Checkbox
-                      register={register}
-                      name={`permissions[${role.view}]`}
-                      label='Crear / Editar'
-                      id={`permissions[${role.view}]-create-edit`}
-                      value='create-edit'
-                    />
-                  </div>
-                  <div className={styles.role}>
-                    <Checkbox
-                      register={register}
-                      name={`permissions[${role.view}]`}
-                      label='Eliminar'
-                      id={`permissions[${role.view}]-delete`}
-                      value='delete'
-                    />
-                  </div>
-                </div>
-              </div>
-            ))
-          }
-        </div>
         <Checkbox
           register={register}
           label='Activo'
@@ -296,15 +226,30 @@ const CustomerDetailsAdminPage = ({ user }: Props) => {
               </div>
               <div className="cardItem">
                 <h4>Contraseña</h4>
-                <button className="btn btn-black mt-10">Restablecer contraseña</button>
+                <button
+                  disabled={saving}
+                  onClick={async () => {
+                    try {
+                      setSaving(true)
+                      await makeRequest('post', '/api/auth/recover', {
+                        email: "misael@wearerethink.mx"
+                      })
+                      toast.success('Se envió un correo con las instrucciones para restablecer la contraseña', {
+                        duration: 6000
+                      })
+                      setSaving(false)
+                    } catch (error: any) {
+                      toast.error(error.response.data.message, {
+                        duration: 6000
+                      })
+                      setSaving(false)
+                    }
+                  }}
+                  className="btn btn-black mt-10">Restablecer contraseña</button>
               </div>
               <div className="cardItem">
                 <h4>Pedidos</h4>
                 {/*    <span>{user.orders}</span> */}
-              </div>
-              <div className="cardItem">
-                <h4>Accesos</h4>
-                {/*   <span>{user.permissions}</span> */}
               </div>
               <div className="cardItem">
                 <h4>Ultimo acceso</h4>

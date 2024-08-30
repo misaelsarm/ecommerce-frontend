@@ -9,11 +9,13 @@ import { ValueInterface } from "@/interfaces"
 import { GetServerSideProps } from "next"
 import Link from "next/link"
 import { useRouter } from "next/router"
-import { ReactElement, useState } from "react"
+import { ReactElement, useContext, useState } from "react"
 import toast from "react-hot-toast"
 import Cookies from "js-cookie";
 import { getServerSideToken } from "@/utils/getServerSideToken"
 import Chip from "@/components/common/Chip"
+import { hasPermission } from "@/utils/hasPermission"
+import { AuthContext } from "@/context/auth/AuthContext"
 
 interface Props {
   values: ValueInterface[],
@@ -70,7 +72,18 @@ const ValuesAdminPage = ({ values = [], page, limit, size }: Props) => {
         <Link href={`/admin/values/${record._id}`} className='btn btn-black btn-auto'>Ver</Link>
       )
     },
-    {
+
+  ]
+  const [visible, setVisible] = useState(false)
+
+  const { searchTerm, setSearchTerm, handleSearch } = useDebouncedSearch({ url: 'values', limit })
+
+  const { push, query, replace, pathname } = useRouter()
+
+  const { user } = useContext(AuthContext)
+
+  if (hasPermission(pathname, 'delete', user.permissions) || user.role?.value === 'admin') {
+    columns.push({
       title: 'Eliminar',
       dataIndex: 'eliminar',
       key: 'eliminar',
@@ -80,13 +93,8 @@ const ValuesAdminPage = ({ values = [], page, limit, size }: Props) => {
           setDeletedValue(record)
         }} className="btn">Eliminar</button>
       )
-    },
-  ]
-  const [visible, setVisible] = useState(false)
-
-  const { searchTerm, setSearchTerm, handleSearch } = useDebouncedSearch({ url: 'values', limit })
-
-  const { push, query, replace } = useRouter()
+    })
+  }
 
   return (
     <>

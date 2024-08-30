@@ -10,11 +10,13 @@ import { GetServerSideProps } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { ReactElement, useCallback, useState } from 'react'
+import React, { ReactElement, useCallback, useContext, useState } from 'react'
 import toast from 'react-hot-toast'
 import Cookies from "js-cookie";
 import { getServerSideToken } from '@/utils/getServerSideToken'
 import Chip from '@/components/common/Chip'
+import { AuthContext } from '@/context/auth/AuthContext'
+import { hasPermission } from '@/utils/hasPermission'
 
 interface Props {
   collections: CollectionInterface[],
@@ -33,7 +35,9 @@ const CollectionsAdminPage = ({ collections = [], page, limit, size }: Props) =>
 
   const [visible, setVisible] = useState(false)
 
-  const { push, query, replace } = useRouter()
+  const { push, query, replace, pathname } = useRouter()
+
+  const { user } = useContext(AuthContext)
 
   const columns = [
     {
@@ -72,16 +76,16 @@ const CollectionsAdminPage = ({ collections = [], page, limit, size }: Props) =>
         }
       </div>
     },
-/*     {
-      title: 'Colección agrupadora',
-      dataIndex: 'parentCollection',
-      key: 'parentCollection',
-      render: (_text: string, record: CollectionInterface) => <div className='d-flex flex-column align-start'>
-        {
-          record.parentCollection && <Chip text={record.parentCollection.name} />
-        }
-      </div>
-    }, */
+    /*     {
+          title: 'Colección agrupadora',
+          dataIndex: 'parentCollection',
+          key: 'parentCollection',
+          render: (_text: string, record: CollectionInterface) => <div className='d-flex flex-column align-start'>
+            {
+              record.parentCollection && <Chip text={record.parentCollection.name} />
+            }
+          </div>
+        }, */
     {
       title: 'Detalles',
       dataIndex: 'detalles',
@@ -89,8 +93,12 @@ const CollectionsAdminPage = ({ collections = [], page, limit, size }: Props) =>
       render: (_text: string, record: CollectionInterface) => (
         <Link href={`/admin/collections/${record.code}`} className='btn btn-black btn-auto'>Ver</Link>
       )
-    },
-    {
+    }
+  ]
+
+
+  if (hasPermission(pathname, 'delete', user.permissions) || user.role?.value === 'admin') {
+    columns.push({
       title: 'Eliminar',
       dataIndex: 'eliminar',
       key: 'eliminar',
@@ -100,8 +108,9 @@ const CollectionsAdminPage = ({ collections = [], page, limit, size }: Props) =>
           setDeletedCollection(record)
         }} className="btn">Eliminar</button>
       )
-    },
-  ]
+    })
+  }
+
 
   return (
     <>

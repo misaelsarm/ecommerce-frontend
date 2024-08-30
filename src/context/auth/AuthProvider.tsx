@@ -76,6 +76,7 @@ export const AuthProvider: FC<Props> = ({ children }) => {
     <AuthContext.Provider value={{
       ...state,
       setUser,
+      setLoading
     }}>
       {
         children

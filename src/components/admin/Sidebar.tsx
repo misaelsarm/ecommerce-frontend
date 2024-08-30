@@ -41,9 +41,6 @@ const Sidebar = () => {
     background: 'black',
   };
 
-
-
-
   return (
     <div className={styles.sidebar}>
       {

@@ -10,7 +10,7 @@ import { AuthContext } from '@/context/auth/AuthContext';
 
 const AdminLoginPage = () => {
 
-  const { setUser } = useContext(AuthContext)
+  const { setUser, setLoading:setContextLoading } = useContext(AuthContext)
 
   const { register, handleSubmit, formState: { errors } } = useForm();
 
@@ -27,8 +27,10 @@ const AdminLoginPage = () => {
       Cookies.set('token', data.token);
       const redirectUrl = returnUrl as string || '/admin/orders?page=1&limit=20'; // Default page after login
       replace(redirectUrl);
+      console.log({data})
       setUser(data)
       setLoading(false)
+      setContextLoading(false)
 
     } catch (error: any) {
       toast.error(error.response.data.message)

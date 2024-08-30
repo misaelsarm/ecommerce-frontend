@@ -7,13 +7,15 @@ import Select from "@/components/common/Select"
 import { AttributeInterface, ValueInterface } from "@/interfaces"
 import { GetServerSideProps } from "next"
 import { useRouter } from "next/router"
-import { ReactElement, useEffect, useState } from "react"
+import { ReactElement, useContext, useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import Cookies from "js-cookie"
 import Chip from "@/components/common/Chip"
 import { getServerSideToken } from "@/utils/getServerSideToken"
 import { attributeTypes } from "@/utils/attributeTypes"
+import { hasPermission } from "@/utils/hasPermission"
+import { AuthContext } from "@/context/auth/AuthContext"
 
 interface Props {
   attribute: AttributeInterface
@@ -38,6 +40,8 @@ const AttributeDetailsAdminPage = ({ attribute }: Props) => {
   }
 
   const [editing, setEditing] = useState(false)
+
+  const { user } = useContext(AuthContext)
 
   const [values, setValues] = useState([] as ValueInterface[])
 
@@ -68,7 +72,7 @@ const AttributeDetailsAdminPage = ({ attribute }: Props) => {
 
   const [saving, setSaving] = useState(false)
 
-  const { replace, back } = useRouter()
+  const { replace, back, pathname } = useRouter()
 
   const onSubmit = async (values: any) => {
 
@@ -179,6 +183,8 @@ const AttributeDetailsAdminPage = ({ attribute }: Props) => {
     )
   }
 
+  const canCreateEdit = user.role?.value === 'admin' ? true : hasPermission(pathname, 'create-edit', user.permissions)
+
   return (
     <>
       <div className='detailPage'>
@@ -195,7 +201,7 @@ const AttributeDetailsAdminPage = ({ attribute }: Props) => {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg></button>
             {
-              !editing && <button className='btn btn-black' onClick={async () => {
+              !editing && canCreateEdit && <button className='btn btn-black' onClick={async () => {
                 setEditing(true)
                 await fetchData()
               }}>Editar</button>
