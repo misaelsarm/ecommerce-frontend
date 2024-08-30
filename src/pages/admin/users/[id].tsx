@@ -17,10 +17,19 @@ import Chip from "@/components/common/Chip"
 import styles from '@/styles/admin/Users.module.scss'
 import { getServerSideToken } from "@/utils/getServerSideToken"
 import moment from "moment"
+import { permissionsMap } from "@/utils/permissionsMap"
+import { pagesMap } from "@/utils/pagesMap"
 
 
 interface Props {
   user: UserInterface
+}
+
+function transformResponseToDefaultValues(dbResponse) {
+  return dbResponse.reduce((acc, item) => {
+    acc[item.page] = item.permissions;
+    return acc;
+  }, {});
 }
 
 const UserDetailsAdminPage = ({ user }: Props) => {
@@ -118,7 +127,7 @@ const UserDetailsAdminPage = ({ user }: Props) => {
       "name": user.name,
       "email": user.email,
       "active": user.active,
-      "permissions": user.permissions,
+      permissions: transformResponseToDefaultValues(user.permissions)
     }
   });
 
@@ -138,16 +147,25 @@ const UserDetailsAdminPage = ({ user }: Props) => {
 
   const onSubmit = async (values: any) => {
 
-    console.log({ values })
-    //setSaving(true)
+    const permissions = values.permissions
 
+    let mapped: any[] = []
+
+    if (permissions) {
+      mapped = Object.keys(permissions).map(role => ({
+        page: role,
+        permissions: permissions[role] || [],
+      }))
+    }
+
+    const access = [...mapped]
     try {
       const update = {
         name: values.name,
         "role": values.role,
         "email": values.email,
         "active": values.active,
-       // "permissions": values.permissions,
+        permissions: access.filter(role => role.permissions.length > 0),
       }
       await makeRequest('put', `/api/users/${user._id}`, update)
       toast.success('Usuario actualizado')
@@ -296,16 +314,49 @@ const UserDetailsAdminPage = ({ user }: Props) => {
               </div>
               <div className="cardItem">
                 <h4>Contraseña</h4>
-                <button className="btn btn-black mt-10">Restablecer contraseña</button>
+                <button
+                  onClick={async () => {
+                    try {
+                      await makeRequest('post', '/api/auth/recover', {
+                        email: "misael@wearerethink.mx"
+                      })
+                      toast.success('Se envió un correo con las instrucciones para restablecer la contraseña', {
+                        duration: 6000
+                      })
+                    } catch (error: any) {
+                      toast.error(error.response.data.message, {
+                        duration: 6000
+                      })
+                    }
+                  }}
+                  className="btn btn-black mt-10">Restablecer contraseña</button>
               </div>
               <div className="cardItem">
                 <h4>Pedidos</h4>
                 {/*    <span>{user.orders}</span> */}
               </div>
-              <div className="cardItem">
-                <h4>Accesos</h4>
-                {/*   <span>{user.permissions}</span> */}
-              </div>
+              {
+                user.permissions && user.permissions.length > 0 &&
+                <div className="cardItem">
+                  <h4>Accesos</h4>
+                  {
+                    user.permissions.map(page => (
+                      <div className="mb-20" key={page.page}>
+                        <b >
+                          {pagesMap[page.page]}
+                        </b>
+                        {
+                          page.permissions?.map(perm => (
+                            <span key={perm}>{permissionsMap[perm]}</span>
+                          ))
+                        }
+                      </div>
+                    )
+
+                    )
+                  }
+                </div>
+              }
               <div className="cardItem">
                 <h4>Ultimo acceso</h4>
                 <span>{moment(user.lastLogin).format('lll')}</span>

@@ -1,3 +1,8 @@
+
+interface PagePermissions {
+  page: string;
+  permissions: string[];
+}
 export interface UserInterface {
 
   _id: string
@@ -35,6 +40,7 @@ export interface UserInterface {
 
   verified: boolean
 
-  permissions: any[]  // Store permissions directly
+  permissions: PagePermissions[]  // Store permissions directly
 
 }
+

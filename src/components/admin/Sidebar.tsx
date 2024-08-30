@@ -9,7 +9,7 @@ const Sidebar = () => {
 
   const { asPath } = useRouter();
 
-  const { user } = useContext(AuthContext);
+  const { user, loading } = useContext(AuthContext);
 
   // Extract pages from user permissions
   const pages = user.permissions?.map(item => item.page);
@@ -41,39 +41,46 @@ const Sidebar = () => {
     background: 'black',
   };
 
+
+
+
   return (
-    <div className={`${styles.sidebar} sidebar`}>
-      <div className={styles.logo}>
-        <img src="/logo.png" alt="" />
-      </div>
-      <div className={styles.links}>
-        {filtered.map(link => (
-          <div key={link.name}>
-            <Link
-              style={asPath.includes(link.path) ? style : undefined}
-              href={`${link.path}?page=1&limit=20`}
-              className={styles.link}
-            >
-              {link.icon}
-              <span>{link.name}</span>
-            </Link>
-            {link.sub.length > 0 && (
-              <div className={styles.sub}>
-                {link.sub.map(sub => (
-                  <Link
-                    style={asPath.includes(sub.path) ? style : undefined}
-                    key={sub.name}
-                    href={`${sub.path}?page=1&limit=20`}
-                    className={styles.link}
-                  >
-                    <span>{sub.name}</span>
-                  </Link>
-                ))}
-              </div>
-            )}
+    <div className={styles.sidebar}>
+      {
+        loading ? 'Loading...' : <>
+          <div className={styles.logo}>
+            <img src="/logo.png" alt="" />
           </div>
-        ))}
-      </div>
+          <div className={styles.links}>
+            {filtered.map(link => (
+              <div key={link.name}>
+                <Link
+                  style={asPath.includes(link.path) ? style : undefined}
+                  href={`${link.path}?page=1&limit=20`}
+                  className={styles.link}
+                >
+                  {link.icon}
+                  <span>{link.name}</span>
+                </Link>
+                {link.sub.length > 0 && (
+                  <div className={styles.sub}>
+                    {link.sub.map(sub => (
+                      <Link
+                        style={asPath.includes(sub.path) ? style : undefined}
+                        key={sub.name}
+                        href={`${sub.path}?page=1&limit=20`}
+                        className={styles.link}
+                      >
+                        <span>{sub.name}</span>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </>
+      }
     </div>
   );
 };

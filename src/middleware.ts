@@ -27,14 +27,17 @@ export default async function Middleware(req: NextRequest) {
 
         const userRole = decodedToken.role?.value;
 
-        const validUser = decodedToken.active && decodedToken.verified
+        /* const validUser = decodedToken.active && decodedToken.verified
+
+        console.log({validUser})
 
         if (!validUser) {
             console.log('Usuario no valido');
-            // const url = req.nextUrl.clone();
-            // url.pathname = '/admin/403';
-            // return NextResponse.redirect(url);
-        }
+            const url = req.nextUrl.clone();
+            console.log({url})
+            url.pathname = '/admin/login';
+            return NextResponse.redirect(url);
+        } */
 
         const userPermissions: {
             "page": string,
@@ -60,8 +63,6 @@ export default async function Middleware(req: NextRequest) {
 
         const requiredPermissions = permissionsMap[path];
 
-        console.log({ requiredPermissions, path })
-
         if (requiredPermissions) {
             const hasPermission = requiredPermissions.every((perm) => {
                 console.log({ perm })
@@ -72,12 +73,10 @@ export default async function Middleware(req: NextRequest) {
             }
             );
 
-            console.log({ hasPermission })
-
             if (!hasPermission) {
                 console.log('No tienes permiso para esta vista');
                 const url = req.nextUrl.clone();
-                url.pathname = '/admin/403';
+                url.pathname = '/admin/login';
                 return NextResponse.redirect(url);
             }
         } else {

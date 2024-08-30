@@ -1,5 +1,8 @@
-import React, { ChangeEventHandler } from 'react'
+import React, { ChangeEventHandler, useContext } from 'react'
 import Input from '../common/Input'
+import { AuthContext } from '@/context/auth/AuthContext'
+import { hasPermission } from '@/utils/hasPermission'
+import { useRouter } from 'next/router'
 
 interface Props {
   title: string,
@@ -11,24 +14,34 @@ interface Props {
 }
 
 const PageHeader = ({ title, actions, handleSearch, searchTerm, searchQuery, onClearSearch }: Props) => {
+
+  const { user } = useContext(AuthContext)
+
+  const { push, query, replace, pathname } = useRouter()
+
+  const canCreateEdit = user.role?.value === 'admin' ? true : hasPermission(pathname, 'create-edit', user.permissions)
+
   return (
     <div className='pageHeader'>
       <div className="pageHeaderTop">
         <div className='pageHeaderTitle'>
           <h2>{title}</h2>
         </div>
-        <div className='pageHeaderActions'>
-          {
-            actions.map(action => (
-              <button
-                key={action.name}
-                onClick={action.onClick}
-                className='btn btn-black'
-              >{action.name}
-              </button>
-            ))
-          }
-        </div>
+        {
+          canCreateEdit &&
+          <div className='pageHeaderActions'>
+            {
+              actions.map(action => (
+                <button
+                  key={action.name}
+                  onClick={action.onClick}
+                  className='btn btn-black'
+                >{action.name}
+                </button>
+              ))
+            }
+          </div>
+        }
       </div>
       <div className="pageHeaderBottom">
         <div className='pageHeaderSearch'>

@@ -52,8 +52,8 @@ export const AuthProvider: FC<Props> = ({ children }) => {
           setUser(data)
           setLoading(false)
         } catch (error: any) {
+          setLoading(false)
           toast.error(error.response.data.message)
-          console.log({ error })
         }
       } else {
         try {
@@ -61,8 +61,8 @@ export const AuthProvider: FC<Props> = ({ children }) => {
           setUser(data)
           setLoading(false)
         } catch (error: any) {
+          setLoading(false)
           toast.error(error.response.data.message)
-          console.log({ error })
         }
       }
 

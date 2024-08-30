@@ -11,17 +11,21 @@ import { makeRequest } from "@/utils/makeRequest"
 import { numberWithCommas } from "@/utils/numberWithCommas"
 import { GetServerSideProps } from "next"
 import { useRouter } from "next/router"
-import { ReactElement, useState } from "react"
+import { ReactElement, useContext, useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import Cookies from "js-cookie"
 import Chip from "@/components/common/Chip"
+import { AuthContext } from "@/context/auth/AuthContext"
+import { hasPermission } from "@/utils/hasPermission"
 
 interface Props {
   product: ProductInterface
 }
 
 const ProductDetailsAdminPage = ({ product }: Props) => {
+
+  const { user } = useContext(AuthContext)
 
   const [editing, setEditing] = useState(false)
 
@@ -97,7 +101,7 @@ const ProductDetailsAdminPage = ({ product }: Props) => {
 
   const [images, setImages] = useState(product.images)
 
-  const { replace, back } = useRouter()
+  const { replace, back, pathname } = useRouter()
 
   const [uploading, setUploading] = useState(false)
 
@@ -145,12 +149,17 @@ const ProductDetailsAdminPage = ({ product }: Props) => {
       toast.success('Producto actualizado')
       setSaving(false)
       setEditing(false)
-      replace(`/admin/products/${values.name.trim().toLowerCase().split(' ').join('-')}`)
+      const normalizeString = (str: string) =>
+        str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      const code = normalizeString(values.name.trim().toLowerCase().split(' ').join('-'))
+      replace(`/admin/products/${code}`)
     } catch (error: any) {
       toast.error(error.response.data.message)
       setSaving(false)
     }
   }
+
+  const canCreateEdit = user.role?.value === 'admin' ? true : hasPermission(pathname, 'create-edit', user.permissions)
 
   const renderForm = () => {
     return (
@@ -289,7 +298,7 @@ const ProductDetailsAdminPage = ({ product }: Props) => {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg></button>
             {
-              !editing && <button className='btn btn-black' onClick={async () => {
+              !editing && canCreateEdit && <button className='btn btn-black' onClick={async () => {
                 setEditing(true)
                 await fetchData()
               }}>Editar</button>
