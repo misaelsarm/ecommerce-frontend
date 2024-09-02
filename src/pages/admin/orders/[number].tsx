@@ -1,10 +1,12 @@
 import Layout from '@/components/admin/Layout'
 import Modal from '@/components/common/Modal'
+import { AuthContext } from '@/context/auth/AuthContext'
 import { OrderInterface } from '@/interfaces'
+import { hasPermission } from '@/utils/hasPermission'
 import axios from 'axios'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
-import React, { ReactElement, useState } from 'react'
+import React, { ReactElement, useContext, useState } from 'react'
 
 interface Props {
   order: OrderInterface
@@ -12,9 +14,14 @@ interface Props {
 
 const OrderDetailsPage = ({ order }: Props) => {
 
-  const { back, replace } = useRouter()
+  const { back, replace, pathname } = useRouter()
+
+  const { user } = useContext(AuthContext)
 
   const [editing, setEditing] = useState(false)
+
+  const canCreateEdit = user.role?.value === 'admin' ? true : hasPermission(pathname, 'create-edit', user.permissions)
+
 
   return (
     <>
@@ -31,7 +38,7 @@ const OrderDetailsPage = ({ order }: Props) => {
               <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg></button>
           {
-            !editing && <button className='btn btn-black' onClick={() => { setEditing(true) }}>Editar</button>
+            !editing && canCreateEdit && <button className='btn btn-black' onClick={() => { setEditing(true) }}>Editar</button>
           }
         </div>
         <div className="card">

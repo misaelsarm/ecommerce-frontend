@@ -3,21 +3,17 @@ import Layout from "@/components/admin/Layout"
 import Checkbox from "@/components/common/Checkbox"
 import Input from "@/components/common/Input"
 import Modal from "@/components/common/Modal"
-import Select from "@/components/common/Select"
-import { AttributeInterface, CollectionInterface, UserInterface } from "@/interfaces"
+import { UserInterface } from "@/interfaces"
 import { makeRequest } from "@/utils/makeRequest"
-import { numberWithCommas } from "@/utils/numberWithCommas"
 import { GetServerSideProps } from "next"
 import { useRouter } from "next/router"
 import { ReactElement, useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
-import Cookies from "js-cookie"
 import Chip from "@/components/common/Chip"
-import styles from '@/styles/admin/Users.module.scss'
 import { getServerSideToken } from "@/utils/getServerSideToken"
 import moment from "moment"
-
+import { hasPermission } from "@/utils/hasPermission"
 
 interface Props {
   user: UserInterface
@@ -25,129 +21,30 @@ interface Props {
 
 const CustomerDetailsAdminPage = ({ user }: Props) => {
 
-  console.log({ user })
-
   const [editing, setEditing] = useState(false)
 
-  const [collections, setCollections] = useState([])
+  const { replace, back, pathname } = useRouter()
 
-  const [attributes, setAttributes] = useState([])
-
-  async function fetchData() {
-    try {
-
-      const { data } = await api.get(`/api/collections`, {
-        headers: {
-          //"x-access-token": token
-          //"x-location": "admin"
-        }
-      })
-      const { data: attributesData } = await api.get(`/api/attributes`, {
-        headers: {
-          "x-access-token": Cookies.get('token')
-          //"x-location": "admin"
-        }
-      })
-      setCollections(data.collections.map((col: CollectionInterface) => ({
-        label: col.name,
-        value: col._id
-      })))
-      setAttributes(attributesData.attributes.map((att: AttributeInterface) => ({
-        label: att.shortName,
-        value: att._id
-      })))
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message || 'Error')
-    }
-  }
-
-  const views = [
-    {
-      view: '/admin/orders',
-      name: 'Pedidos',
-    },
-    {
-      view: '/admin/products',
-      name: 'Productos',
-    },
-    {
-      view: '/admin/attributes',
-      name: 'Atributos de producto',
-    },
-    {
-      view: '/admin/values',
-      name: 'Valores de atributo',
-    },
-    {
-      view: '/admin/collections',
-      name: 'Colecciones',
-    },
-    {
-      view: '/admin/customers',
-      name: 'Clientes',
-    },
-    {
-      view: '/admin/users',
-      name: 'Usuarios',
-    },
-    {
-      view: '/admin/discounts',
-      name: 'Descuentos',
-    },
-    {
-      view: '/admin/reportes/rutas',
-      name: 'Reporte de rutas',
-    },
-    {
-      view: '/admin/reportes/repartidores',
-      name: 'Reporte de repartidores',
-    },
-    {
-      view: '/admin/reportes/ventas',
-      name: 'Reporte de ventas',
-    },
-    {
-      view: '/admin/general',
-      name: 'General',
-    },
-  ]
+  const canCreateEdit = user.role?.value === 'admin' ? true : hasPermission(pathname, 'create-edit', user.permissions)
 
   const { register, handleSubmit, control, formState: { errors } } = useForm<any>({
     defaultValues: {
-      "role": user.role,
       "name": user.name,
       "email": user.email,
       "active": user.active,
-      "permissions": user.permissions,
     }
   });
 
   const [saving, setSaving] = useState(false)
 
-  const { replace, back } = useRouter()
-
-  //const { handleFileUpload, uploading } = useFileUpload();
-
-  const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    // const file = e.target.files?.[0];
-    // if (file) {
-    //   const data = await handleFileUpload(file);
-    //   setImage(data as string)
-    // }
-  };
-
   const onSubmit = async (values: any) => {
-
-    console.log({ values })
     //setSaving(true)
 
     try {
       const update = {
         name: values.name,
-        "role": values.role,
         "email": values.email,
         "active": values.active,
-       // "permissions": values.permissions,
       }
       await makeRequest('put', `/api/users/${user._id}`, update)
       toast.success('Usuario actualizado')
@@ -204,9 +101,8 @@ const CustomerDetailsAdminPage = ({ user }: Props) => {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg></button>
             {
-              !editing && <button className='btn btn-black' onClick={async () => {
+              !editing && canCreateEdit && <button className='btn btn-black' onClick={async () => {
                 setEditing(true)
-                await fetchData()
               }}>Editar</button>
             }
           </div>
@@ -224,29 +120,32 @@ const CustomerDetailsAdminPage = ({ user }: Props) => {
                 <h4>Correo electrónico</h4>
                 <span>{user.email}</span>
               </div>
-              <div className="cardItem">
-                <h4>Contraseña</h4>
-                <button
-                  disabled={saving}
-                  onClick={async () => {
-                    try {
-                      setSaving(true)
-                      await makeRequest('post', '/api/auth/recover', {
-                        email: "misael@wearerethink.mx"
-                      })
-                      toast.success('Se envió un correo con las instrucciones para restablecer la contraseña', {
-                        duration: 6000
-                      })
-                      setSaving(false)
-                    } catch (error: any) {
-                      toast.error(error.response.data.message, {
-                        duration: 6000
-                      })
-                      setSaving(false)
-                    }
-                  }}
-                  className="btn btn-black mt-10">Restablecer contraseña</button>
-              </div>
+              {
+                canCreateEdit &&
+                <div className="cardItem">
+                  <h4>Contraseña</h4>
+                  <button
+                    disabled={saving}
+                    onClick={async () => {
+                      try {
+                        setSaving(true)
+                        await makeRequest('post', '/api/auth/recover', {
+                          email: "misael@wearerethink.mx"
+                        })
+                        toast.success('Se envió un correo con las instrucciones para restablecer la contraseña', {
+                          duration: 6000
+                        })
+                        setSaving(false)
+                      } catch (error: any) {
+                        toast.error(error.response.data.message, {
+                          duration: 6000
+                        })
+                        setSaving(false)
+                      }
+                    }}
+                    className="btn btn-black mt-10">Restablecer contraseña</button>
+                </div>
+              }
               <div className="cardItem">
                 <h4>Pedidos</h4>
                 {/*    <span>{user.orders}</span> */}
