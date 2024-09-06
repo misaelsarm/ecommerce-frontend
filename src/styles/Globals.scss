@@ -60,10 +60,6 @@ h6 {
   padding-top: 105px;
 }
 
-
-
-
-
 .DraftEditor-editorContainer {
   border-top: 1px solid #ddd;
   cursor: text;
@@ -88,7 +84,7 @@ h6 {
 .DraftEditor-editorContainer .DraftEditor-blockquote {
   border-left: 5px solid #eee;
   color: #666;
-  font-family: 'Hoefler Text', 'Georgia', serif;
+  font-family: "Hoefler Text", "Georgia", serif;
   font-style: italic;
   margin: 16px 0;
   padding: 10px 20px;
@@ -101,9 +97,7 @@ h6 {
   padding: 20px;
 }
 
-
 .DraftEditor-editorContainer {
-
   ul,
   ol {
     margin: 0 0 10px 25px;
@@ -111,9 +105,8 @@ h6 {
   }
 }
 
-
 .DraftEditor-controls {
-  font-family: 'Helvetica', sans-serif;
+  font-family: "Helvetica", sans-serif;
   font-size: 14px;
   margin-bottom: 5px;
   user-select: none;
@@ -185,7 +178,7 @@ h6 {
   display: flex;
   flex-direction: column;
 
-  >label {
+  > label {
     text-align: left !important;
     margin-bottom: 10px;
   }
@@ -322,7 +315,7 @@ h6 {
         display: none;
 
         &:checked {
-          ~label {
+          ~ label {
             border: 2px solid rgb(109, 109, 109);
           }
         }
@@ -613,7 +606,6 @@ h6 {
 }
 
 @media (min-width: 768px) {
-
   .container-white,
   .container-beige,
   .container-gray {
@@ -622,7 +614,6 @@ h6 {
 }
 
 @media (min-width: 1200px) {
-
   .container-white,
   .container-beige,
   .container-gray {
@@ -904,7 +895,7 @@ body {
 }
 
 .specs {
-  >div {
+  > div {
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
@@ -937,7 +928,7 @@ body {
     flex-direction: column;
     margin-top: 10px;
 
-    >div {
+    > div {
       display: flex;
     }
 
@@ -960,7 +951,7 @@ body {
   flex-direction: column;
   margin-top: 10px;
 
-  >div {
+  > div {
     display: flex;
   }
 
@@ -995,7 +986,6 @@ button {
 
 .page {
   .pageHeader {
-
     // margin-bottom: 20px;
     // display: flex;
     // justify-content: space-between;
