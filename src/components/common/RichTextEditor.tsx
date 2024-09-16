@@ -1,7 +1,7 @@
 import React, { useCallback, useRef, useState } from 'react';
 import { Editor, EditorState, convertToRaw, RichUtils } from 'draft-js';
 import { Controller, Control, FieldErrors } from 'react-hook-form';
-import styles from '../styles/RichEditor.module.scss'
+import styles from '@/styles/RichTextEditor.module.scss'
 import 'draft-js/dist/Draft.css';
 
 interface DraftEditorFormProps {

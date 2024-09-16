@@ -1,5 +1,5 @@
-import React, { CSSProperties, useEffect } from 'react'
-import styles from '@/styles/admin/Modal.module.scss'
+import React, { CSSProperties, ReactNode, useEffect } from 'react'
+import styles from '../../styles/Modal.module.scss'
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface Props {
@@ -8,12 +8,12 @@ interface Props {
   onClose?: () => void,
   onOk?: () => void,
   onCancel?: () => void,
-  children: JSX.Element,
-  header?: JSX.Element,
+  children: ReactNode,
+  header?: ReactNode,
   bodyStyle?: CSSProperties,
   loadingState?: boolean,
   showButtons?: boolean,
-  style?: CSSProperties
+  wrapperStyle?: CSSProperties
   headerStyle?: CSSProperties
 }
 
@@ -55,14 +55,20 @@ const backdropVariants = {
   },
 };
 
-// initial={{ transform: 'translate(-50%,0%)', top: '100%', left: '50%' }}
-//               animate={{ transform: 'translate(-50%,-50%)', top: '50%', left: '50%' }}
-//               exit={{ transform: 'translate(-50%,0%)', top: '100%', left: '50%' }}
-//               transition={{ duration: 5 }}
+const Modal = ({
+  visible,
+  title,
+  showButtons = true,
+  children,
+  onClose,
+  onOk,
+  onCancel,
+  wrapperStyle,
+  headerStyle,
+  bodyStyle,
+  loadingState,
+}: Props) => {
 
-
-
-const Modal = ({ title, showButtons = true, onClose, visible, children, onOk, bodyStyle, onCancel, loadingState, style, headerStyle }: Props) => {
   useEffect(() => {
     if (visible) {
       document.body.style.overflow = 'hidden'
@@ -94,8 +100,8 @@ const Modal = ({ title, showButtons = true, onClose, visible, children, onOk, bo
               exit="exit"
               variants={modalVariants}
               style={{
-                width: bodyStyle ? bodyStyle.width : 600,
-                ...style
+                width: wrapperStyle ? wrapperStyle.width : 600,
+                ...wrapperStyle
               }}
               className={styles.modal
               }>
@@ -118,7 +124,12 @@ const Modal = ({ title, showButtons = true, onClose, visible, children, onOk, bo
                   </svg>
                 </div>
               </div>
-              <div style={{ ...bodyStyle }} className={styles.modalBody}>
+              <div
+                style={{
+                  ...bodyStyle
+                }}
+                className={styles.modalBody}
+              >
                 {children}
               </div>
               {
