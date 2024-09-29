@@ -27,6 +27,7 @@
   justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
+
   svg {
     width: 25px;
   }
@@ -43,6 +44,7 @@
   height: 65vh;
   overflow-y: auto;
   padding: 25px;
+  overflow-x: hidden;
 }
 
 .modalFooter {
@@ -54,5 +56,14 @@
     &:first-child {
       margin-right: 15px;
     }
+  }
+}
+
+@media (max-width: 768px) {
+  .modal {
+    width: 100% !important;
+  }
+  .modalBody {
+    width: 100% !important;
   }
 }

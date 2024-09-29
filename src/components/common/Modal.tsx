@@ -15,6 +15,8 @@ interface Props {
   showButtons?: boolean,
   wrapperStyle?: CSSProperties
   headerStyle?: CSSProperties
+  okText?: string,
+  cancelText?: string
 }
 
 const modalVariants = {
@@ -67,6 +69,8 @@ const Modal = ({
   headerStyle,
   bodyStyle,
   loadingState,
+  okText = 'Aceptar',
+  cancelText = 'Cancelar'
 }: Props) => {
 
   useEffect(() => {
@@ -135,8 +139,8 @@ const Modal = ({
               {
                 showButtons &&
                 <div className={styles.modalFooter}>
-                  <button disabled={loadingState} onClick={onCancel} className='btn'>Cancelar</button>
-                  <button disabled={loadingState} onClick={onOk} className='btn btn-black'>Aceptar</button>
+                  <button disabled={loadingState} onClick={onCancel} className='btn'>{cancelText}</button>
+                  <button disabled={loadingState} onClick={onOk} className='btn btn-black'>{okText}</button>
                 </div>
               }
             </motion.div>
