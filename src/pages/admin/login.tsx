@@ -7,6 +7,7 @@ import { useContext, useState } from 'react';
 import { useRouter } from 'next/router';
 import Input from '@/components/common/Input';
 import { AuthContext } from '@/context/auth/AuthContext';
+import { makeRequest } from '@/utils/makeRequest';
 
 const AdminLoginPage = () => {
 
@@ -23,7 +24,7 @@ const AdminLoginPage = () => {
   const login = async ({ email, password }: any) => {
     setLoading(true)
     try {
-      const { data } = await api.post(`/api/auth/login`, { email, password, location: 'admin' })
+      const data = await makeRequest('post', `/api/auth/login`, { email, password, location: 'admin' })
       Cookies.set('token', data.token);
       const redirectUrl = returnUrl as string || '/admin/orders?page=1&limit=20'; // Default page after login
       replace(redirectUrl);

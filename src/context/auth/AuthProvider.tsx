@@ -44,11 +44,7 @@ export const AuthProvider: FC<Props> = ({ children }) => {
 
       if (pathname.startsWith('/admin')) {
         try {
-          const data = await makeRequest('get', '/api/auth/renew', {}, {
-            headers: {
-              'x-location': 'admin'
-            }
-          });
+          const data = await makeRequest('get', '/api/auth/renew');
           setUser(data)
           setLoading(false)
         } catch (error: any) {

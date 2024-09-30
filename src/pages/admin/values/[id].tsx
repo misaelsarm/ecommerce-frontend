@@ -52,12 +52,7 @@ const ValueDetailsAdminPage = ({ value }: Props) => {
       const update = {
         ...values,
       }
-      await api.put(`/api/values/${value._id}`, update, {
-        headers: {
-          "x-access-token": Cookies.get('token')
-          //"x-location": "admin"
-        }
-      })
+      await makeRequest('put', `/api/values/${value._id}`, update)
       toast.success('Valor actualizado')
       setSaving(false)
       setEditing(false)

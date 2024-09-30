@@ -30,7 +30,7 @@ const AddProduct = ({ visible, setVisible, onOk }: Props) => {
     try {
 
       const data = await makeRequest('get', `/api/collections`)
-      const { data: attributesData } = await makeRequest('get', `/api/attributes`)
+      const  attributesData  = await makeRequest('get', `/api/attributes`)
       setCollections(data.collections.map((col: CollectionInterface) => ({
         label: col.name,
         value: col._id

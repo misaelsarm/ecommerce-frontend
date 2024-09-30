@@ -40,14 +40,7 @@ const AddAttribute = ({ visible, setVisible, onOk }: Props) => {
 
   async function fetchData() {
     try {
-      const data = await makeRequest('get', '/api/values', {},
-        {
-          headers: {
-            "x-access-token": Cookies.get('token')
-            //"x-location": "admin"
-          }
-        }
-      )
+      const data = await makeRequest('get', '/api/values')
       setValues(data.values)
     } catch (error: any) {
       toast.error(error?.response?.data?.message || 'Error')
@@ -62,12 +55,7 @@ const AddAttribute = ({ visible, setVisible, onOk }: Props) => {
         ...values,
         values: values.values?.map((value: any) => value.value)
       }
-      await api.post('/api/attributes', attribute, {
-        headers: {
-          "x-access-token": Cookies.get('token')
-          //"x-location": "admin"
-        }
-      })
+      await makeRequest('post', '/api/attributes', attribute)
       toast.success('Atributo agregado')
       setSaving(false)
       onOk && onOk()

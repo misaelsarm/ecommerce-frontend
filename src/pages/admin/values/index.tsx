@@ -153,11 +153,7 @@ const ValuesAdminPage = ({ values = [], page, limit, size }: Props) => {
         onCancel={() => setConfirmDelete(false)}
         onOk={async () => {
           try {
-            await api.put(`/api/values/${deletedValue._id}`, { deleted: true }, {
-              headers: {
-                'x-access-token': Cookies.get('token')
-              }
-            })
+            await makeRequest('put', `/api/values/${deletedValue._id}`, { deleted: true })
             toast.success(`Se elimino el valor ${deletedValue.label}`)
             setConfirmDelete(false);
             setDeletedValue({} as ValueInterface);

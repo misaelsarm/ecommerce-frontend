@@ -76,11 +76,7 @@ const AttributeDetailsAdminPage = ({ attribute }: Props) => {
         ...values,
         values: values.values?.map((value: any) => value.value)
       }
-      await api.put(`/api/attributes/${attribute._id}`, update, {
-        headers: {
-          "x-access-token": Cookies.get('token')
-        }
-      })
+      await makeRequest('put', `/api/attributes/${attribute._id}`, update)
       toast.success('Atributo actualizado')
       setEditing(false)
       setSaving(false)

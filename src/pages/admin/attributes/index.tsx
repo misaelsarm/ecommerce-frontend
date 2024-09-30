@@ -147,11 +147,7 @@ const AttributesAdminPage = ({ attributes = [], page, limit, size }: Props) => {
         onCancel={() => setConfirmDelete(false)}
         onOk={async () => {
           try {
-            await api.put(`/api/attributes/${deletedAttribute._id}`, { deleted: true }, {
-              headers: {
-                'x-access-token': Cookies.get('token')
-              }
-            })
+            await makeRequest('put', `/api/attributes/${deletedAttribute._id}`, { deleted: true })
             toast.success(`Se elimino el producto ${deletedAttribute.shortName}`)
             setConfirmDelete(false);
             setDeletedAttribute({} as AttributeInterface);

@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie";
+import { makeRequest } from "@/utils/makeRequest";
 
 interface Props {
   visible: boolean,
@@ -34,12 +35,7 @@ const AddValue = ({ visible, setVisible, onOk }: Props) => {
     }
     setSaving(true)
     try {
-      await api.post('/api/values', post, {
-        headers: {
-          "x-access-token": Cookies.get('token')
-          //"x-location": "admin"
-        }
-      })
+      await makeRequest('post', '/api/values', post)
       toast.success('Valor creado.')
       setSaving(false)
       setVisible(false)

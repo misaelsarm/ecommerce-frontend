@@ -84,18 +84,6 @@ export const Sortable = ({ items, setItems, label, uploading, folder }: Props) =
     } catch (error: any) {
       toast.error(error.response.data.message)
     }
-
-    /*  api.post(url, formData,
- 
-     ).then(({ data }) => {
-       let images = data.map((image) => image.Location);
-       setImages((prev) => [...prev, ...images])
-       setUploading(false)
-     }).catch((e) => {
-       toast.error(JSON.stringify(e))
-       setUploading(false)
-     }) */
-
   }
 
   return (
