@@ -8,7 +8,7 @@ import { UserInterface } from "@/interfaces"
 import { makeRequest } from "@/utils/makeRequest"
 import { GetServerSideProps } from "next"
 import { useRouter } from "next/router"
-import { ReactElement, useState } from "react"
+import { ReactElement, useContext, useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import Chip from "@/components/common/Chip"
@@ -18,6 +18,7 @@ import moment from "moment"
 import { permissionsMap } from "@/utils/permissionsMap"
 import { pagesMap } from "@/utils/pagesMap"
 import { hasPermission } from "@/utils/hasPermission"
+import { AuthContext } from "@/context/auth/AuthContext"
 
 interface Props {
   user: UserInterface
@@ -36,7 +37,9 @@ const UserDetailsAdminPage = ({ user }: Props) => {
 
   const { replace, back, pathname } = useRouter()
 
-  const canCreateEdit = user.role?.value === 'admin' ? true : hasPermission(pathname, 'create-edit', user.permissions)
+  const { user: currentUser } = useContext(AuthContext)
+
+  const canCreateEdit = currentUser.role?.value === 'admin' ? true : hasPermission(pathname, 'create-edit', user.permissions)
 
   const views = [
     {
@@ -357,10 +360,11 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req }) =>
   const id = params?.id
 
   let user
+
   const token = getServerSideToken(req)
 
   try {
-    const { data } = await api.get(`/api/users/${id}`, {
+    const data = await makeRequest('get', `/api/users/${id}`, {}, {
       headers:
       {
         "x-access-token": token

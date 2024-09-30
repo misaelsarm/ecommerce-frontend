@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form';
-import useFileUpload from '@/hooks/useFileUpload';
 import { makeRequest } from '@/utils/makeRequest';
 import toast from 'react-hot-toast';
 import Modal from '@/components/common/Modal';
@@ -8,7 +7,6 @@ import Input from '@/components/common/Input';
 import TextArea from '@/components/common/TextArea';
 import Checkbox from '@/components/common/Checkbox';
 import Select from '@/components/common/Select';
-import { api } from '@/api_config/api';
 import { CollectionInterface } from '@/interfaces';
 
 interface Props {
@@ -36,7 +34,7 @@ const AddCollection = ({ visible, setVisible, onOk }: Props) => {
   async function fetchData() {
     try {
 
-      const { data } = await api.get(`/api/collections`, {
+      const data = await makeRequest('get', `/api/collections`, {}, {
         headers: {
           //"x-access-token": token
           //"x-location": "admin"

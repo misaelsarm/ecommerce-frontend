@@ -16,6 +16,7 @@ import { getServerSideToken } from "@/utils/getServerSideToken"
 import { attributeTypes } from "@/utils/attributeTypes"
 import { hasPermission } from "@/utils/hasPermission"
 import { AuthContext } from "@/context/auth/AuthContext"
+import { makeRequest } from "@/utils/makeRequest"
 
 interface Props {
   attribute: AttributeInterface
@@ -25,14 +26,7 @@ const AttributeDetailsAdminPage = ({ attribute }: Props) => {
 
   async function fetchData() {
     try {
-      const { data } = await api.get('/api/values',
-        {
-          headers: {
-            "x-access-token": Cookies.get('token')
-            //"x-location": "admin"
-          }
-        }
-      )
+      const data = await makeRequest('get', '/api/values')
       setValues(data.values)
     } catch (error: any) {
       toast.error(error?.response?.data?.message || 'Error')
@@ -283,7 +277,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
   const token = getServerSideToken(nextReq)
 
   try {
-    const { data } = await api.get(`/api/attributes/${id}`, {
+    const data = await makeRequest('get', `/api/attributes/${id}`, {}, {
       headers: {
         "x-access-token": token,
       },

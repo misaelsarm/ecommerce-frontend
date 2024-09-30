@@ -1,4 +1,3 @@
-import { api } from "@/api_config/api"
 import Layout from "@/components/admin/Layout"
 import { Sortable } from "@/components/admin/Sortable"
 import Checkbox from "@/components/common/Checkbox"
@@ -14,10 +13,10 @@ import { useRouter } from "next/router"
 import { ReactElement, useContext, useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
-import Cookies from "js-cookie"
 import Chip from "@/components/common/Chip"
 import { AuthContext } from "@/context/auth/AuthContext"
 import { hasPermission } from "@/utils/hasPermission"
+import { getServerSideToken } from "@/utils/getServerSideToken"
 
 interface Props {
   product: ProductInterface
@@ -36,27 +35,22 @@ const ProductDetailsAdminPage = ({ product }: Props) => {
   async function fetchData() {
     try {
 
-      const { data } = await api.get(`/api/collections`, {
-        headers: {
-          //"x-access-token": token
-          //"x-location": "admin"
-        }
-      })
-      const { data: attributesData } = await api.get(`/api/attributes`, {
-        headers: {
-          "x-access-token": Cookies.get('token')
-          //"x-location": "admin"
-        }
-      })
+      const data = await makeRequest('get', `/api/collections`)
+
+      const attributesData = await makeRequest('get', `/api/attributes`)
+
       setCollections(data.collections.map((col: CollectionInterface) => ({
         label: col.name,
         value: col._id
       })))
+
       setAttributes(attributesData.attributes.map((att: AttributeInterface) => ({
         label: att.shortName,
         value: att._id
       })))
+
     } catch (error: any) {
+      console.log({ error })
       toast.error(error?.response?.data?.message || 'Error')
     }
   }
@@ -115,13 +109,15 @@ const ProductDetailsAdminPage = ({ product }: Props) => {
     // }
   };
 
+  console.log({errors})
+
   const onSubmit = async (values: any) => {
 
     console.log({ values })
 
     //if (images.length === 0) return toast.error('Elige al menos 1 imagen')
 
-    //setSaving(true)
+    setSaving(true)
 
     try {
       const update = {
@@ -277,6 +273,7 @@ const ProductDetailsAdminPage = ({ product }: Props) => {
           items={images}
           setItems={setImages}
           uploading={uploading}
+          folder="products"
         />
       </>
     )
@@ -414,15 +411,24 @@ const ProductDetailsAdminPage = ({ product }: Props) => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = async ({ params, req }) => {
 
   const code = params?.code
 
   let product
 
   try {
-    const { data } = await api.get(`/api/products/${code}`)
+    const token = getServerSideToken(req)
+
+    const data = await makeRequest('get', `/api/products/${code}`, {}, {
+      headers: {
+        "x-access-token": token,
+        "x-location": "admin"
+      }
+    })
+
     product = data.product
+
   } catch (error) {
 
   }

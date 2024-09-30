@@ -13,6 +13,7 @@ import { api } from '@/api_config/api';
 import { numberWithCommas } from '@/utils/numberWithCommas';
 import Chip from '@/components/common/Chip';
 import { getServerSideToken } from '@/utils/getServerSideToken';
+import { makeRequest } from '@/utils/makeRequest';
 
 interface Props {
   orders: OrderInterface[],
@@ -154,12 +155,11 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
 
     const token = getServerSideToken(nextReq)
 
-    // Make API request with the token
-    const { data } = await api.get(`/api/orders?page=${page}&limit=${limit}&search=${search}`, {
+    const data = await makeRequest('get', `/api/orders?page=${page}&limit=${limit}&search=${search}`, {}, {
       headers: {
         "x-access-token": token,
-      },
-    });
+      }
+    })
 
     orders = data.orders;
 

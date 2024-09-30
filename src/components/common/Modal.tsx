@@ -1,5 +1,5 @@
 import React, { CSSProperties, ReactNode, useEffect } from 'react'
-import styles from '../../styles/Modal.module.scss'
+import styles from '@/styles/admin/Modal.module.scss'
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface Props {

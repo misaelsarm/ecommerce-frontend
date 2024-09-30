@@ -9,6 +9,7 @@ import toast from "react-hot-toast"
 import Cookies from "js-cookie"
 import { attributeTypes } from "@/utils/attributeTypes"
 import Checkbox from "@/components/common/Checkbox"
+import { makeRequest } from "@/utils/makeRequest"
 
 interface Props {
   visible: boolean,
@@ -39,7 +40,7 @@ const AddAttribute = ({ visible, setVisible, onOk }: Props) => {
 
   async function fetchData() {
     try {
-      const { data } = await api.get('/api/values',
+      const data = await makeRequest('get', '/api/values', {},
         {
           headers: {
             "x-access-token": Cookies.get('token')

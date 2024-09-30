@@ -7,6 +7,7 @@ import Chip from '@/components/common/Chip'
 import { useDebouncedSearch } from '@/hooks/useDebouncedSearch'
 import { DiscountInterface } from '@/interfaces'
 import { getServerSideToken } from '@/utils/getServerSideToken'
+import { makeRequest } from '@/utils/makeRequest'
 import moment from 'moment'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
@@ -124,7 +125,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
 
     const token = getServerSideToken(nextReq)
 
-    const { data } = await api.get(`/api/discounts?page=${page}&limit=${limit}&search=${search}`, {
+    const data = await makeRequest('get', `/api/discounts?page=${page}&limit=${limit}&search=${search}`, {}, {
       headers: {
         "x-access-token": token
         // "x-location": "admin"

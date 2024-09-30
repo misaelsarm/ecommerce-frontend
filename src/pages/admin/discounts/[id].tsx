@@ -8,6 +8,7 @@ import Modal from '@/components/common/Modal';
 import Select from '@/components/common/Select';
 import { AuthContext } from '@/context/auth/AuthContext';
 import { CollectionInterface, DiscountInterface, ProductInterface } from '@/interfaces';
+import { getServerSideToken } from '@/utils/getServerSideToken';
 import { hasPermission } from '@/utils/hasPermission';
 import { makeRequest } from '@/utils/makeRequest';
 import moment from 'moment';
@@ -63,7 +64,7 @@ const DiscountDetailsPage = ({ discount }: Props) => {
 
   const fetchProducts = async () => {
     try {
-      const { data } = await api.get('/api/products?active=true')
+      const data = await makeRequest('get', '/api/products?active=true')
       setProducts(data.products)
     } catch (error: any) {
       toast.error(error.response.data.message)
@@ -73,7 +74,7 @@ const DiscountDetailsPage = ({ discount }: Props) => {
 
   const fetchCollections = async () => {
     try {
-      const { data } = await api.get('/api/collections?active=true')
+      const data = await makeRequest('get', '/api/collections?active=true')
       setCollections(data.collections)
     } catch (error: any) {
       toast.error(error.response.data.message)
@@ -362,17 +363,17 @@ DiscountDetailsPage.getLayout = function getLayout(page: ReactElement) {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, params }) => {
-
-  const req = nextReq as any
+export const getServerSideProps: GetServerSideProps = async ({ req, params }) => {
 
   let discount
 
+  const token = getServerSideToken(req)
+
   try {
-    const { data } = await api.get(`/api/discounts/${params?.id}`, {
+    const data = await makeRequest('get', `/api/discounts/${params?.id}`, {}, {
       headers: {
         //@ts-ignore
-        "x-access-token": req.headers.cookie ? req.headers.cookie.split(';').find(c => c.trim().startsWith('token=')).split('=')[1] : null,
+        "x-access-token": token,
         "x-location": "admin"
       }
     })

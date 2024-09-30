@@ -2,7 +2,9 @@ import Layout from '@/components/admin/Layout'
 import Modal from '@/components/common/Modal'
 import { AuthContext } from '@/context/auth/AuthContext'
 import { OrderInterface } from '@/interfaces'
+import { getServerSideToken } from '@/utils/getServerSideToken'
 import { hasPermission } from '@/utils/hasPermission'
+import { makeRequest } from '@/utils/makeRequest'
 import axios from 'axios'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
@@ -147,33 +149,15 @@ const OrderDetailsPage = ({ order }: Props) => {
 
 export const getServerSideProps: GetServerSideProps = async ({ params, req: nextReq }) => {
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL
-
   const number = params?.number
 
   let order
 
   try {
 
+    const token = getServerSideToken(nextReq)
 
-    // Extract the token from cookies
-    const token = nextReq.headers.cookie
-      ?.split(';')
-      .find(c => c.trim().startsWith('token='))
-      ?.split('=')[1];
-
-
-    if (!token) {
-      // No token found, redirect to login
-      return {
-        redirect: {
-          destination: '/admin/login', // Redirect to your login page
-          permanent: false,
-        },
-      };
-    }
-
-    const { data } = await axios.get(`${apiUrl}/api/orders/${number}`, {
+    const data = await makeRequest('get', `/api/orders/${number}`, {}, {
       headers: {
         "x-access-token": token,
         "x-location": "admin"

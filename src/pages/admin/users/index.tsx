@@ -13,6 +13,7 @@ import Chip from '@/components/common/Chip'
 import Link from 'next/link'
 import { useDebouncedSearch } from '@/hooks/useDebouncedSearch'
 import AddUser from '@/components/admin/users/AddUser'
+import { makeRequest } from '@/utils/makeRequest'
 
 interface Props {
   users: UserInterface[],
@@ -129,7 +130,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
   try {
     const token = getServerSideToken(nextReq)
 
-    const { data } = await api.get(`/api/users?role=admin,user&page=${page}&limit=${limit}&search=${search}`, {
+    const data = await makeRequest('get', `/api/users?role=admin,user&page=${page}&limit=${limit}&search=${search}`, {}, {
       headers: {
         //@ts-ignore
         "x-access-token": token,

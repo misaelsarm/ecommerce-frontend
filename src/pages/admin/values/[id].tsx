@@ -15,6 +15,7 @@ import { getServerSideToken } from "@/utils/getServerSideToken"
 import Checkbox from "@/components/common/Checkbox"
 import { AuthContext } from "@/context/auth/AuthContext"
 import { hasPermission } from "@/utils/hasPermission"
+import { makeRequest } from "@/utils/makeRequest"
 
 interface Props {
   value: ValueInterface
@@ -201,16 +202,16 @@ const ValueDetailsAdminPage = ({ value }: Props) => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, query, params }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, query, params }) => {
 
   const id = params?.id
 
   let value
 
-  const token = getServerSideToken(nextReq)
+  const token = getServerSideToken(req)
 
   try {
-    const { data } = await api.get(`/api/values/${id}`, {
+    const data = await makeRequest('get', `/api/values/${id}`, {}, {
       headers: {
         "x-access-token": token,
       },

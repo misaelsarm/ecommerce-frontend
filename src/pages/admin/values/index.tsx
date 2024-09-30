@@ -16,6 +16,7 @@ import { getServerSideToken } from "@/utils/getServerSideToken"
 import Chip from "@/components/common/Chip"
 import { hasPermission } from "@/utils/hasPermission"
 import { AuthContext } from "@/context/auth/AuthContext"
+import { makeRequest } from "@/utils/makeRequest"
 
 interface Props {
   values: ValueInterface[],
@@ -140,9 +141,12 @@ const ValuesAdminPage = ({ values = [], page, limit, size }: Props) => {
       />
       <Modal
         title="Eliminar valor de atributo"
-        bodyStyle={{
+        wrapperStyle={{
           height: 'auto',
           width: 400
+        }}
+        bodyStyle={{
+          height: 'auto'
         }}
         visible={confirmDelete}
         onClose={() => setConfirmDelete(false)}
@@ -178,7 +182,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
 
     const token = getServerSideToken(nextReq)
 
-    const { data } = await api.get(`/api/values?page=${page}&limit=${limit}&search=${search}`, {
+    const data = await makeRequest('get', `/api/values?page=${page}&limit=${limit}&search=${search}`, {}, {
       headers: {
         "x-access-token": token
         //"x-location": "admin"

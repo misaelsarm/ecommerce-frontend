@@ -8,6 +8,7 @@ import Select from "@/components/common/Select"
 import TextArea from "@/components/common/TextArea"
 import { AuthContext } from "@/context/auth/AuthContext"
 import { CollectionInterface } from "@/interfaces"
+import { getServerSideToken } from "@/utils/getServerSideToken"
 import { hasPermission } from "@/utils/hasPermission"
 import { makeRequest } from "@/utils/makeRequest"
 import { GetServerSideProps } from "next"
@@ -262,19 +263,31 @@ const CollectionDetailsPage = ({ collection, collections }: Props) => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = async ({ params,req }) => {
 
   const code = params?.code
 
   try {
 
+    const token = getServerSideToken(req)
+
     // Fetch the specific collection by code
-    const collectionResponse = await api.get(`/api/collections/${code}`)
-    const collection = collectionResponse.data.collection
+    const collectionResponse = await makeRequest('get', `/api/collections/${code}`, {}, {
+      headers: {
+        "x-access-token": token,
+        "x-location": "admin"
+      }
+    })
+    const collection = collectionResponse.collection
 
     // Fetch all collections
-    const collectionsResponse = await api.get(`/api/collections`)
-    const collections = collectionsResponse.data.collections
+    const collectionsResponse = await makeRequest('get', `/api/collections`, {}, {
+      headers: {
+        "x-access-token": token,
+        "x-location": "admin"
+      }
+    })
+    const collections = collectionsResponse.collections
 
     return {
       props: {

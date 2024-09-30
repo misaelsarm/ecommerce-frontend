@@ -1,18 +1,15 @@
-import { SubCategory } from "@/interfaces/SubCategory";
 import { FC, useEffect, useReducer } from "react";
-import { api } from "../../api_config/api";
-import { Category, Product } from "../../interfaces";
 import { UIContext } from "./UIContext";
 import { uiReducer } from "./uiReducer";
+import { makeRequest } from "@/utils/makeRequest";
+import { ProductInterface } from "@/interfaces";
 export interface UIState {
   visible: boolean,
   modalType: string,
-  products: Product[],
+  products: ProductInterface[],
   searchVisible: boolean,
-  categoriesVisible: boolean,
-  categories: Category[]
-  subCategories: SubCategory[],
-  ruletaVisible: boolean
+  //categoriesVisible: boolean,
+  //categories: Category[]
 }
 
 interface Props {
@@ -24,34 +21,28 @@ const UI_INITIAL_STATE: UIState = {
   modalType: '',
   products: [],
   searchVisible: false,
-  categoriesVisible: false,
-  categories: [],
-  subCategories: [],
-  ruletaVisible: false
+  //categoriesVisible: false,
+  //categories: []
 }
 
 export const UIProvider: FC<Props> = ({ children }) => {
 
   const [state, dispatch] = useReducer(uiReducer, UI_INITIAL_STATE)
 
-  const setProducts = (products: Product[]) => {
+  const setProducts = (products: ProductInterface[]) => {
     dispatch({ type: 'UI - Set Products', payload: products })
   }
 
-  const setCategories = (categories: Category[]) => {
+  /* const setCategories = (categories: Category[]) => {
     dispatch({ type: 'UI - Set Categories', payload: categories })
   }
 
   const setSubCategories = (subCategories: SubCategory[]) => {
     dispatch({ type: 'UI - Set SubCategories', payload: subCategories })
-  }
+  } */
 
   const setVisible = (visible: boolean) => {
     dispatch({ type: 'UI - Set Visible', payload: visible })
-  }
-
-  const setRuletaVisible = (visible: boolean) => {
-    dispatch({ type: 'UI - Set Ruleta Visible', payload: visible })
   }
 
   const setSearchVisible = (visible: boolean) => {
@@ -68,15 +59,13 @@ export const UIProvider: FC<Props> = ({ children }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const { data } = await api.get('/api/products?active=true')
-      const { data: categoriesData } = await api.get('/api/categories?active=true')
-      const { data: subCategoriesData } = await api.get('/api/subcategories?active=true')
+      const data = await makeRequest('get', '/api/products?active=true')
+      /*  const { data: categoriesData } = await makeRequest('get', '/api/categories?active=true')
+       const { data: subCategoriesData } = await makeRequest('get', '/api/subcategories?active=true') */
 
-      console.log({subCategoriesData})
-
-      setSubCategories(subCategoriesData.subcategories)
+      //setSubCategories(subCategoriesData.subcategories)
       setProducts(data.products)
-      setCategories(categoriesData.categories)
+      // setCategories(categoriesData.categories)
     }
     fetchData()
   }, [])
@@ -86,13 +75,13 @@ export const UIProvider: FC<Props> = ({ children }) => {
       value={{
         ...state,
         setProducts,
-        setCategories,
+        //setCategories,
+        //setSubCategories,
+        //setCategoriesVisible,
         setVisible,
         setSearchVisible,
         setModalType,
-        setCategoriesVisible,
-        setSubCategories,
-        setRuletaVisible
+
       }}>
       {
         children

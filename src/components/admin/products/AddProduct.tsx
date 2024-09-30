@@ -12,7 +12,6 @@ import { Sortable } from "../Sortable"
 import { AttributeInterface, CollectionInterface } from "@/interfaces"
 import { api } from "@/api_config/api"
 import Cookies from "js-cookie"
-import MyEditorComponent from "@/components/common/Editor"
 
 
 interface Props {
@@ -30,18 +29,8 @@ const AddProduct = ({ visible, setVisible, onOk }: Props) => {
   async function fetchData() {
     try {
 
-      const { data } = await api.get(`/api/collections`, {
-        headers: {
-          //"x-access-token": token
-          //"x-location": "admin"
-        }
-      })
-      const { data: attributesData } = await api.get(`/api/attributes`, {
-        headers: {
-          "x-access-token": Cookies.get('token')
-          //"x-location": "admin"
-        }
-      })
+      const data = await makeRequest('get', `/api/collections`)
+      const { data: attributesData } = await makeRequest('get', `/api/attributes`)
       setCollections(data.collections.map((col: CollectionInterface) => ({
         label: col.name,
         value: col._id
@@ -250,6 +239,7 @@ const AddProduct = ({ visible, setVisible, onOk }: Props) => {
           items={images}
           setItems={setImages}
           uploading={uploading}
+          folder="products"
         />
       </>
     </Modal>

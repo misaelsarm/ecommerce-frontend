@@ -5,7 +5,10 @@ const nextConfig = {
     remotePatterns: [
       {
         hostname: 'globemily.s3.amazonaws.com'
-      }
+      },
+      {
+        hostname: 'wearerethink.nyc3.cdn.digitaloceanspaces.com'
+      },
     ]
   }
 };

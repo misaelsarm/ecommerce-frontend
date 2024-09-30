@@ -17,6 +17,7 @@ import { getServerSideToken } from "@/utils/getServerSideToken"
 import Chip from "@/components/common/Chip"
 import { hasPermission } from "@/utils/hasPermission"
 import { AuthContext } from "@/context/auth/AuthContext"
+import { makeRequest } from "@/utils/makeRequest"
 
 interface Props {
   products: ProductInterface[],
@@ -30,6 +31,8 @@ const ProductsAdminPage = ({ products = [], page, limit, size }: Props) => {
   const [confirmDelete, setConfirmDelete] = useState(false)
 
   const { user } = useContext(AuthContext)
+
+  const [loading, setLoading] = useState(false)
 
   const [deletedProduct, setDeletedProduct] = useState({} as ProductInterface)
 
@@ -149,26 +152,29 @@ const ProductsAdminPage = ({ products = [], page, limit, size }: Props) => {
         }}
       />
       <Modal
+      loadingState={loading}
         title="Eliminar producto"
-        bodyStyle={{
+        wrapperStyle={{
           height: 'auto',
           width: 400
+        }}
+        bodyStyle={{
+          height: 'auto'
         }}
         visible={confirmDelete}
         onClose={() => setConfirmDelete(false)}
         onCancel={() => setConfirmDelete(false)}
         onOk={async () => {
           try {
-            await api.put(`/api/products/${deletedProduct._id}`, { deleted: true }, {
-              headers: {
-                'x-access-token': Cookies.get('token')
-              }
-            })
+            setLoading(true)
+            await makeRequest('put', `/api/products/${deletedProduct._id}`, { deleted: true })
             toast.success(`Se elimino el producto ${deletedProduct.name}`)
             setConfirmDelete(false);
             setDeletedProduct({} as ProductInterface);
             replace('/admin/products?page=1&limit=20')
+            setLoading(false)
           } catch (error: any) {
+            setLoading(false)
             toast.error(error.response.data.message)
           }
         }}
@@ -189,12 +195,13 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
 
     const token = getServerSideToken(nextReq)
 
-    const { data } = await api.get(`/api/products?page=${page}&limit=${limit}&search=${search}`, {
+    const data = await makeRequest('get', `/api/products?page=${page}&limit=${limit}&search=${search}`, {}, {
       headers: {
         "x-access-token": token
         // "x-location": "admin"
       }
     })
+
     products = data.products
 
   } catch (error) {

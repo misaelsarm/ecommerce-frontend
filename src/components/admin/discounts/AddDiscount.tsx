@@ -41,7 +41,7 @@ const AddDiscount = ({ visible, setVisible, onOk }: Props) => {
 
   const fetchProducts = async () => {
     try {
-      const { data } = await api.get('/api/products?active=true')
+      const  data  = await makeRequest('get', '/api/products?active=true')
       setProducts(data.products)
     } catch (error: any) {
       toast.error(error.response.data.message)
@@ -51,7 +51,7 @@ const AddDiscount = ({ visible, setVisible, onOk }: Props) => {
 
   const fetchCollections = async () => {
     try {
-      const { data } = await api.get('/api/collections?active=true')
+      const  data  = await makeRequest('get', '/api/collections?active=true')
       setCollections(data.collections)
     } catch (error: any) {
       toast.error(error.response.data.message)
