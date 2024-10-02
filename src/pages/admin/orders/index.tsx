@@ -52,7 +52,7 @@ const OrdersAdminPage = ({ page, limit, size, orders = [] }: Props) => {
       key: 'customer'
     },
     {
-      title: 'Status',
+      title: 'Estado',
       dataIndex: 'status',
       key: 'status',
       render: (text: string) => {
@@ -171,7 +171,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
       // Unauthorized error, token might be invalid or expired
       return {
         redirect: {
-          destination: '/login', // Redirect to your login page
+          destination: '/admin/login', // Redirect to your login page
           permanent: false,
         },
       };

@@ -318,7 +318,7 @@ const DiscountDetailsPage = ({ discount }: Props) => {
             <div className="cardItem">
               <h4>Estado</h4>
               {
-                discount.active ? <Chip text='activo' color='green' /> : <Chip text='no activo' />
+                discount.active ? <Chip text='Activo' color='green' /> : <Chip text='No activo' />
               }
             </div>
             {

@@ -133,7 +133,7 @@ const CustomerDetailsAdminPage = ({ user }: Props) => {
                       try {
                         setSaving(true)
                         await makeRequest('post', '/api/auth/recover', {
-                          email: "misael@wearerethink.mx"
+                          email: user.email
                         })
                         toast.success('Se envió un correo con las instrucciones para restablecer la contraseña', {
                           duration: 6000
@@ -160,10 +160,10 @@ const CustomerDetailsAdminPage = ({ user }: Props) => {
               <div className="cardItem">
                 <h4>Estado</h4>
                 {
-                  user.active ? <Chip text='activo' color='green' /> : <Chip text='no activo' />
+                  user.active ? <Chip text='Activo' color='green' /> : <Chip text='No activo' />
                 }
                 {
-                  user.verified ? <Chip text='verificado' color='green' /> : <Chip text='no verificado' />
+                  user.verified ? <Chip text='Verificado' color='green' /> : <Chip text='No verificado' />
                 }
               </div>
 
@@ -198,7 +198,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req }) =>
   const token = getServerSideToken(req)
 
   try {
-    const  data  = await makeRequest('get', `/api/users/${id}`, {}, {
+    const data = await makeRequest('get', `/api/users/${id}`, {}, {
       headers:
       {
         "x-access-token": token

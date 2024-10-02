@@ -172,7 +172,7 @@ const ValueDetailsAdminPage = ({ value }: Props) => {
               <div className="cardItem">
                 <h4>Estado</h4>
                 {
-                  value.active ? <Chip text='activo' color='green' /> : <Chip text='no activo' />
+                  value.active ? <Chip text='Activo' color='green' /> : <Chip text='No activo' />
                 }
               </div>
             </>

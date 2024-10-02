@@ -59,10 +59,10 @@ const CustomersAdminPage = ({ customers, page, limit, size }: Props) => {
       key: 'status',
       render: (_text: string, record: UserInterface) => <div className='d-flex flex-column align-start'>
         {
-          record.active ? <Chip text='activo' color='green' /> : <Chip text='no activo' />
+          record.active ? <Chip text='Activo' color='green' /> : <Chip text='No activo' />
         }
         {
-          record.verified ? <Chip text='verificado' color='green' /> : <Chip text='no verificado' />
+          record.verified ? <Chip text='Verificado' color='green' /> : <Chip text='No verificado' />
         }
       </div>
     },

@@ -226,7 +226,7 @@ const CollectionDetailsPage = ({ collection, collections }: Props) => {
               <div className="cardItem">
                 <h4>Estado</h4>
                 {
-                  collection.active ? <Chip text='activo' color='green' /> : <Chip text='no activo' />
+                  collection.active ? <Chip text='Activo' color='green' /> : <Chip text='No activo' />
                 }
               </div>
               <div className="cardItem">

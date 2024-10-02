@@ -281,7 +281,7 @@ const UserDetailsAdminPage = ({ user }: Props) => {
                       try {
                         setSaving(true)
                         await makeRequest('post', '/api/auth/recover', {
-                          email: "misael@wearerethink.mx"
+                          email: user.email
                         })
                         toast.success('Se envió un correo con las instrucciones para restablecer la contraseña', {
                           duration: 6000
@@ -326,10 +326,10 @@ const UserDetailsAdminPage = ({ user }: Props) => {
               <div className="cardItem">
                 <h4>Estado</h4>
                 {
-                  user.active ? <Chip text='activo' color='green' /> : <Chip text='no activo' />
+                  user.active ? <Chip text='Activo' color='green' /> : <Chip text='No activo' />
                 }
                 {
-                  user.verified ? <Chip text='verificado' color='green' /> : <Chip text='no verificado' />
+                  user.verified ? <Chip text='Verificado' color='green' /> : <Chip text='No verificado' />
                 }
               </div>
 
