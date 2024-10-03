@@ -1,15 +1,12 @@
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
-import React, { ReactElement, useCallback, useState } from 'react'
-import debounce from 'lodash.debounce';
+import React, { ReactElement } from 'react'
 import { useRouter } from 'next/router'
-//import Cookies from 'js-cookie'
 import Layout from '@/components/admin/Layout';
 import Table from '@/components/admin/Table';
 import PageHeader from '@/components/admin/PageHeader';
 import { OrderInterface } from '@/interfaces';
 import { useDebouncedSearch } from '@/hooks/useDebouncedSearch';
-import { api } from '@/api_config/api';
 import { numberWithCommas } from '@/utils/numberWithCommas';
 import Chip from '@/components/common/Chip';
 import { getServerSideToken } from '@/utils/getServerSideToken';
@@ -19,7 +16,8 @@ interface Props {
   orders: OrderInterface[],
   page: number,
   limit: number,
-  size: number
+  size: number,
+  errorCode: number
 }
 
 // Define a type for your possible statuses
@@ -34,7 +32,7 @@ const statusColorMap: Record<Status, string> = {
 };
 
 
-const OrdersAdminPage = ({ page, limit, size, orders = [] }: Props) => {
+const OrdersAdminPage = ({ page, limit, size, orders = [], errorCode }: Props) => {
 
   const { push, query } = useRouter()
 
@@ -104,42 +102,47 @@ const OrdersAdminPage = ({ page, limit, size, orders = [] }: Props) => {
   return (
     <>
       <div className="page">
-        <PageHeader
-          title='Pedidos'
-          actions={
-            [
-              {
-                name: "Action 1",
-                onClick: () => {
-                  alert('Action 1')
+        {
+          errorCode ? 'No tienes acceso para ver esta información.' :
+            <>
+              <PageHeader
+                title='Pedidos'
+                actions={
+                  [
+                    {
+                      name: "Action 1",
+                      onClick: () => {
+                        alert('Action 1')
+                      }
+                    },
+                    {
+                      name: "Action 2",
+                      onClick: () => {
+                        alert('Action 2')
+                      }
+                    },
+                  ]
                 }
-              },
-              {
-                name: "Action 2",
-                onClick: () => {
-                  alert('Action 2')
-                }
-              },
-            ]
-          }
-          handleSearch={handleSearch}
-          searchQuery={query.search}
-          searchTerm={searchTerm}
-          onClearSearch={() => {
-            push(`/admin/orders?page=1&limit=20`);
-            setSearchTerm('')
-          }}
-        />
-        <div className="pageContent">
-          <Table
-            page={page}
-            limit={limit}
-            columns={columns}
-            data={orders}
-            size={size}
-            navigateTo='orders'
-          />
-        </div>
+                handleSearch={handleSearch}
+                searchQuery={query.search}
+                searchTerm={searchTerm}
+                onClearSearch={() => {
+                  push(`/admin/orders?page=1&limit=20`);
+                  setSearchTerm('')
+                }}
+              />
+              <div className="pageContent">
+                <Table
+                  page={page}
+                  limit={limit}
+                  columns={columns}
+                  data={orders}
+                  size={size}
+                  navigateTo='orders'
+                />
+              </div>
+            </>
+        }
       </div>
     </>
   )
@@ -150,6 +153,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
   const { page, limit, search = '' } = query;
 
   let orders = []
+
+  let errorCode = null;
 
   try {
 
@@ -165,23 +170,21 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
 
   } catch (error: any) {
 
-    console.error('Error fetching orders:', error.message || error);
-
-    if (error.response && error.response.status === 401) {
-      // Unauthorized error, token might be invalid or expired
-      return {
-        redirect: {
-          destination: '/admin/login', // Redirect to your login page
-          permanent: false,
-        },
-      };
+    // Set errorCode based on the type of error (you can customize based on your needs)
+    if (error.response?.status === 401) {
+      errorCode = 401; // Unauthorized
+    } else if (error.response?.status === 500) {
+      errorCode = 500; // Internal Server Error
+    } else {
+      errorCode = 400; // General Error
     }
+  }
 
-    // Handle other potential errors
+  // Handle redirection or returning error code
+  if (errorCode) {
     return {
-      redirect: {
-        destination: '/error', // Redirect to an error page or handle appropriately
-        permanent: false,
+      props: {
+        errorCode, // Pass the error code to the frontend to render an error page
       },
     };
   }
