@@ -1,4 +1,3 @@
-import { api } from "@/api_config/api"
 import Layout from "@/components/admin/Layout"
 import Checkbox from "@/components/common/Checkbox"
 import Input from "@/components/common/Input"
@@ -7,10 +6,9 @@ import Select from "@/components/common/Select"
 import { AttributeInterface, ValueInterface } from "@/interfaces"
 import { GetServerSideProps } from "next"
 import { useRouter } from "next/router"
-import { ReactElement, useContext, useEffect, useState } from "react"
+import { ReactElement, useContext, useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
-import Cookies from "js-cookie"
 import Chip from "@/components/common/Chip"
 import { getServerSideToken } from "@/utils/getServerSideToken"
 import { attributeTypes } from "@/utils/attributeTypes"
@@ -39,22 +37,13 @@ const AttributeDetailsAdminPage = ({ attribute }: Props) => {
 
   const [values, setValues] = useState([] as ValueInterface[])
 
-  const [type, setType] = useState<'dropdown' | 'color' | 'long-text' | 'short-text' | ''>(attribute.type.value)
-
-  useEffect(() => {
-    if (editing) {
-      fetchData();
-    }
-  }, [editing]);
+  const [type, setType] = useState()
 
   const { register, handleSubmit, control, resetField, formState: { errors }, reset } = useForm<any>({
     defaultValues: {
       longName: attribute.longName,
       shortName: attribute.shortName,
-      type: {
-        label: attribute.type.label,
-        value: attribute.type.value
-      },
+      type: attribute.type,
       max: attribute.max,
       values: attribute.values.map(val => ({
         label: val.label,
@@ -106,7 +95,10 @@ const AttributeDetailsAdminPage = ({ attribute }: Props) => {
         />
         <Select
           label="Tipo de atributo"
-          options={attributeTypes}
+          options={attributeTypes.map(att => ({
+            label: att,
+            value: att
+          }))}
           name="type"
           control={control}
           required
@@ -209,11 +201,7 @@ const AttributeDetailsAdminPage = ({ attribute }: Props) => {
               </div>
               <div className="cardItem">
                 <h4>Tipo de atributo</h4>
-                <span>{attribute.type.label}</span>
-              </div>
-              <div className="cardItem">
-                <h4>Tipo de atributo</h4>
-                <span>{attribute.type.label}</span>
+                <span>{attribute.type}</span>
               </div>
               {
                 attribute.values.length > 0 &&

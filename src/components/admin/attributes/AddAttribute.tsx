@@ -1,4 +1,3 @@
-import { api } from "@/api_config/api"
 import Input from "@/components/common/Input"
 import Modal from "@/components/common/Modal"
 import Select from "@/components/common/Select"
@@ -6,7 +5,6 @@ import { ValueInterface } from "@/interfaces"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
-import Cookies from "js-cookie"
 import { attributeTypes } from "@/utils/attributeTypes"
 import Checkbox from "@/components/common/Checkbox"
 import { makeRequest } from "@/utils/makeRequest"
@@ -23,13 +21,13 @@ const AddAttribute = ({ visible, setVisible, onOk }: Props) => {
 
   const [values, setValues] = useState([] as ValueInterface[])
 
-  const [type, setType] = useState<'dropdown' | 'color' | 'long-text' | 'short-text' | ''>('')
+  const [type, setType] = useState()
 
   const [saving, setSaving] = useState(false)
 
   const resetForm = () => {
     reset()
-    setType('')
+    setType(undefined)
   }
 
   useEffect(() => {
@@ -98,7 +96,10 @@ const AddAttribute = ({ visible, setVisible, onOk }: Props) => {
         />
         <Select
           label="Tipo de atributo"
-          options={attributeTypes}
+          options={attributeTypes.map(att => ({
+            label: att,
+            value: att
+          }))}
           name="type"
           control={control}
           required

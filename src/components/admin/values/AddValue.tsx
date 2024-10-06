@@ -1,4 +1,3 @@
-import { api } from "@/api_config/api";
 import Checkbox from "@/components/common/Checkbox";
 import Input from "@/components/common/Input";
 import Modal from "@/components/common/Modal";
@@ -6,7 +5,6 @@ import Select from "@/components/common/Select";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import Cookies from "js-cookie";
 import { makeRequest } from "@/utils/makeRequest";
 
 interface Props {

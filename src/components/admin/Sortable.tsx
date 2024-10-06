@@ -17,7 +17,7 @@ import {
 import { SortableItem } from './SortableItem';
 import imageCompression from 'browser-image-compression';
 import { makeRequest } from '@/utils/makeRequest';
-import toast from 'react-hot-toast';
+import toast, { LoaderIcon } from 'react-hot-toast';
 
 interface Props {
   items: string[],
@@ -25,9 +25,10 @@ interface Props {
   label: string
   uploading: boolean
   folder?: string
+  setUploading: (uploading: boolean) => void
 }
 
-export const Sortable = ({ items, setItems, label, uploading, folder }: Props) => {
+export const Sortable = ({ items, setItems, label, uploading, setUploading, folder }: Props) => {
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -40,7 +41,7 @@ export const Sortable = ({ items, setItems, label, uploading, folder }: Props) =
     })
   );
 
-  const fileInputRef = useRef()
+  const fileInputRef = useRef<HTMLInputElement>()
 
   const handleClick = (e: any) => {
     console.log('click')
@@ -52,7 +53,7 @@ export const Sortable = ({ items, setItems, label, uploading, folder }: Props) =
     if (!files || files.length === 0) {
       return
     }
-    //setUploading(true)
+    setUploading(true)
     const options = {
       maxSizeMB: 3,
       maxWidthOrHeight: 1500,
@@ -76,13 +77,13 @@ export const Sortable = ({ items, setItems, label, uploading, folder }: Props) =
 
     try {
       const data = await makeRequest('post', '/api/files/multiple', formData)
-      console.log({ data })
       toast.success('Imagen cargada')
       let images = data.map((image) => image.Location);
       setItems((prev) => [...prev, ...images])
-      //setUploading(false)
+      setUploading(false)
     } catch (error: any) {
       toast.error(error.response.data.message)
+      setUploading(false)
     }
   }
 
@@ -118,8 +119,12 @@ export const Sortable = ({ items, setItems, label, uploading, folder }: Props) =
         }
         {
           uploading &&
-          <div>
+          <div className='sortable-loading'>
             <h2>Cargando imagenes...</h2>
+            <LoaderIcon style={{
+              width: 30,
+              height: 30
+            }} />
           </div>
         }
         <div className='sortable-grid'>
@@ -134,6 +139,16 @@ export const Sortable = ({ items, setItems, label, uploading, folder }: Props) =
             </div>
           }
         </div>
+        {
+          uploading  && items.length >= 5 &&
+          <div className='sortable-loading'>
+            <h2>Cargando imagenes...</h2>
+            <LoaderIcon style={{
+              width: 30,
+              height: 30
+            }} />
+          </div>
+        }
       </SortableContext>
     </DndContext>
   );

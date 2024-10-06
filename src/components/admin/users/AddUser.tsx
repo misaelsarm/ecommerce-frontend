@@ -1,4 +1,3 @@
-import { api } from "@/api_config/api";
 import Checkbox from "@/components/common/Checkbox";
 import Input from "@/components/common/Input";
 import Modal from "@/components/common/Modal";
@@ -8,6 +7,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import styles from '@/styles/admin/Users.module.scss'
+import { views } from "@/utils/views";
 
 interface Props {
   visible: boolean,
@@ -16,57 +16,6 @@ interface Props {
 }
 
 const AddUser = ({ visible, setVisible, onOk }: Props) => {
-
-  const views = [
-    {
-      view: '/admin/orders',
-      name: 'Pedidos',
-    },
-    {
-      view: '/admin/products',
-      name: 'Productos',
-    },
-    {
-      view: '/admin/attributes',
-      name: 'Atributos de producto',
-    },
-    {
-      view: '/admin/values',
-      name: 'Valores de atributo',
-    },
-    {
-      view: '/admin/collections',
-      name: 'Colecciones',
-    },
-    {
-      view: '/admin/customers',
-      name: 'Clientes',
-    },
-    {
-      view: '/admin/users',
-      name: 'Usuarios',
-    },
-    {
-      view: '/admin/discounts',
-      name: 'Descuentos',
-    },
-    {
-      view: '/admin/reportes/rutas',
-      name: 'Reporte de rutas',
-    },
-    {
-      view: '/admin/reportes/repartidores',
-      name: 'Reporte de repartidores',
-    },
-    {
-      view: '/admin/reportes/ventas',
-      name: 'Reporte de ventas',
-    },
-    {
-      view: '/admin/general',
-      name: 'General',
-    },
-  ]
 
   const { register, handleSubmit, control, formState: { errors } } = useForm();
 

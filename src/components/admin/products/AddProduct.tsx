@@ -3,15 +3,12 @@ import toast from "react-hot-toast"
 import Modal from "../../common/Modal"
 import { makeRequest } from "@/utils/makeRequest"
 import { useForm } from "react-hook-form"
-import ProductFields from "./ProductFields"
 import Input from "@/components/common/Input"
 import TextArea from "@/components/common/TextArea"
 import Checkbox from "@/components/common/Checkbox"
 import Select from "@/components/common/Select"
 import { Sortable } from "../Sortable"
 import { AttributeInterface, CollectionInterface } from "@/interfaces"
-import { api } from "@/api_config/api"
-import Cookies from "js-cookie"
 
 
 interface Props {
@@ -30,7 +27,7 @@ const AddProduct = ({ visible, setVisible, onOk }: Props) => {
     try {
 
       const data = await makeRequest('get', `/api/collections`)
-      const  attributesData  = await makeRequest('get', `/api/attributes`)
+      const attributesData = await makeRequest('get', `/api/attributes`)
       setCollections(data.collections.map((col: CollectionInterface) => ({
         label: col.name,
         value: col._id
@@ -71,8 +68,6 @@ const AddProduct = ({ visible, setVisible, onOk }: Props) => {
     setIsTracked(false)
     setImages([])
   }
-
-  //const { handleFileUpload, uploading } = useFileUpload();
 
   const onSubmit = async (values: any) => {
 
@@ -115,7 +110,7 @@ const AddProduct = ({ visible, setVisible, onOk }: Props) => {
 
   return (
     <Modal
-      loadingState={saving /* || uploading */}
+      loadingState={saving || uploading}
       onOk={handleSubmit(onSubmit)}
       onCancel={() => {
         setVisible(false)
@@ -239,6 +234,7 @@ const AddProduct = ({ visible, setVisible, onOk }: Props) => {
           items={images}
           setItems={setImages}
           uploading={uploading}
+          setUploading={setUploading}
           folder="products"
         />
       </>

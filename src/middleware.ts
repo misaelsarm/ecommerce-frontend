@@ -108,8 +108,8 @@ export default async function Middleware(req: NextRequest) {
                         if (!hasPermission) {
                             console.log('No tienes permiso para esta vista');
                             const url = req.nextUrl.clone();
-                            url.pathname = '/admin/login';
-                            url.search = `?error=no-access-to-page`;
+                            url.pathname = '/404';
+                            url.search = ``;
                             return NextResponse.redirect(url);
                         }
                     } else {
@@ -134,9 +134,10 @@ export default async function Middleware(req: NextRequest) {
                 return NextResponse.next();
             }
         } catch (error) {
-            console.log({ error })
+            console.log('error!!!')
             // If accessing /admin/*, redirect to login with a returnUrl parameter
             const loginUrl = req.nextUrl.clone();
+            loginUrl.search = '';
             loginUrl.pathname = '/admin/login';
             return NextResponse.redirect(loginUrl);
         }

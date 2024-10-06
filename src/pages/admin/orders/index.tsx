@@ -31,7 +31,6 @@ const statusColorMap: Record<Status, string> = {
   'Entregado': 'green',
 };
 
-
 const OrdersAdminPage = ({ page, limit, size, orders = [], errorCode }: Props) => {
 
   const { push, query } = useRouter()

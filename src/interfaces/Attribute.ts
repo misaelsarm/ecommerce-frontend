@@ -1,13 +1,13 @@
 import { ValueInterface } from "."
 
+// Define a separate type for the attribute type
+export type AttributeType = 'Lista desplegable' | 'Color' | 'Texto largo' | 'Texto corto'
+
 export interface AttributeInterface {
   _id: string
   shortName: string,
   longName: string,
-  type: {
-    label: string,
-    value: string
-  }
+  type: AttributeType
   max: number,
   values: ValueInterface[],
   active: boolean

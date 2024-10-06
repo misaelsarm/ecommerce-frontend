@@ -1,4 +1,3 @@
-import { api } from "@/api_config/api"
 import AddAttribute from "@/components/admin/attributes/AddAttribute"
 import Layout from "@/components/admin/Layout"
 import PageHeader from "@/components/admin/PageHeader"
@@ -54,7 +53,7 @@ const AttributesAdminPage = ({ attributes = [], page, limit, size }: Props) => {
       title: 'Tipo',
       dataIndex: 'type',
       key: 'type',
-      render: (text: string, record: AttributeInterface) => record.type.label
+      render: (text: string, record: AttributeInterface) => record.type
     },
     {
       title: 'Estado',

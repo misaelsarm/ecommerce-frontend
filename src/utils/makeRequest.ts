@@ -1,4 +1,4 @@
-import { api } from "@/api_config/api";
+import { api } from "@/api/api";
 import Cookies from "js-cookie";
 
 export const makeRequest = async (method: 'get' | 'post' | 'put', url: string, data: any = {}, options = {}) => {

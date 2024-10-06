@@ -1,4 +1,3 @@
-import { api } from "@/api_config/api"
 import Layout from "@/components/admin/Layout"
 import Checkbox from "@/components/common/Checkbox"
 import Input from "@/components/common/Input"
@@ -19,6 +18,7 @@ import { permissionsMap } from "@/utils/permissionsMap"
 import { pagesMap } from "@/utils/pagesMap"
 import { hasPermission } from "@/utils/hasPermission"
 import { AuthContext } from "@/context/auth/AuthContext"
+import { views } from "@/utils/views"
 
 interface Props {
   user: UserInterface
@@ -40,57 +40,6 @@ const UserDetailsAdminPage = ({ user }: Props) => {
   const { user: currentUser } = useContext(AuthContext)
 
   const canCreateEdit = currentUser.role?.value === 'admin' ? true : hasPermission(pathname, 'create-edit', user.permissions)
-
-  const views = [
-    {
-      view: '/admin/orders',
-      name: 'Pedidos',
-    },
-    {
-      view: '/admin/products',
-      name: 'Productos',
-    },
-    {
-      view: '/admin/attributes',
-      name: 'Atributos de producto',
-    },
-    {
-      view: '/admin/values',
-      name: 'Valores de atributo',
-    },
-    {
-      view: '/admin/collections',
-      name: 'Colecciones',
-    },
-    {
-      view: '/admin/customers',
-      name: 'Clientes',
-    },
-    {
-      view: '/admin/users',
-      name: 'Usuarios',
-    },
-    {
-      view: '/admin/discounts',
-      name: 'Descuentos',
-    },
-    {
-      view: '/admin/reportes/rutas',
-      name: 'Reporte de rutas',
-    },
-    {
-      view: '/admin/reportes/repartidores',
-      name: 'Reporte de repartidores',
-    },
-    {
-      view: '/admin/reportes/ventas',
-      name: 'Reporte de ventas',
-    },
-    {
-      view: '/admin/general',
-      name: 'General',
-    },
-  ]
 
   const { register, handleSubmit, control, formState: { errors } } = useForm<any>({
     defaultValues: {
