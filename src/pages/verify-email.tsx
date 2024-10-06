@@ -9,7 +9,7 @@ interface Props {
   errorCode: number
 }
 
-const VerifyEmail = ({ valid, errorCode }: Props) => {
+const VerifyEmail = ({ errorCode }: Props) => {
 
   return (
     <div className={styles.verify}>
@@ -30,11 +30,11 @@ const VerifyEmail = ({ valid, errorCode }: Props) => {
       }
       <span>
         {
-          errorCode ? 'Este link de verificación no es valido o ya expiro.' : 'Tu correo electrónico se ha verificado. Ahora puedes iniciar sesión con tu nueva cuenta de Norday.'
+          errorCode ? 'Este link de verificación no es válido o ya expiró.' : 'Tu correo electrónico se ha verificado. Ahora puedes iniciar sesión con tu nueva cuenta de Norday.'
         }
       </span>
       {
-        errorCode ? <button className='btn btn-black'>Ir a inicio</button> : <button className='btn btn-black'>Iniciar sesión</button>
+        errorCode ? <button className='btn btn-black'>Ir a Inicio</button> : <button className='btn btn-black'>Iniciar sesión</button>
       }
     </div>
   )
