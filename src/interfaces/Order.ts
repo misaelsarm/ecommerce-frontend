@@ -1,5 +1,7 @@
 import { CartInterface, ProductInterface, UserInterface } from "."
 
+export type PaymentMethod = 'paypal' | 'stripe'
+
 export interface OrderInterface {
 
   _id: string
@@ -8,7 +10,7 @@ export interface OrderInterface {
 
   user: UserInterface,
 
-  customer: {
+  guestUser: {
     name: string
     email: string,
     phone: string
@@ -22,10 +24,7 @@ export interface OrderInterface {
 
   shippingFee: number
 
-  paymentMethod: {
-    label: string,
-    value: string
-  },
+  paymentMethod: PaymentMethod,
 
   status: string
 
@@ -39,5 +38,6 @@ export interface OrderInterface {
     apartment: string,
     deliveryInstructions: string
   }
+
   products: ProductInterface[]
 }

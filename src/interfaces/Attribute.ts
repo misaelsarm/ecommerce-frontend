@@ -1,7 +1,7 @@
 import { ValueInterface } from "."
 
 // Define a separate type for the attribute type
-export type AttributeType = 'Lista desplegable' | 'Color' | 'Texto largo' | 'Texto corto'
+export type AttributeType = 'dropdown-list' | 'color' | 'short-text' | 'long-text'
 
 export interface AttributeInterface {
   _id: string

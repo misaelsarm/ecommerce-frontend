@@ -2,10 +2,7 @@ import { AttributeInterface, CollectionInterface } from ".";
 
 interface ProductDiscountInterface {
   hasDiscount?: boolean;
-  discountType?: {
-    label: string,
-    value: string
-  };
+  discountType?: 'fixed' | 'percentage'
   discountValue?: number;
 }
 
