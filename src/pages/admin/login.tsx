@@ -1,6 +1,5 @@
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { api } from '@/api_config/api';
 import styles from '@/styles/admin/Login.module.scss'
 import Cookies from 'js-cookie';
 import { useContext, useState } from 'react';

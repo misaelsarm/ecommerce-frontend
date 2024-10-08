@@ -1,4 +1,3 @@
-import { api } from "@/api_config/api";
 import Checkbox from "@/components/common/Checkbox";
 import DatePicker from "@/components/common/DatePicker";
 import Input from "@/components/common/Input";
