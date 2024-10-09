@@ -19,7 +19,7 @@ const PageHeader = ({ title, actions, handleSearch, searchTerm, searchQuery, onC
 
   const { push, query, replace, pathname } = useRouter()
 
-  const canCreateEdit = user.role?.value === 'admin' ? true : hasPermission(pathname, 'create-edit', user.permissions)
+  const canCreateEdit = user.role === 'admin' ? true : hasPermission(pathname, 'create-edit', user.permissions)
 
   return (
     <div className='pageHeader'>

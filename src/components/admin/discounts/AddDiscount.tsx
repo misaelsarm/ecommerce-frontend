@@ -99,6 +99,7 @@ const AddDiscount = ({ visible, setVisible, onOk }: Props) => {
 
       const discount = {
         ...values,
+        //@ts-ignore
         applicableProducts: [...new Set(validProducts)],
         applicableCollections: validCollections,
       }

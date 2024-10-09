@@ -41,14 +41,14 @@ export const Sortable = ({ items, setItems, label, uploading, setUploading, fold
     })
   );
 
-  const fileInputRef = useRef<HTMLInputElement>()
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleClick = (e: any) => {
     console.log('click')
     fileInputRef.current?.click()
   }
 
-  const handleFileUpload = async (e) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (!files || files.length === 0) {
       return
@@ -71,14 +71,18 @@ export const Sortable = ({ items, setItems, label, uploading, setUploading, fold
         compressedFile = new File([compressedBlob], compressedBlob.name)
       } catch (error) {
       }
+      //@ts-ignore
       formData.append('files', compressedFile)
     }
+    //@ts-ignore
     formData.append('folder', folder)
 
     try {
       const data = await makeRequest('post', '/api/files/multiple', formData)
       toast.success('Imagen cargada')
+      //@ts-ignore
       let images = data.map((image) => image.Location);
+      //@ts-ignore
       setItems((prev) => [...prev, ...images])
       setUploading(false)
     } catch (error: any) {
@@ -102,6 +106,7 @@ export const Sortable = ({ items, setItems, label, uploading, setUploading, fold
           accept='image/*'
           multiple
           onChange={handleFileUpload}
+          
           ref={fileInputRef}
           type='file'
           style={{
@@ -140,7 +145,7 @@ export const Sortable = ({ items, setItems, label, uploading, setUploading, fold
           }
         </div>
         {
-          uploading  && items.length >= 5 &&
+          uploading && items.length >= 5 &&
           <div className='sortable-loading'>
             <h2>Cargando imagenes...</h2>
             <LoaderIcon style={{

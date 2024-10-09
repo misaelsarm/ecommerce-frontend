@@ -1,4 +1,3 @@
-import { api } from '@/api_config/api'
 import AddCollection from '@/components/admin/collections/AddCollection'
 import Layout from '@/components/admin/Layout'
 import PageHeader from '@/components/admin/PageHeader'
@@ -10,9 +9,8 @@ import { GetServerSideProps } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { ReactElement, useCallback, useContext, useState } from 'react'
+import React, { ReactElement, useContext, useState } from 'react'
 import toast from 'react-hot-toast'
-import Cookies from "js-cookie";
 import { getServerSideToken } from '@/utils/getServerSideToken'
 import Chip from '@/components/common/Chip'
 import { AuthContext } from '@/context/auth/AuthContext'
@@ -98,7 +96,7 @@ const CollectionsAdminPage = ({ collections = [], page, limit, size }: Props) =>
   ]
 
 
-  if (hasPermission(pathname, 'delete', user.permissions) || user.role?.value === 'admin') {
+  if (hasPermission(pathname, 'delete', user.permissions) || user.role === 'admin') {
     columns.push({
       title: 'Eliminar',
       dataIndex: 'eliminar',

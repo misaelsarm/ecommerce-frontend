@@ -46,6 +46,7 @@ const DatePicker: React.FC<Props> = ({
               selected={startDate}
               onChange={(date) => {
                 onChange(date)
+                //@ts-ignore
                 setStartDate(date)
               }}
             />

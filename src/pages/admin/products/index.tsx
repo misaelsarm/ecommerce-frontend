@@ -1,4 +1,3 @@
-import { api } from "@/api_config/api"
 import Layout from "@/components/admin/Layout"
 import PageHeader from "@/components/admin/PageHeader"
 import AddProduct from "@/components/admin/products/AddProduct"
@@ -95,7 +94,7 @@ const ProductsAdminPage = ({ products = [], page, limit, size }: Props) => {
 
   const { push, query, replace, pathname } = useRouter()
 
-  if (hasPermission(pathname, 'delete', user.permissions) || user.role?.value === 'admin') {
+  if (hasPermission(pathname, 'delete', user.permissions) || user.role === 'admin') {
     columns.push({
       title: 'Eliminar',
       dataIndex: 'eliminar',

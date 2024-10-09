@@ -1,4 +1,3 @@
-import { api } from "@/api_config/api"
 import Layout from "@/components/admin/Layout"
 import Checkbox from "@/components/common/Checkbox"
 import Input from "@/components/common/Input"
@@ -28,7 +27,7 @@ const CustomerDetailsAdminPage = ({ user }: Props) => {
 
   const { user: currentUser } = useContext(AuthContext)
 
-  const canCreateEdit = currentUser.role?.value === 'admin' ? true : hasPermission(pathname, 'create-edit', user.permissions)
+  const canCreateEdit = currentUser.role === 'admin' ? true : hasPermission(pathname, 'create-edit', user.permissions)
 
   const { register, handleSubmit, control, formState: { errors } } = useForm<any>({
     defaultValues: {
@@ -53,7 +52,7 @@ const CustomerDetailsAdminPage = ({ user }: Props) => {
       toast.success('Usuario actualizado')
       setSaving(false)
       setEditing(false)
-      replace(`/admin/users/${user._id}`)
+      replace(`/admin/customers/${user._id}`)
     } catch (error: any) {
       toast.error(error.response.data.message)
       setSaving(false)
@@ -113,7 +112,7 @@ const CustomerDetailsAdminPage = ({ user }: Props) => {
             <>
               <div className="cardItem">
                 <h4>Tipo de usuario</h4>
-                <span>{user.role.label}</span>
+                <span>{user.role}</span>
               </div>
               <div className="cardItem">
                 <h4>Nombre</h4>

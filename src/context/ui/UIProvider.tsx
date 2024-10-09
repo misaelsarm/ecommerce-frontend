@@ -2,14 +2,14 @@ import { FC, useEffect, useReducer } from "react";
 import { UIContext } from "./UIContext";
 import { uiReducer } from "./uiReducer";
 import { makeRequest } from "@/utils/makeRequest";
-import { ProductInterface } from "@/interfaces";
+import { CollectionInterface, ProductInterface } from "@/interfaces";
 export interface UIState {
   visible: boolean,
   modalType: string,
   products: ProductInterface[],
   searchVisible: boolean,
   //categoriesVisible: boolean,
-  //categories: Category[]
+  collections: CollectionInterface[]
 }
 
 interface Props {
@@ -21,8 +21,8 @@ const UI_INITIAL_STATE: UIState = {
   modalType: '',
   products: [],
   searchVisible: false,
+  collections: []
   //categoriesVisible: false,
-  //categories: []
 }
 
 export const UIProvider: FC<Props> = ({ children }) => {
@@ -33,13 +33,9 @@ export const UIProvider: FC<Props> = ({ children }) => {
     dispatch({ type: 'UI - Set Products', payload: products })
   }
 
-  /* const setCategories = (categories: Category[]) => {
-    dispatch({ type: 'UI - Set Categories', payload: categories })
+  const setCollections = (collections: CollectionInterface[]) => {
+    dispatch({ type: 'UI - Set Collections', payload: collections })
   }
-
-  const setSubCategories = (subCategories: SubCategory[]) => {
-    dispatch({ type: 'UI - Set SubCategories', payload: subCategories })
-  } */
 
   const setVisible = (visible: boolean) => {
     dispatch({ type: 'UI - Set Visible', payload: visible })
@@ -49,10 +45,10 @@ export const UIProvider: FC<Props> = ({ children }) => {
     dispatch({ type: 'UI - Set Search Visible', payload: visible })
   }
 
-  const setCategoriesVisible = (visible: boolean) => {
+/*   const setCategoriesVisible = (visible: boolean) => {
     dispatch({ type: 'UI - Set Collections Visible', payload: visible })
   }
-
+ */
   const setModalType = (modalType: string) => {
     dispatch({ type: 'UI - Set Modal Type', payload: modalType })
   }
@@ -75,6 +71,7 @@ export const UIProvider: FC<Props> = ({ children }) => {
       value={{
         ...state,
         setProducts,
+        setCollections,
         //setCategories,
         //setSubCategories,
         //setCategoriesVisible,

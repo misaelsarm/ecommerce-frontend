@@ -76,7 +76,7 @@ const AttributesAdminPage = ({ attributes = [], page, limit, size }: Props) => {
 
   ]
 
-  if (hasPermission(pathname, 'delete', user.permissions) || user.role?.value === 'admin') {
+  if (hasPermission(pathname, 'delete', user.permissions) || user.role === 'admin') {
     columns.push({
       title: 'Eliminar',
       dataIndex: 'eliminar',

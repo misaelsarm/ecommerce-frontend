@@ -1,4 +1,3 @@
-import { api } from '@/api_config/api';
 import Layout from '@/components/admin/Layout'
 import Checkbox from '@/components/common/Checkbox';
 import Chip from '@/components/common/Chip';
@@ -50,9 +49,9 @@ const DiscountDetailsPage = ({ discount }: Props) => {
 
   });
 
-  const [limitBy, setLimitBy] = useState(discount.limitBy?.value)
+  const [limitBy, setLimitBy] = useState(discount.limitBy)
 
-  const [discountType, setDiscountType] = useState(discount.type?.value)
+  const [discountType, setDiscountType] = useState(discount.type)
 
   const [products, setProducts] = useState<ProductInterface[]>([])
 
@@ -114,6 +113,7 @@ const DiscountDetailsPage = ({ discount }: Props) => {
 
       const discount = {
         ...values,
+        //@ts-ignore
         applicableProducts: [...new Set(validProducts)],
         applicableCollections: validCollections,
       }
@@ -136,7 +136,7 @@ const DiscountDetailsPage = ({ discount }: Props) => {
 
   const { user } = useContext(AuthContext)
 
-  const canCreateEdit = user.role?.value === 'admin' ? true : hasPermission(pathname, 'create-edit', user.permissions)
+  const canCreateEdit = user.role === 'admin' ? true : hasPermission(pathname, 'create-edit', user.permissions)
 
   const renderForm = () => {
     return (
@@ -174,6 +174,7 @@ const DiscountDetailsPage = ({ discount }: Props) => {
           />
         </div>
         {
+          //@ts-ignore
           discountType !== '' &&
           <>
             <div className="d-flex align-center">
@@ -305,11 +306,11 @@ const DiscountDetailsPage = ({ discount }: Props) => {
             </div>
             <div className="cardItem">
               <h4>Tipo</h4>
-              <span>{discount.type.label}</span>
+              <span>{discount.type}</span>
             </div>
             <div className="cardItem">
               <h4>Valor del descuento</h4>
-              <span>{discount.type.value === 'percentage' ? `${discount.value}%` : `$ ${discount.value.toFixed(2)} MXN`}</span>
+              <span>{discount.type === 'percentage' ? `${discount.value}%` : `$ ${discount.value.toFixed(2)} MXN`}</span>
             </div>
             <div className="cardItem">
               <h4>Fecha de expiración</h4>

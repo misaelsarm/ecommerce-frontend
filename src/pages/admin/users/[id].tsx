@@ -24,7 +24,7 @@ interface Props {
   user: UserInterface
 }
 
-function transformResponseToDefaultValues(dbResponse) {
+function transformResponseToDefaultValues(dbResponse: any[]) {
   return dbResponse.reduce((acc, item) => {
     acc[item.page] = item.permissions;
     return acc;
@@ -39,7 +39,7 @@ const UserDetailsAdminPage = ({ user }: Props) => {
 
   const { user: currentUser } = useContext(AuthContext)
 
-  const canCreateEdit = currentUser.role?.value === 'admin' ? true : hasPermission(pathname, 'create-edit', user.permissions)
+  const canCreateEdit = currentUser.role === 'admin' ? true : hasPermission(pathname, 'create-edit', user.permissions)
 
   const { register, handleSubmit, control, formState: { errors } } = useForm<any>({
     defaultValues: {
@@ -210,7 +210,7 @@ const UserDetailsAdminPage = ({ user }: Props) => {
             <>
               <div className="cardItem">
                 <h4>Tipo de usuario</h4>
-                <span>{user.role.label}</span>
+                <span>{user.role}</span>
               </div>
               <div className="cardItem">
                 <h4>Nombre</h4>
@@ -254,10 +254,12 @@ const UserDetailsAdminPage = ({ user }: Props) => {
                     user.permissions.map(page => (
                       <div className="mb-20" key={page.page}>
                         <b >
+                          {/* @ts-ignore */}
                           {pagesMap[page.page]}
                         </b>
                         {
                           page.permissions?.map(perm => (
+                            //@ts-ignore
                             <span key={perm}>{permissionsMap[perm]}</span>
                           ))
                         }

@@ -1,4 +1,3 @@
-import { api } from '@/api_config/api'
 import Layout from '@/components/admin/Layout'
 //import moment from 'moment'
 import { GetServerSideProps } from 'next'

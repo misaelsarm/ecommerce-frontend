@@ -1,6 +1,7 @@
-import { Cart } from "@/interfaces";
+import { CartInterface } from "@/interfaces";
 
-const renderSubtotal = (cart: Cart) => {
+
+const renderSubtotal = (cart: CartInterface) => {
   function add(accumulator: number, a: number) {
     return accumulator + a;
   }
@@ -10,13 +11,13 @@ const renderSubtotal = (cart: Cart) => {
   return sum
 }
 
-const renderTotal = (cart: Cart, shippingFee: number) => {
+const renderTotal = (cart: CartInterface, shippingFee: number) => {
   const sum = renderSubtotal(cart)
 
   let finalPrice
 
   if (cart.discount) {
-    if (cart.discount.type?.value === 'percentage') {
+    if (cart.discount.type === 'percentage') {
       finalPrice = (sum - (sum * (cart.discount?.value / 100)))
     } else {
       finalPrice = (sum - cart.discount?.value)
@@ -35,7 +36,7 @@ const renderTotal = (cart: Cart, shippingFee: number) => {
 
 }
 
-const renderTotalWithProductDiscounts = (cart: Cart, shippingFee: number) => {
+const renderTotalWithProductDiscounts = (cart: CartInterface, shippingFee: number) => {
   const sum = renderSubtotal(cart)
 
   let finalPrice

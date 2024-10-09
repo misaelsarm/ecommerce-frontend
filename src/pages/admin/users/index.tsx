@@ -1,4 +1,3 @@
-import { api } from '@/api_config/api'
 import Layout from '@/components/admin/Layout'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
@@ -39,7 +38,7 @@ const UsersAdminPage = ({ users, page, limit, size }: Props) => {
       title: 'Tipo de usuario',
       dataIndex: 'role',
       key: 'role',
-      render: (text: string, record: UserInterface) => record.role.label
+      render: (text: string, record: UserInterface) => record.role
     },
     {
       title: 'Ultimo ingreso',

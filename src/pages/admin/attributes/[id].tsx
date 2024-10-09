@@ -113,7 +113,7 @@ const AttributeDetailsAdminPage = ({ attribute }: Props) => {
           <Select
             label="Valores de atributo"
             options={values.filter((option) => {
-              return option.type?.value === 'color'
+              return option.type === 'color'
             }).map((item) => ({
               label: item.label,
               value: item._id
@@ -130,7 +130,7 @@ const AttributeDetailsAdminPage = ({ attribute }: Props) => {
           <Select
             label="Valores de atributo"
             options={values.filter((option) => {
-              return option.type?.value === 'option'
+              return option.type === 'option'
             }).map((item) => ({
               label: item.label,
               value: item._id
@@ -165,7 +165,7 @@ const AttributeDetailsAdminPage = ({ attribute }: Props) => {
     )
   }
 
-  const canCreateEdit = user.role?.value === 'admin' ? true : hasPermission(pathname, 'create-edit', user.permissions)
+  const canCreateEdit = user.role === 'admin' ? true : hasPermission(pathname, 'create-edit', user.permissions)
 
   return (
     <>

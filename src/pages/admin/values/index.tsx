@@ -1,4 +1,3 @@
-import { api } from "@/api_config/api"
 import Layout from "@/components/admin/Layout"
 import PageHeader from "@/components/admin/PageHeader"
 import Table from "@/components/admin/Table"
@@ -36,7 +35,7 @@ const ValuesAdminPage = ({ values = [], page, limit, size }: Props) => {
       title: 'Nombre',
       dataIndex: 'label',
       key: 'label',
-      render: (text: string, record: ValueInterface) => record.type.value === 'color' ? <div className="d-flex align-center">
+      render: (text: string, record: ValueInterface) => record.type === 'color' ? <div className="d-flex align-center">
         <div
           style={{
             width: 30,
@@ -53,7 +52,7 @@ const ValuesAdminPage = ({ values = [], page, limit, size }: Props) => {
       title: 'Tipo',
       dataIndex: 'type',
       key: 'type',
-      render: (text: string, record: ValueInterface) => record.type.label
+      render: (text: string, record: ValueInterface) => record.type
     },
     {
       title: 'Estado',
@@ -83,7 +82,7 @@ const ValuesAdminPage = ({ values = [], page, limit, size }: Props) => {
 
   const { user } = useContext(AuthContext)
 
-  if (hasPermission(pathname, 'delete', user.permissions) || user.role?.value === 'admin') {
+  if (hasPermission(pathname, 'delete', user.permissions) || user.role === 'admin') {
     columns.push({
       title: 'Eliminar',
       dataIndex: 'eliminar',

@@ -1,4 +1,3 @@
-import { api } from "@/api_config/api"
 import Layout from "@/components/admin/Layout"
 import Input from "@/components/common/Input"
 import Modal from "@/components/common/Modal"
@@ -25,13 +24,13 @@ const ValueDetailsAdminPage = ({ value }: Props) => {
 
   const [editing, setEditing] = useState(false)
 
-  const [type, setType] = useState<'option' | 'color' | ''>(value.type.value)
+  const [type, setType] = useState(value.type)
 
   const { user } = useContext(AuthContext)
 
   const { replace, back, pathname } = useRouter()
 
-  const canCreateEdit = user.role?.value === 'admin' ? true : hasPermission(pathname, 'create-edit', user.permissions)
+  const canCreateEdit = user.role === 'admin' ? true : hasPermission(pathname, 'create-edit', user.permissions)
 
   const { register, handleSubmit, control, resetField, formState: { errors }, reset } = useForm<any>({
     defaultValues: {
@@ -149,10 +148,10 @@ const ValueDetailsAdminPage = ({ value }: Props) => {
               </div>
               <div className="cardItem">
                 <h4>Tipo de valor</h4>
-                <span>{value.type.label}</span>
+                <span>{value.type}</span>
               </div>
               {
-                value.type.value === 'color' &&
+                value.type === 'color' &&
                 <div className="cardItem">
                   <h4>Código de color</h4>
                   <div className="d-flex align-center">

@@ -1,4 +1,3 @@
-import { api } from "@/api_config/api"
 import Layout from "@/components/admin/Layout"
 import Checkbox from "@/components/common/Checkbox"
 import Chip from "@/components/common/Chip"
@@ -45,7 +44,7 @@ const CollectionDetailsPage = ({ collection, collections }: Props) => {
 
   const { user } = useContext(AuthContext)
 
-  const canCreateEdit = user.role?.value === 'admin' ? true : hasPermission(pathname, 'create-edit', user.permissions)
+  const canCreateEdit = user.role === 'admin' ? true : hasPermission(pathname, 'create-edit', user.permissions)
 
   const [uploading, setUploading] = useState(false)
 

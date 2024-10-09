@@ -22,7 +22,7 @@ const OrderDetailsPage = ({ order }: Props) => {
 
   const [editing, setEditing] = useState(false)
 
-  const canCreateEdit = user.role?.value === 'admin' ? true : hasPermission(pathname, 'create-edit', user.permissions)
+  const canCreateEdit = user.role === 'admin' ? true : hasPermission(pathname, 'create-edit', user.permissions)
 
 
   return (
@@ -114,9 +114,9 @@ const OrderDetailsPage = ({ order }: Props) => {
               {
                 order.cart && order.cart.discount &&
                 <div className="listItem" >
-                  <span>Descuento: {order.cart.discount.name} (-{order.cart.discount.type.value === 'fixed' ? `$ ${order.cart.discount.value.toFixed(2)} MXN` : `${order.cart.discount.value}%`})</span>
+                  <span>Descuento: {order.cart.discount.name} (-{order.cart.discount.type === 'fixed' ? `$ ${order.cart.discount.value.toFixed(2)} MXN` : `${order.cart.discount.value}%`})</span>
                   <span>- $ {
-                    order.cart.discount.type.value === 'percentage' ? (order.subTotal * (order.cart.discount.value / 100)).toFixed(2) : 0
+                    order.cart.discount.type === 'percentage' ? (order.subTotal * (order.cart.discount.value / 100)).toFixed(2) : 0
                   } MXN</span>
                 </div>
               }

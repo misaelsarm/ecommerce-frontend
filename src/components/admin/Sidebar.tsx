@@ -18,7 +18,7 @@ const Sidebar = () => {
   const [filtered, setFiltered] = useState<LinkInterface[]>([]);
 
   useEffect(() => {
-    if (user.role?.value === 'admin') {
+    if (user.role === 'admin') {
       // Admin has access to all links
       setFiltered(links);
     } else {

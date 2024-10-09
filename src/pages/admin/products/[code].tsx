@@ -155,7 +155,7 @@ const ProductDetailsAdminPage = ({ product }: Props) => {
     }
   }
 
-  const canCreateEdit = user.role?.value === 'admin' ? true : hasPermission(pathname, 'create-edit', user.permissions)
+  const canCreateEdit = user.role === 'admin' ? true : hasPermission(pathname, 'create-edit', user.permissions)
 
   const renderForm = () => {
     return (
@@ -273,6 +273,7 @@ const ProductDetailsAdminPage = ({ product }: Props) => {
           items={images}
           setItems={setImages}
           uploading={uploading}
+          setUploading={setUploading}
           folder="products"
         />
       </>

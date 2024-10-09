@@ -114,7 +114,7 @@ const AddAttribute = ({ visible, setVisible, onOk }: Props) => {
           <Select
             label="Valores de atributo"
             options={values.filter((option) => {
-              return option.type?.value === 'color'
+              return option.type === 'color'
             }).map((item) => ({
               label: item.label,
               value: item._id
@@ -131,7 +131,7 @@ const AddAttribute = ({ visible, setVisible, onOk }: Props) => {
           <Select
             label="Valores de atributo"
             options={values.filter((option) => {
-              return option.type?.value === 'option'
+              return option?.value === 'option'
             }).map((item) => ({
               label: item.label,
               value: item._id

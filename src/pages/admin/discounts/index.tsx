@@ -1,4 +1,3 @@
-import { api } from '@/api_config/api'
 import AddDiscount from '@/components/admin/discounts/AddDiscount'
 import Layout from '@/components/admin/Layout'
 import PageHeader from '@/components/admin/PageHeader'
@@ -39,13 +38,13 @@ const DiscountsAdminPage = ({ discounts = [], page, limit, size }: Props) => {
       title: 'Tipo',
       dataIndex: 'type',
       key: 'type',
-      render: (_text: string, record: DiscountInterface) => record.type.label
+      render: (_text: string, record: DiscountInterface) => record.type
     },
     {
       title: 'Valor',
       dataIndex: 'value',
       key: 'value',
-      render: (_text: string, record: DiscountInterface) => record.type.value === 'fixed' ? `$ ${record.value.toFixed(2)} MXN` : `${record.value}%`,
+      render: (_text: string, record: DiscountInterface) => record.type === 'fixed' ? `$ ${record.value.toFixed(2)} MXN` : `${record.value}%`,
     },
     {
       title: 'Fecha de expiración',

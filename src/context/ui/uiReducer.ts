@@ -1,31 +1,20 @@
-import { SubCategory } from '@/interfaces/SubCategory';
-import { Category, Product } from '../../interfaces';
+import { CollectionInterface, ProductInterface } from '@/interfaces';
 import { UIState } from './UIProvider';
 type UIActionType =
   {
     type: 'UI - Set Products',
-    payload: Product[]
+    payload: ProductInterface[]
   }
   |
   {
-    type: 'UI - Set Categories',
-    payload: Category[]
-  }
-  |
-  {
-    type: 'UI - Set SubCategories',
-    payload: SubCategory[]
+    type: 'UI - Set Collections',
+    payload: CollectionInterface[]
   }
   |
   {
     type: 'UI - Set Visible',
     payload: boolean
-  }
-  |
-  {
-    type: 'UI - Set Ruleta Visible',
-    payload: boolean
-  }
+  }  
   |
   {
     type: 'UI - Set Search Visible',
@@ -50,36 +39,26 @@ export const uiReducer = (state: UIState, action: UIActionType): UIState => {
         ...state,
         products: action.payload
       }
-    case 'UI - Set Categories':
+    case 'UI - Set Collections':
       return {
         ...state,
-        categories: action.payload
-      }
-    case 'UI - Set SubCategories':
-      return {
-        ...state,
-        subCategories: action.payload
+        collections: action.payload
       }
     case 'UI - Set Visible':
       return {
         ...state,
         visible: action.payload
       }
-    case 'UI - Set Ruleta Visible':
-      return {
-        ...state,
-        ruletaVisible: action.payload
-      }
     case 'UI - Set Search Visible':
       return {
         ...state,
         searchVisible: action.payload
       }
-    case 'UI - Set Collections Visible':
-      return {
-        ...state,
-        categoriesVisible: action.payload
-      }
+    // case 'UI - Set Collections Visible':
+    //   return {
+    //     ...state,
+    //     categoriesVisible: action.payload
+    //   }
     case 'UI - Set Modal Type':
       return {
         ...state,
