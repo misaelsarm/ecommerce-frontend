@@ -7,6 +7,7 @@ import { useDebouncedSearch } from '@/hooks/useDebouncedSearch'
 import { DiscountInterface } from '@/interfaces'
 import { getServerSideToken } from '@/utils/getServerSideToken'
 import { makeRequest } from '@/utils/makeRequest'
+import { discountTypesMap } from '@/utils/mappings'
 import moment from 'moment'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
@@ -38,7 +39,7 @@ const DiscountsAdminPage = ({ discounts = [], page, limit, size }: Props) => {
       title: 'Tipo',
       dataIndex: 'type',
       key: 'type',
-      render: (_text: string, record: DiscountInterface) => record.type
+      render: (_text: string, record: DiscountInterface) => discountTypesMap[record.type]
     },
     {
       title: 'Valor',

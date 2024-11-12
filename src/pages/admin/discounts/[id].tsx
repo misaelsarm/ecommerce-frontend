@@ -10,6 +10,7 @@ import { CollectionInterface, DiscountInterface, ProductInterface } from '@/inte
 import { getServerSideToken } from '@/utils/getServerSideToken';
 import { hasPermission } from '@/utils/hasPermission';
 import { makeRequest } from '@/utils/makeRequest';
+import { discountTypesMap } from '@/utils/mappings';
 import moment from 'moment';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
@@ -306,7 +307,7 @@ const DiscountDetailsPage = ({ discount }: Props) => {
             </div>
             <div className="cardItem">
               <h4>Tipo</h4>
-              <span>{discount.type}</span>
+              <span>{discountTypesMap[discount.type]}</span>
             </div>
             <div className="cardItem">
               <h4>Valor del descuento</h4>

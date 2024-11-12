@@ -15,6 +15,7 @@ import { attributeTypes } from "@/utils/attributeTypes"
 import { hasPermission } from "@/utils/hasPermission"
 import { AuthContext } from "@/context/auth/AuthContext"
 import { makeRequest } from "@/utils/makeRequest"
+import { attributeTypesMap } from "@/utils/mappings"
 
 interface Props {
   attribute: AttributeInterface
@@ -201,7 +202,7 @@ const AttributeDetailsAdminPage = ({ attribute }: Props) => {
               </div>
               <div className="cardItem">
                 <h4>Tipo de atributo</h4>
-                <span>{attribute.type}</span>
+                <span>{attributeTypesMap[attribute.type]}</span>
               </div>
               {
                 attribute.values.length > 0 &&

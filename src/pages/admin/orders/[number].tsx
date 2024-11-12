@@ -6,6 +6,7 @@ import { getServerSideToken } from '@/utils/getServerSideToken'
 import { hasPermission } from '@/utils/hasPermission'
 import { makeRequest } from '@/utils/makeRequest'
 import axios from 'axios'
+import moment from 'moment'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { ReactElement, useContext, useState } from 'react'
@@ -85,7 +86,7 @@ const OrderDetailsPage = ({ order }: Props) => {
             </div>
             <div className="cardItem">
               <h4>Fecha de compra</h4>
-              {/* <span>{moment(order.createdAt).format('lll')}</span> */}
+              <span>{moment(order.createdAt).format('lll')}</span>
             </div>
             <div className="cardItem">
               <h4>Productos</h4>

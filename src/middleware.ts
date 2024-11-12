@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { makeRequest } from './utils/makeRequest';
+import { UserInterface } from './interfaces';
 
 export default async function Middleware(req: NextRequest) {
 
@@ -8,7 +9,7 @@ export default async function Middleware(req: NextRequest) {
 
     const token = req.cookies.get('token')?.value;
 
-    let user;
+    let user: UserInterface;
 
     if (path === '/admin/login') {
         // Allow access to the login page
@@ -46,7 +47,7 @@ export default async function Middleware(req: NextRequest) {
 
             user = data
 
-            const userRole = user.role?.value;
+            const userRole = user.role;
 
             const validUser = user.active && user.verified
 

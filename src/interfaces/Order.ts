@@ -40,4 +40,6 @@ export interface OrderInterface {
   }
 
   products: ProductInterface[]
+
+  createdAt: Date
 }

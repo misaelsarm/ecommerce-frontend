@@ -16,6 +16,7 @@ import Chip from "@/components/common/Chip"
 import { hasPermission } from "@/utils/hasPermission"
 import { AuthContext } from "@/context/auth/AuthContext"
 import { makeRequest } from "@/utils/makeRequest"
+import { attributeTypesMap } from "@/utils/mappings"
 
 interface Props {
   attributes: AttributeInterface[],
@@ -53,7 +54,7 @@ const AttributesAdminPage = ({ attributes = [], page, limit, size }: Props) => {
       title: 'Tipo',
       dataIndex: 'type',
       key: 'type',
-      render: (text: string, record: AttributeInterface) => record.type
+      render: (text: string, record: AttributeInterface) => attributeTypesMap[record.type]
     },
     {
       title: 'Estado',

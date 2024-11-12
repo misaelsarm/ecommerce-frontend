@@ -13,6 +13,7 @@ import Link from 'next/link'
 import { useDebouncedSearch } from '@/hooks/useDebouncedSearch'
 import AddUser from '@/components/admin/users/AddUser'
 import { makeRequest } from '@/utils/makeRequest'
+import { userRolesMap } from '@/utils/mappings';
 
 interface Props {
   users: UserInterface[],
@@ -38,7 +39,7 @@ const UsersAdminPage = ({ users, page, limit, size }: Props) => {
       title: 'Tipo de usuario',
       dataIndex: 'role',
       key: 'role',
-      render: (text: string, record: UserInterface) => record.role
+      render: (text: string, record: UserInterface) => userRolesMap[record.role]
     },
     {
       title: 'Ultimo ingreso',
