@@ -39,8 +39,12 @@ const AddUser = ({ visible, setVisible, onOk }: Props) => {
       const access = [...mapped]
 
       const postedUser = {
-        ...values,
+        name: values.name,
+        "role": values.role.value,
+        "email": values.email,
+        "active": values.active,
         permissions: access.filter(role => role.permissions.length > 0),
+        password: values.password
       }
 
       //return console.log({ postedUser })

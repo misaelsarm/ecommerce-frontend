@@ -44,13 +44,17 @@ const AttributeDetailsAdminPage = ({ attribute }: Props) => {
     defaultValues: {
       longName: attribute.longName,
       shortName: attribute.shortName,
-      type: attribute.type,
+
       max: attribute.max,
       values: attribute.values.map(val => ({
         label: val.label,
         value: val._id
       })),
-      active: attribute.active
+      active: attribute.active,
+      type: {
+        label: attributeTypesMap[attribute.type],
+        value: attribute.type
+      }
     }
   });
 
@@ -64,7 +68,8 @@ const AttributeDetailsAdminPage = ({ attribute }: Props) => {
     try {
       const update = {
         ...values,
-        values: values.values?.map((value: any) => value.value)
+        values: values.values?.map((value: any) => value.value),
+        type: values.type.value
       }
       await makeRequest('put', `/api/attributes/${attribute._id}`, update)
       toast.success('Atributo actualizado')
@@ -96,10 +101,7 @@ const AttributeDetailsAdminPage = ({ attribute }: Props) => {
         />
         <Select
           label="Tipo de atributo"
-          options={attributeTypes.map(att => ({
-            label: att,
-            value: att
-          }))}
+          options={attributeTypes}
           name="type"
           control={control}
           required

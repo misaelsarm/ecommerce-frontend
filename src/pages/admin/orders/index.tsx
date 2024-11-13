@@ -11,6 +11,7 @@ import { numberWithCommas } from '@/utils/numberWithCommas';
 import Chip from '@/components/common/Chip';
 import { getServerSideToken } from '@/utils/getServerSideToken';
 import { makeRequest } from '@/utils/makeRequest';
+import moment from 'moment';
 
 interface Props {
   orders: OrderInterface[],
@@ -47,6 +48,12 @@ const OrdersAdminPage = ({ page, limit, size, orders = [], errorCode }: Props) =
       title: 'Nombre de cliente',
       dataIndex: 'customer',
       key: 'customer'
+    },
+    {
+      title: 'Fecha de compra',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      render: (text: string) => moment(text).format('lll')
     },
     {
       title: 'Estado',

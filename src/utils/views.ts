@@ -31,7 +31,7 @@ export const views = [
     view: '/admin/discounts',
     name: 'Descuentos',
   },
-  {
+/*   {
     view: '/admin/reportes/rutas',
     name: 'Reporte de rutas',
   },
@@ -42,9 +42,9 @@ export const views = [
   {
     view: '/admin/reportes/ventas',
     name: 'Reporte de ventas',
-  },
+  }, */
   {
-    view: '/admin/general',
-    name: 'General',
+    view: '/admin/slides',
+    name: 'Slides',
   },
 ]

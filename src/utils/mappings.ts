@@ -10,6 +10,11 @@ export const discountTypesMap = {
   "fixed": 'Monto fijo',
 }
 
+export const discountLimitByMap = {
+  "collection": 'Colección',
+  "product": 'Producto',
+}
+
 export const userRolesMap = {
   "admin": "Administrador",
   "user": "Usuario",

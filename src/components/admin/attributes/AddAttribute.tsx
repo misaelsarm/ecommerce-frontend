@@ -51,7 +51,8 @@ const AddAttribute = ({ visible, setVisible, onOk }: Props) => {
     try {
       const attribute = {
         ...values,
-        values: values.values?.map((value: any) => value.value)
+        values: values.values?.map((value: any) => value.value),
+        type: values.type.value
       }
       await makeRequest('post', '/api/attributes', attribute)
       toast.success('Atributo agregado')
@@ -96,10 +97,7 @@ const AddAttribute = ({ visible, setVisible, onOk }: Props) => {
         />
         <Select
           label="Tipo de atributo"
-          options={attributeTypes.map(att => ({
-            label: att,
-            value: att
-          }))}
+          options={attributeTypes}
           name="type"
           control={control}
           required

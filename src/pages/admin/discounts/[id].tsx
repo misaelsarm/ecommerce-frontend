@@ -10,7 +10,7 @@ import { CollectionInterface, DiscountInterface, ProductInterface } from '@/inte
 import { getServerSideToken } from '@/utils/getServerSideToken';
 import { hasPermission } from '@/utils/hasPermission';
 import { makeRequest } from '@/utils/makeRequest';
-import { discountTypesMap } from '@/utils/mappings';
+import { discountLimitByMap, discountTypesMap } from '@/utils/mappings';
 import moment from 'moment';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
@@ -32,7 +32,6 @@ const DiscountDetailsPage = ({ discount }: Props) => {
     defaultValues:
     {
       "name": discount.name,
-      "type": discount.type,
       "value": discount.value,
       "active": discount.active,
       "endDate": discount.endDate,
@@ -44,7 +43,14 @@ const DiscountDetailsPage = ({ discount }: Props) => {
         label: item.name,
         value: item._id
       })),
-      limitBy: discount.limitBy,
+      limitBy: {
+        label: discountLimitByMap[discount.limitBy],
+        value: discount.limitBy
+      },
+      type: {
+        label: discountTypesMap[discount.type],
+        value: discount.type
+      },
       limited: discount.limited
     }
 
@@ -117,6 +123,8 @@ const DiscountDetailsPage = ({ discount }: Props) => {
         //@ts-ignore
         applicableProducts: [...new Set(validProducts)],
         applicableCollections: validCollections,
+        type: values.type.value,
+        limitBy: values.limitBy.value
       }
 
       setSaving(true)

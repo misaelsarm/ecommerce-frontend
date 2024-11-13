@@ -19,6 +19,7 @@ import { pagesMap } from "@/utils/pagesMap"
 import { hasPermission } from "@/utils/hasPermission"
 import { AuthContext } from "@/context/auth/AuthContext"
 import { views } from "@/utils/views"
+import { userRolesMap } from "@/utils/mappings"
 
 interface Props {
   user: UserInterface
@@ -43,7 +44,10 @@ const UserDetailsAdminPage = ({ user }: Props) => {
 
   const { register, handleSubmit, control, formState: { errors } } = useForm<any>({
     defaultValues: {
-      "role": user.role,
+      "role": {
+        label: userRolesMap[user.role],
+        value: user.role
+      },
       "name": user.name,
       "email": user.email,
       "active": user.active,
@@ -70,7 +74,7 @@ const UserDetailsAdminPage = ({ user }: Props) => {
     try {
       const update = {
         name: values.name,
-        "role": values.role,
+        "role": values.role.value,
         "email": values.email,
         "active": values.active,
         permissions: access.filter(role => role.permissions.length > 0),
@@ -210,7 +214,7 @@ const UserDetailsAdminPage = ({ user }: Props) => {
             <>
               <div className="cardItem">
                 <h4>Tipo de usuario</h4>
-                <span>{user.role}</span>
+                <span>{userRolesMap[user.role]}</span>
               </div>
               <div className="cardItem">
                 <h4>Nombre</h4>

@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form'
 import { makeRequest } from '@/utils/makeRequest'
 import toast from 'react-hot-toast'
 import { useRouter } from 'next/router'
+import Link from 'next/link'
 
 const ResetPage = () => {
 
@@ -15,16 +16,21 @@ const ResetPage = () => {
 
   const token = query.token
 
-  const [ok, setOk] = useState(false)
+  const [loading, setLoading] = useState(false)
+
+  const [ok, setOk] = useState(true)
 
   const onSubmit = async (values: any) => {
     try {
+      setLoading(true)
       await makeRequest('post', `/api/auth/reset/${token}`, values)
       toast.success('La contraseña se ha actualizado.')
       setOk(true)
+      setLoading(false)
     } catch (error: any) {
       toast.error(error.response.data.message)
       setOk(false)
+      setLoading(false)
     }
   }
 
@@ -33,6 +39,7 @@ const ResetPage = () => {
       <div className={styles.logo}>
         <Image alt='' fill src='/logo.png' />
       </div>
+      <h2>Restablecer contraseña</h2>
       {
         ok ?
           <>
@@ -44,7 +51,7 @@ const ResetPage = () => {
             <div className={styles.fields}>
 
               <span>Tu contraseña ha cambiado de manera exitosa.</span>
-              <button className='btn btn-black'>Ir a Inicio</button>
+              <Link href='/' className='btn btn-black'>Ir a Inicio</Link>
             </div>
           </>
           : <form onSubmit={handleSubmit(onSubmit)} className={styles.fields}>
@@ -71,7 +78,7 @@ const ResetPage = () => {
                 }
               }
             />
-            <button className='btn btn-black btn-block'>Aceptar</button>
+            <button disabled={loading} className='btn btn-black btn-block'>Aceptar</button>
           </form>
       }
     </div>

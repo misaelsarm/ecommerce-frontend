@@ -102,6 +102,8 @@ const AddDiscount = ({ visible, setVisible, onOk }: Props) => {
         //@ts-ignore
         applicableProducts: [...new Set(validProducts)],
         applicableCollections: validCollections,
+        type: values.type.value,
+        limitBy: values.limitBy.value
       }
 
       console.log({ discount })
