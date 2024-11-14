@@ -20,3 +20,8 @@ export const userRolesMap = {
   "user": "Usuario",
   "customer": "Cliente"
 }
+
+export const valueTypesMap = {
+  "option": "Opción",
+  "color": "Color"
+}

@@ -18,7 +18,10 @@ interface Props {
   page: number,
   limit: number,
   size: number,
-  errorCode: number
+  error: {
+    error: number,
+    message: string
+  }
 }
 
 // Define a type for your possible statuses
@@ -32,7 +35,9 @@ const statusColorMap: Record<Status, string> = {
   'Entregado': 'green',
 };
 
-const OrdersAdminPage = ({ page, limit, size, orders = [], errorCode }: Props) => {
+const OrdersAdminPage = ({ page, limit, size, orders = [], error }: Props) => {
+
+  console.log({ orders })
 
   const { push, query } = useRouter()
 
@@ -47,7 +52,10 @@ const OrdersAdminPage = ({ page, limit, size, orders = [], errorCode }: Props) =
     {
       title: 'Nombre de cliente',
       dataIndex: 'customer',
-      key: 'customer'
+      key: 'customer',
+      render: (text: string, record: OrderInterface) => record.type === 'manual' || !record.user ? record.guestUser?.name
+
+        : record.user?.name
     },
     {
       title: 'Fecha de compra',
@@ -109,7 +117,7 @@ const OrdersAdminPage = ({ page, limit, size, orders = [], errorCode }: Props) =
     <>
       <div className="page">
         {
-          errorCode ? 'No tienes acceso para ver esta información.' :
+          error ? error.message :
             <>
               <PageHeader
                 title='Pedidos'
@@ -161,6 +169,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
   let orders = []
 
   let errorCode = null;
+  let errorMessage = null;
 
   try {
 
@@ -175,22 +184,19 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
     orders = data.orders;
 
   } catch (error: any) {
+    errorCode = error.response?.status
+    errorMessage = error.response?.data.message
 
-    // Set errorCode based on the type of error (you can customize based on your needs)
-    if (error.response?.status === 401) {
-      errorCode = 401; // Unauthorized
-    } else if (error.response?.status === 500) {
-      errorCode = 500; // Internal Server Error
-    } else {
-      errorCode = 400; // General Error
-    }
   }
 
   // Handle redirection or returning error code
   if (errorCode) {
     return {
       props: {
-        errorCode, // Pass the error code to the frontend to render an error page
+        error: {
+          error: errorCode,
+          message: errorMessage
+        }
       },
     };
   }

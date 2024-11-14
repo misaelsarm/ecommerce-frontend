@@ -42,4 +42,8 @@ export interface OrderInterface {
   products: ProductInterface[]
 
   createdAt: Date
+
+  createdBy: UserInterface,
+
+  type: string,
 }

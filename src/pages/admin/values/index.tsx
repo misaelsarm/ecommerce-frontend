@@ -16,6 +16,7 @@ import Chip from "@/components/common/Chip"
 import { hasPermission } from "@/utils/hasPermission"
 import { AuthContext } from "@/context/auth/AuthContext"
 import { makeRequest } from "@/utils/makeRequest"
+import { valueTypesMap } from "@/utils/mappings"
 
 interface Props {
   values: ValueInterface[],
@@ -52,7 +53,7 @@ const ValuesAdminPage = ({ values = [], page, limit, size }: Props) => {
       title: 'Tipo',
       dataIndex: 'type',
       key: 'type',
-      render: (text: string, record: ValueInterface) => record.type
+      render: (text: string, record: ValueInterface) => valueTypesMap[record.type]
     },
     {
       title: 'Estado',

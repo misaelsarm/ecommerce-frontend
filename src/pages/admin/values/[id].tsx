@@ -15,6 +15,7 @@ import Checkbox from "@/components/common/Checkbox"
 import { AuthContext } from "@/context/auth/AuthContext"
 import { hasPermission } from "@/utils/hasPermission"
 import { makeRequest } from "@/utils/makeRequest"
+import { valueTypesMap } from "@/utils/mappings"
 
 interface Props {
   value: ValueInterface
@@ -34,7 +35,10 @@ const ValueDetailsAdminPage = ({ value }: Props) => {
 
   const { register, handleSubmit, control, resetField, formState: { errors }, reset } = useForm<any>({
     defaultValues: {
-      type: value.type,
+      type: {
+        label: valueTypesMap[value.type],
+        value: value.type
+      },
       label: value.label,
       value: value.value,
       active: value.active,
@@ -50,6 +54,7 @@ const ValueDetailsAdminPage = ({ value }: Props) => {
     try {
       const update = {
         ...values,
+        type: values.type.value
       }
       await makeRequest('put', `/api/values/${value._id}`, update)
       toast.success('Valor actualizado')
@@ -148,7 +153,7 @@ const ValueDetailsAdminPage = ({ value }: Props) => {
               </div>
               <div className="cardItem">
                 <h4>Tipo de valor</h4>
-                <span>{value.type}</span>
+                <span>{valueTypesMap[value.type]}</span>
               </div>
               {
                 value.type === 'color' &&

@@ -29,7 +29,8 @@ const AddValue = ({ visible, setVisible, onOk }: Props) => {
   const onSubmit = async (values: any) => {
     const post = {
       ...values,
-      value: type === 'color' ? values.value : values.label.trim().toLowerCase().split(' ').join('-')
+      value: type === 'color' ? values.value : values.label.trim().toLowerCase().split(' ').join('-'),
+      type: values.type.value
     }
     setSaving(true)
     try {
@@ -59,7 +60,6 @@ const AddValue = ({ visible, setVisible, onOk }: Props) => {
         resetForm()
       }}
       visible={visible}
-
     >
       <>
         <Select
