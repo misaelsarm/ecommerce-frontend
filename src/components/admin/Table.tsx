@@ -7,15 +7,16 @@ interface Props {
   columns: any[]
   data: any[],
   style?: CSSProperties,
-  limit?: number,
+  limit: number,
   page?: number,
   navigateTo?: string,
-  size?: number
+  batchSize: number,
+  totalRecords: number
   loading?: boolean,
   showButtons?: boolean
 }
 
-const Table = ({ data, columns, style, page, limit, navigateTo, size = 0, loading, showButtons = true }: Props) => {
+const Table = ({ data, columns, style, page, limit, navigateTo, batchSize, totalRecords, loading, showButtons = true }: Props) => {
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -132,19 +133,22 @@ const Table = ({ data, columns, style, page, limit, navigateTo, size = 0, loadin
       {
         (!loading && (limit && page) && showButtons) &&
         <div className={styles.footer}>
-          <button
-            onClick={() => {
-              push(`/admin/${navigateTo}?page=${page - 1}&limit=${limit}`)
-            }}
-            disabled={page === 1}
-            className='btn btn-black' >Anterior</button>
-          <button
-            disabled={size < limit}
-            className='btn btn-black'
-            onClick={() => {
-              push(`/admin/${navigateTo}?page=${page + 1}&limit=${limit}`)
-            }}
-          >Siguiente</button>
+          <span>Página {page}/{(totalRecords / limit).toFixed(0)}</span>
+          <div className={styles.buttons}>
+            <button
+              onClick={() => {
+                push(`/admin/${navigateTo}?page=${page - 1}&limit=${limit}`)
+              }}
+              disabled={page === 1}
+              className='btn btn-black' >Anterior</button>
+            <button
+              disabled={batchSize < limit}
+              className='btn btn-black'
+              onClick={() => {
+                push(`/admin/${navigateTo}?page=${page + 1}&limit=${limit}`)
+              }}
+            >Siguiente</button>
+          </div>
         </div>
       }
       {
@@ -154,6 +158,7 @@ const Table = ({ data, columns, style, page, limit, navigateTo, size = 0, loadin
           <span>No hay registros</span>
         </div>
       }
+
     </div>
   )
 }

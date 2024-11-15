@@ -7,7 +7,7 @@ import Input from '@/components/common/Input';
 import TextArea from '@/components/common/TextArea';
 import Checkbox from '@/components/common/Checkbox';
 import Select from '@/components/common/Select';
-import { CollectionInterface } from '@/interfaces';
+import { CollectionInterface, ProductInterface } from '@/interfaces';
 
 interface Props {
   visible: boolean,
@@ -20,6 +20,8 @@ const AddCollection = ({ visible, setVisible, onOk }: Props) => {
   const { register, handleSubmit, reset, control, formState: { errors } } = useForm();
 
   const [collections, setCollections] = useState<any[]>([])
+
+  const [products, setProducts] = useState([])
 
   //const { handleFileUpload, uploading } = useFileUpload();
 
@@ -34,7 +36,14 @@ const AddCollection = ({ visible, setVisible, onOk }: Props) => {
   async function fetchData() {
     try {
 
-      const data = await makeRequest('get', `/api/collections`, {}, {
+      const data = await makeRequest('get', `/api/collections?active=true`, {}, {
+        headers: {
+          //"x-access-token": token
+          //"x-location": "admin"
+        }
+      })
+      
+      const productData = await makeRequest('get', `/api/products?active=true`, {}, {
         headers: {
           //"x-access-token": token
           //"x-location": "admin"
@@ -46,22 +55,27 @@ const AddCollection = ({ visible, setVisible, onOk }: Props) => {
         value: col._id
       })))
 
+      setProducts(productData.products.map((prod: ProductInterface) => ({
+        label: prod.name,
+        value: prod._id
+      })))
+
     } catch (error: any) {
       toast.error(error?.response?.data?.message || 'Error')
     }
   }
-
-  useEffect(() => {
-    if (visible) {
-      fetchData();
-    }
-  }, [visible]);
 
   const imageRef = useRef<any>()
 
   const [image, setImage] = useState('')
 
   const [saving, setSaving] = useState(false)
+
+  useEffect(() => {
+    if (visible) {
+      fetchData();
+    }
+  }, [visible]);
 
   const resetForm = () => {
     reset()
@@ -74,6 +88,7 @@ const AddCollection = ({ visible, setVisible, onOk }: Props) => {
       const collection = {
         ...values,
         parentCollection: values.parentCollection?.value,
+        products: values.products.map((prod:any)=>prod.value),
         image,
       }
 
@@ -127,6 +142,13 @@ const AddCollection = ({ visible, setVisible, onOk }: Props) => {
           options={collections}
           name="parentCollection"
           label="Colección agrupadora"
+        />
+        <Select
+          control={control}
+          options={products}
+          name="products"
+          label="Añadir productos a la colección"
+          isMulti
         />
         <Input
           register={register}

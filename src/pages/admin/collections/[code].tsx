@@ -6,7 +6,7 @@ import Modal from "@/components/common/Modal"
 import Select from "@/components/common/Select"
 import TextArea from "@/components/common/TextArea"
 import { AuthContext } from "@/context/auth/AuthContext"
-import { CollectionInterface } from "@/interfaces"
+import { CollectionInterface, ProductInterface } from "@/interfaces"
 import { getServerSideToken } from "@/utils/getServerSideToken"
 import { hasPermission } from "@/utils/hasPermission"
 import { makeRequest } from "@/utils/makeRequest"
@@ -18,10 +18,10 @@ import toast from "react-hot-toast"
 
 interface Props {
   collection: CollectionInterface,
-  collections: CollectionInterface[],
+
 }
 
-const CollectionDetailsPage = ({ collection, collections }: Props) => {
+const CollectionDetailsPage = ({ collection }: Props) => {
 
   const [editing, setEditing] = useState(false)
 
@@ -34,9 +34,50 @@ const CollectionDetailsPage = ({ collection, collections }: Props) => {
         label: collection.parentCollection?.name,
         value: collection.parentCollection?._id
       },
+      products: collection.products?.map(prod=>({
+        label: prod?.name,
+        value: prod?._id
+      })),
       active: collection.active,
     }
   });
+
+  const [collections, setCollections] = useState<any[]>([])
+
+  const [products, setProducts] = useState([])
+
+  async function fetchData() {
+    try {
+
+      const data = await makeRequest('get', `/api/collections?active=true`, {}, {
+        headers: {
+          //"x-access-token": token
+          //"x-location": "admin"
+        }
+      })
+
+      const productData = await makeRequest('get', `/api/products?active=true`, {}, {
+        headers: {
+          //"x-access-token": token
+          //"x-location": "admin"
+        }
+      })
+
+      setCollections(data.collections.map((col: CollectionInterface) => ({
+        label: col.name,
+        value: col._id
+      })))
+
+      setProducts(productData.products.map((prod: ProductInterface) => ({
+        label: prod.name,
+        value: prod._id
+      })))
+
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || 'Error')
+    }
+  }
+
 
   const [saving, setSaving] = useState(false)
 
@@ -74,6 +115,7 @@ const CollectionDetailsPage = ({ collection, collections }: Props) => {
       const update = {
         ...values,
         parentCollection: values.parentCollection?.value,
+        products: values.products.map((prod: any) => prod.value),
         image,
       }
       await makeRequest('put', `/api/collections/${collection._id}`, update)
@@ -106,14 +148,18 @@ const CollectionDetailsPage = ({ collection, collections }: Props) => {
           errors={errors}
           required
         />
-        <Select
+         <Select
           control={control}
-          options={collections.map(col => ({
-            label: col.name,
-            value: col._id
-          }))}
+          options={collections}
           name="parentCollection"
           label="Colección agrupadora"
+        />
+        <Select
+          control={control}
+          options={products}
+          name="products"
+          label="Añadir productos a la colección"
+          isMulti
         />
         <Input
           register={register}
@@ -190,8 +236,9 @@ const CollectionDetailsPage = ({ collection, collections }: Props) => {
               </svg></button>
             {
               !editing && canCreateEdit &&
-              <button className='btn btn-black' onClick={async () => {
+              <button className='btn btn-black' onClick={() => {
                 setEditing(true)
+                fetchData()
               }}>Editar</button>
             }
           </div>
@@ -218,6 +265,14 @@ const CollectionDetailsPage = ({ collection, collections }: Props) => {
                   <Chip text={collection.parentCollection?.name} />
                 </div>
               }
+               <div className="cardItem">
+                  <h4>Productos</h4>
+                  {
+                    collection.products?.map(product => (
+                      <Chip text={product.name} key={product._id} />
+                    ))
+                  }
+                </div>
               <div className="cardItem">
                 <h4>Palabras clave</h4>
                 <span>{collection.keywords}</span>
@@ -262,7 +317,7 @@ const CollectionDetailsPage = ({ collection, collections }: Props) => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ params,req }) => {
+export const getServerSideProps: GetServerSideProps = async ({ params, req }) => {
 
   const code = params?.code
 
@@ -280,7 +335,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params,req }) => 
     const collection = collectionResponse.collection
 
     // Fetch all collections
-    const collectionsResponse = await makeRequest('get', `/api/collections`, {}, {
+    const collectionsResponse = await makeRequest('get', `/api/collections?active=true`, {}, {
       headers: {
         "x-access-token": token,
         "x-location": "admin"

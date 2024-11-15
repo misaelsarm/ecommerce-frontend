@@ -1,3 +1,5 @@
+import { ProductInterface } from "./Product"
+
 export interface CollectionInterface {
   _id: string
   name: string,
@@ -7,4 +9,5 @@ export interface CollectionInterface {
   active: boolean,
   keywords: string,
   parentCollection?: CollectionInterface
+  products?: ProductInterface[] 
 }

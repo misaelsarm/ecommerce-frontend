@@ -22,10 +22,11 @@ interface Props {
   products: ProductInterface[],
   page: number,
   limit: number,
-  size: number
+  batchSize: number,
+  totalRecords: number
 }
 
-const ProductsAdminPage = ({ products = [], page, limit, size }: Props) => {
+const ProductsAdminPage = ({ products = [], page, limit, totalRecords, batchSize }: Props) => {
 
   const [confirmDelete, setConfirmDelete] = useState(false)
 
@@ -136,7 +137,8 @@ const ProductsAdminPage = ({ products = [], page, limit, size }: Props) => {
             columns={columns}
             data={products}
             navigateTo="products"
-            size={size}
+            batchSize={batchSize}
+            totalRecords={totalRecords}
             page={page}
             limit={limit}
           />
@@ -151,7 +153,7 @@ const ProductsAdminPage = ({ products = [], page, limit, size }: Props) => {
         }}
       />
       <Modal
-      loadingState={loading}
+        loadingState={loading}
         title="Eliminar producto"
         wrapperStyle={{
           height: 'auto',
@@ -188,13 +190,15 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
 
   const { page, limit, search = '' } = query;
 
+  let data
+
   let products = []
 
   try {
 
     const token = getServerSideToken(nextReq)
 
-    const data = await makeRequest('get', `/api/products?page=${page}&limit=${limit}&search=${search}`, {}, {
+    data = await makeRequest('get', `/api/products?page=${page}&limit=${limit}&search=${search}`, {}, {
       headers: {
         "x-access-token": token
         // "x-location": "admin"
@@ -218,7 +222,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
       products,
       page: Number(page),
       limit: Number(limit),
-      size: Number(products.length),
+      batchSize: data.batchSize,
+      totalRecords: data.totalRecords
     },
   };
 }
