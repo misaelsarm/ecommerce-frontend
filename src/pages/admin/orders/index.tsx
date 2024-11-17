@@ -17,11 +17,12 @@ interface Props {
   orders: OrderInterface[],
   page: number,
   limit: number,
-  size: number,
   error: {
     error: number,
     message: string
   }
+  batchSize: number,
+  totalRecords: number
 }
 
 // Define a type for your possible statuses
@@ -35,7 +36,7 @@ const statusColorMap: Record<Status, string> = {
   'Entregado': 'green',
 };
 
-const OrdersAdminPage = ({ page, limit, size, orders = [], error }: Props) => {
+const OrdersAdminPage = ({ page, limit, batchSize, totalRecords, orders = [], error }: Props) => {
 
   console.log({ orders })
 
@@ -151,7 +152,8 @@ const OrdersAdminPage = ({ page, limit, size, orders = [], error }: Props) => {
                   limit={limit}
                   columns={columns}
                   data={orders}
-                  size={size}
+                  batchSize={batchSize}
+                  totalRecords={totalRecords}
                   navigateTo='orders'
                 />
               </div>
@@ -169,13 +171,16 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
   let orders = []
 
   let errorCode = null;
+  
   let errorMessage = null;
+
+  let data
 
   try {
 
     const token = getServerSideToken(nextReq)
 
-    const data = await makeRequest('get', `/api/orders?page=${page}&limit=${limit}&search=${search}`, {}, {
+    data = await makeRequest('get', `/api/orders?page=${page}&limit=${limit}&search=${search}`, {}, {
       headers: {
         "x-access-token": token,
       }
@@ -206,7 +211,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
       orders,
       page: Number(page),
       limit: Number(limit),
-      size: Number(orders.length),
+      batchSize: data.batchSize,
+      totalRecords: data.totalRecords
     },
   };
 }

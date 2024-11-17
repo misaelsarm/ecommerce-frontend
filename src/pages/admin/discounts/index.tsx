@@ -18,10 +18,15 @@ interface Props {
   discounts: DiscountInterface[],
   page: number,
   limit: number,
-  size: number
+  error: {
+    error: number,
+    message: string
+  }
+  batchSize: number,
+  totalRecords: number
 }
 
-const DiscountsAdminPage = ({ discounts = [], page, limit, size }: Props) => {
+const DiscountsAdminPage = ({ discounts = [], page, limit, batchSize, totalRecords }: Props) => {
 
   const [visible, setVisible] = useState(false)
 
@@ -98,7 +103,8 @@ const DiscountsAdminPage = ({ discounts = [], page, limit, size }: Props) => {
             data={discounts}
             page={page}
             limit={limit}
-            size={size}
+            batchSize={batchSize}
+            totalRecords={totalRecords}
             navigateTo='discounts'
           />
         </div>
@@ -121,11 +127,17 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
 
   let discounts = []
 
+  let errorCode = null;
+
+  let errorMessage = null;
+
+  let data
+
   try {
 
     const token = getServerSideToken(nextReq)
 
-    const data = await makeRequest('get', `/api/discounts?page=${page}&limit=${limit}&search=${search}`, {}, {
+    data = await makeRequest('get', `/api/discounts?page=${page}&limit=${limit}&search=${search}`, {}, {
       headers: {
         "x-access-token": token
         // "x-location": "admin"
@@ -134,12 +146,19 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
 
     discounts = data.discounts
 
-  } catch (error) {
-    console.log({ error })
+  } catch (error: any) {
+    errorCode = error.response?.status
+    errorMessage = error.response?.data.message
+  }
+
+  // Handle redirection or returning error code
+  if (errorCode) {
     return {
-      redirect: {
-        destination: '/',
-        permanent: false,
+      props: {
+        error: {
+          error: errorCode,
+          message: errorMessage
+        }
       },
     };
   }
@@ -149,7 +168,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
       discounts,
       page: Number(page),
       limit: Number(limit),
-      size: Number(discounts.length),
+      batchSize: data.batchSize,
+      totalRecords: data.totalRecords
     },
   };
 }

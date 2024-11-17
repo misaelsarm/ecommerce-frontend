@@ -21,10 +21,11 @@ interface Props {
   collections: CollectionInterface[],
   page: number,
   limit: number,
-  size: number
+  batchSize: number,
+  totalRecords: number
 }
 
-const CollectionsAdminPage = ({ collections = [], page, limit, size }: Props) => {
+const CollectionsAdminPage = ({ collections = [], page, limit, batchSize, totalRecords }: Props) => {
 
   const [confirmDelete, setConfirmDelete] = useState(false)
 
@@ -138,7 +139,8 @@ const CollectionsAdminPage = ({ collections = [], page, limit, size }: Props) =>
           <Table
             columns={columns}
             data={collections}
-            size={size}
+            batchSize={batchSize}
+            totalRecords={totalRecords}
             page={page}
             limit={limit}
             navigateTo="collections"
@@ -189,11 +191,16 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
 
   let collections = []
 
+  let errorCode = null;
+  let errorMessage = null;
+
+  let data
+
   try {
 
     const token = getServerSideToken(nextReq)
 
-    const data = await makeRequest('get', `/api/collections?page=${page}&limit=${limit}&search=${search}`, {}, {
+    data = await makeRequest('get', `/api/collections?page=${page}&limit=${limit}&search=${search}`, {}, {
       headers: {
         "x-access-token": token
         //"x-location": "admin"
@@ -201,12 +208,20 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
     })
     collections = data.collections
 
-  } catch (error) {
-    console.log({ error })
+  } catch (error: any) {
+    errorCode = error.response?.status
+    errorMessage = error.response?.data.message
+  }
+
+
+  // Handle redirection or returning error code
+  if (errorCode) {
     return {
-      redirect: {
-        destination: '/',
-        permanent: false,
+      props: {
+        error: {
+          error: errorCode,
+          message: errorMessage
+        }
       },
     };
   }
@@ -216,7 +231,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
       collections,
       page: Number(page),
       limit: Number(limit),
-      size: Number(collections.length),
+      batchSize: data.batchSize,
+      totalRecords: data.totalRecords
     },
   };
 }

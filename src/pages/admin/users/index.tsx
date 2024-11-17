@@ -19,10 +19,15 @@ interface Props {
   users: UserInterface[],
   page: number,
   limit: number,
-  size: number
+  error: {
+    error: number,
+    message: string
+  }
+  batchSize: number,
+  totalRecords: number
 }
 
-const UsersAdminPage = ({ users, page, limit, size }: Props) => {
+const UsersAdminPage = ({ users, page, limit, batchSize, totalRecords }: Props) => {
 
   const columns = [
     {
@@ -105,7 +110,8 @@ const UsersAdminPage = ({ users, page, limit, size }: Props) => {
             data={users}
             page={page}
             limit={limit}
-            size={size}
+            batchSize={batchSize}
+            totalRecords={totalRecords}
             navigateTo='users'
           />
         </div>
@@ -125,12 +131,19 @@ const UsersAdminPage = ({ users, page, limit, size }: Props) => {
 export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, query }) => {
 
   const { page, limit, search = '' } = query;
+
   let users = []
+
+  let errorCode = null;
+
+  let errorMessage = null;
+
+  let data
 
   try {
     const token = getServerSideToken(nextReq)
 
-    const data = await makeRequest('get', `/api/users?role=admin,user&page=${page}&limit=${limit}&search=${search}`, {}, {
+    data = await makeRequest('get', `/api/users?role=admin,user&page=${page}&limit=${limit}&search=${search}`, {}, {
       headers: {
         //@ts-ignore
         "x-access-token": token,
@@ -139,12 +152,19 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
     })
     users = data.users
 
-  } catch (error) {
-    console.log({ error })
+  } catch (error: any) {
+    errorCode = error.response?.status
+    errorMessage = error.response?.data.message
+  }
+
+  // Handle redirection or returning error code
+  if (errorCode) {
     return {
-      redirect: {
-        destination: '/',
-        permanent: false,
+      props: {
+        error: {
+          error: errorCode,
+          message: errorMessage
+        }
       },
     };
   }
@@ -154,7 +174,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
       users: users,
       page: Number(page),
       limit: Number(limit),
-      size: Number(users.length),
+      batchSize: data.batchSize,
+      totalRecords: data.totalRecords
     },
   };
 }

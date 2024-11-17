@@ -22,10 +22,11 @@ interface Props {
   attributes: AttributeInterface[],
   page: number,
   limit: number,
-  size: number
+  batchSize: number
+  totalRecords: number
 }
 
-const AttributesAdminPage = ({ attributes = [], page, limit, size }: Props) => {
+const AttributesAdminPage = ({ attributes = [], page, limit, batchSize, totalRecords }: Props) => {
 
   const [confirmDelete, setConfirmDelete] = useState(false)
 
@@ -119,9 +120,10 @@ const AttributesAdminPage = ({ attributes = [], page, limit, size }: Props) => {
             columns={columns}
             data={attributes}
             navigateTo="attributes"
-            size={size}
+            batchSize={batchSize}
             page={page}
             limit={limit}
+            totalRecords={totalRecords}
           />
         </div>
       </div>
@@ -169,24 +171,37 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
 
   let attributes = []
 
+  let errorCode = null;
+  let errorMessage = null;
+
+  let data
+
   try {
 
     const token = getServerSideToken(nextReq)
 
-    const data = await makeRequest('get', `/api/attributes?page=${page}&limit=${limit}&search=${search}`, {}, {
+     data = await makeRequest('get', `/api/attributes?page=${page}&limit=${limit}&search=${search}`, {}, {
       headers: {
         "x-access-token": token
         //"x-location": "admin"
       }
     })
+
     attributes = data.attributes
 
-  } catch (error) {
-    console.log({ error })
+  } catch (error:any) {
+    errorCode = error.response?.status
+    errorMessage = error.response?.data.message
+  }
+
+  // Handle redirection or returning error code
+  if (errorCode) {
     return {
-      redirect: {
-        destination: '/',
-        permanent: false,
+      props: {
+        error: {
+          error: errorCode,
+          message: errorMessage
+        }
       },
     };
   }
@@ -196,7 +211,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
       attributes,
       page: Number(page),
       limit: Number(limit),
-      size: Number(attributes.length),
+      batchSize: data.batchSize,
+      totalRecords: data.totalRecords
     },
   };
 }

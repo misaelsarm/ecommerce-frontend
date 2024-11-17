@@ -18,6 +18,8 @@ interface Props {
 
 const Table = ({ data, columns, style, page, limit, navigateTo, batchSize, totalRecords, loading, showButtons = true }: Props) => {
 
+  console.log({ batchSize, totalRecords })
+
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [limit, page])
@@ -133,21 +135,27 @@ const Table = ({ data, columns, style, page, limit, navigateTo, batchSize, total
       {
         (!loading && (limit && page) && showButtons) &&
         <div className={styles.footer}>
-          <span>Página {page}/{(totalRecords / limit).toFixed(0)}</span>
-          <div className={styles.buttons}>
+          <span>
+            Página {page}/{Math.ceil(totalRecords / limit)}
+          </span>          <div className={styles.buttons}>
             <button
               onClick={() => {
-                push(`/admin/${navigateTo}?page=${page - 1}&limit=${limit}`)
+                push(`/admin/${navigateTo}?page=${page - 1}&limit=${limit}`);
               }}
-              disabled={page === 1}
-              className='btn btn-black' >Anterior</button>
+              disabled={page <= 1} // Disable when on the first page
+              className="btn btn-black"
+            >
+              Anterior
+            </button>
             <button
-              disabled={batchSize < limit}
-              className='btn btn-black'
               onClick={() => {
-                push(`/admin/${navigateTo}?page=${page + 1}&limit=${limit}`)
+                push(`/admin/${navigateTo}?page=${page + 1}&limit=${limit}`);
               }}
-            >Siguiente</button>
+              disabled={page >= Math.ceil(totalRecords / limit)} // Disable when on the last page
+              className="btn btn-black"
+            >
+              Siguiente
+            </button>
           </div>
         </div>
       }

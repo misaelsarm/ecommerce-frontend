@@ -22,10 +22,15 @@ interface Props {
   values: ValueInterface[],
   page: number,
   limit: number,
-  size: number
+  error: {
+    error: number,
+    message: string
+  }
+  batchSize: number,
+  totalRecords: number
 }
 
-const ValuesAdminPage = ({ values = [], page, limit, size }: Props) => {
+const ValuesAdminPage = ({ values = [], page, limit, batchSize, totalRecords }: Props) => {
 
   const [confirmDelete, setConfirmDelete] = useState(false)
 
@@ -125,7 +130,8 @@ const ValuesAdminPage = ({ values = [], page, limit, size }: Props) => {
             columns={columns}
             data={values}
             navigateTo="values"
-            size={size}
+            batchSize={batchSize}
+            totalRecords={totalRecords}
             page={page}
             limit={limit}
           />
@@ -174,11 +180,17 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
 
   let values = []
 
+  let errorCode = null;
+
+  let errorMessage = null;
+
+  let data
+
   try {
 
     const token = getServerSideToken(nextReq)
 
-    const data = await makeRequest('get', `/api/values?page=${page}&limit=${limit}&search=${search}`, {}, {
+    data = await makeRequest('get', `/api/values?page=${page}&limit=${limit}&search=${search}`, {}, {
       headers: {
         "x-access-token": token
         //"x-location": "admin"
@@ -186,12 +198,19 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
     })
     values = data.values
 
-  } catch (error) {
-    console.log({ error })
+  } catch (error: any) {
+    errorCode = error.response?.status
+    errorMessage = error.response?.data.message
+  }
+
+  // Handle redirection or returning error code
+  if (errorCode) {
     return {
-      redirect: {
-        destination: '/',
-        permanent: false,
+      props: {
+        error: {
+          error: errorCode,
+          message: errorMessage
+        }
       },
     };
   }
@@ -201,7 +220,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
       values,
       page: Number(page),
       limit: Number(limit),
-      size: Number(values.length),
+      batchSize: data.batchSize,
+      totalRecords: data.totalRecords
     },
   };
 }
