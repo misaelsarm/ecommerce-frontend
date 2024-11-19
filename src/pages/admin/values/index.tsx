@@ -62,8 +62,8 @@ const ValuesAdminPage = ({ values = [], page, limit, batchSize, totalRecords }: 
     },
     {
       title: 'Estado',
-      dataIndex: 'status',
-      key: 'status',
+      dataIndex: 'active',
+      key: 'active',
       render: (_text: string, record: ValueInterface) => <div className='d-flex flex-column align-start'>
         {
           record.active ? <Chip text='Activo' color='green' /> : <Chip text='No activo' />

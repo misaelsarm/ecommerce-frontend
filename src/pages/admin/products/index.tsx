@@ -59,20 +59,21 @@ const ProductsAdminPage = ({ products = [], page, limit, totalRecords, batchSize
       key: 'name'
     },
     {
-      title: 'Código',
-      dataIndex: 'code',
-      key: 'code'
-    },
-    {
       title: 'Precio',
       dataIndex: 'price',
       key: 'price',
       render: (_text: string, record: ProductInterface) => record.price ? <>{`${record.price} MXN`}</> : 'N/A',
     },
     {
+      title: 'Colleciones',
+      dataIndex: 'collections',
+      key: 'collections',
+      render: (text: string, record: ProductInterface) => record.collections.length
+    },
+    {
       title: 'Estado',
-      dataIndex: 'status',
-      key: 'status',
+      dataIndex: 'active',
+      key: 'active',
       render: (_text: string, record: ProductInterface) => <div className='d-flex flex-column align-start'>
         {
           record.active ? <Chip text='Activo' color='green' /> : <Chip text='No activo' />

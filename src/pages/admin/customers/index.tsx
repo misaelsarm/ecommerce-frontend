@@ -59,8 +59,8 @@ const CustomersAdminPage = ({ customers, page, limit, batchSize, totalRecords }:
     },
     {
       title: 'Estado',
-      dataIndex: 'status',
-      key: 'status',
+      dataIndex: 'active',
+      key: 'active',
       render: (_text: string, record: UserInterface) => <div className='d-flex flex-column align-start'>
         {
           record.active ? <Chip text='Activo' color='green' /> : <Chip text='No activo' />
