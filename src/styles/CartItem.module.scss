@@ -1,0 +1,74 @@
+.item {
+  display: flex;
+  margin-bottom: 20px;
+  text-decoration: none;
+  padding: 20px 0;
+  border-bottom: 1px solid #d9d9d9;
+  .image {
+    flex-shrink: 0;
+    width: 150px;
+    height: 150px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 5px;
+    margin-right: 20px;
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+  .info {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    position: relative;
+    color: black;
+    .title,
+    .description {
+      margin-bottom: 20px;
+    }
+    .title {
+      text-transform: uppercase;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      width: calc(100% - 30px);
+    }
+    .remove {
+      position: absolute;
+      &:hover {
+        background-color: #f2f2f2;
+      }
+      z-index: 10;
+      top: 0;
+      right: 0;
+      svg {
+        width: 30px;
+      }
+    }
+    .description {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2; /* number of lines to show */
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+    .attributes {
+      margin-bottom: 20px;
+      .attribute {
+        display: flex;
+        flex-direction: column;
+        &:not(:last-child) {
+          margin-bottom: 10px;
+        }
+        .name {
+          font-weight: bold;
+        }
+      }
+    }
+  }
+}

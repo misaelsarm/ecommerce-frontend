@@ -1,4 +1,6 @@
 import Layout from '@/components/admin/Layout'
+import CartItem from '@/components/common/CartItem'
+import Chip from '@/components/common/Chip'
 import Modal from '@/components/common/Modal'
 import { AuthContext } from '@/context/auth/AuthContext'
 import { OrderInterface } from '@/interfaces'
@@ -15,7 +17,20 @@ interface Props {
   order: OrderInterface
 }
 
+// Define a type for your possible statuses
+type Status = 'Nuevo' | 'En camino' | 'Cancelado' | 'Entregado';
+
+// Create a mapping of status to color
+const statusColorMap: Record<Status, string> = {
+  "Nuevo": 'blue',
+  'En camino': 'yellow',
+  'Cancelado': 'red',
+  'Entregado': 'green',
+};
+
 const OrderDetailsPage = ({ order }: Props) => {
+
+  console.log({ order })
 
   const { back, replace, pathname } = useRouter()
 
@@ -25,6 +40,8 @@ const OrderDetailsPage = ({ order }: Props) => {
 
   const canCreateEdit = user.role === 'admin' ? true : hasPermission(pathname, 'create-edit', user.permissions)
 
+  //@ts-ignore
+  const color = statusColorMap[order.status];
 
   return (
     <>
@@ -52,7 +69,7 @@ const OrderDetailsPage = ({ order }: Props) => {
             </div>
             <div className="cardItem">
               <h4>Estado</h4>
-              <span>{order.status}</span>
+              <Chip color={color} text={order.status} />
             </div>
             <div className="cardItem">
               <h4>Dirección de entrega</h4>
@@ -66,9 +83,17 @@ const OrderDetailsPage = ({ order }: Props) => {
             </div>
             <div className="cardItem">
               <h4>Información de cliente</h4>
-              {/* <span>{order.customer}</span>
-              <span>{order.email}</span>
-              <span>{order.phone}</span> */}
+              {
+                order.user ? <>
+                  <span>{order.user.name}</span>
+                  <span>{order.user.email}</span>
+                  <span>{order.user.phone}</span>
+                </> : <>
+                  <span>{order.guestUser.name}</span>
+                  <span>{order.guestUser.email}</span>
+                  <span>{order.guestUser.phone}</span>
+                </>
+              }
             </div>
             {/* {
               order.invoiceRequired &&
@@ -90,15 +115,15 @@ const OrderDetailsPage = ({ order }: Props) => {
             </div>
             <div className="cardItem">
               <h4>Productos</h4>
-              {/* {
-                order.cart && order.cart.items.map(product => (
+              {
+                order.products.map(product => (
                   <CartItem
                     showAttributes
                     key={product.cartItemId}
                     {...product}
                   />
                 ))
-              } */}
+              }
             </div>
             <div className="cardItem">
               <h4>Información de pago</h4>

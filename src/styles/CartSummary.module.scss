@@ -1,0 +1,55 @@
+.summary {
+  margin-bottom: 30px;
+  overflow: hidden;
+  .header {
+    cursor: pointer;
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    > div {
+      display: flex;
+      align-items: center;
+      svg {
+        transition: all 0.3s;
+        width: 25px;
+        margin-left: 10px;
+      }
+    }
+  }
+  .details {
+    .discount {
+      display: flex;
+      justify-content: space-between;
+      padding: 30px 0;
+      border-bottom: 1px solid rgb(219, 219, 219);
+      border-top: 1px solid rgb(219, 219, 219);
+      margin-bottom: 30px;
+      input {
+        flex: 1;
+        margin-right: 10px;
+      }
+    }
+    .item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 15px;
+      span {
+        &:first-child {
+          flex: 1;
+        }
+      }
+      svg {
+        width: 30px;
+        margin-left: 10px;
+        cursor: pointer;
+      }
+      &:last-child {
+        span {
+          font-weight: bold;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,180 @@
+
+
+.checkout {
+  padding: 20px;
+  .steps {
+    .step {
+      span {
+        display: block;
+      }
+      padding-top: 30px;
+      padding-bottom: 30px;
+      border-top: 1px solid rgb(219, 219, 219);
+      border-bottom: 1px solid rgb(219, 219, 219);
+      margin-bottom: 30px;
+      &Info {
+        display: flex;
+        flex-direction: column;
+      }
+      .title {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+        span {
+          &:last-of-type {
+            flex: 1;
+          }
+        }
+        .number {
+          width: 25px;
+          height: 25px;
+          flex-shrink: 0;
+          background-color: black;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          border-radius: 25px;
+          color: white;
+          margin-right: 15px;
+        }
+      }
+      .content {
+        display: flex;
+        flex-direction: column;
+        .login {
+          cursor: pointer;
+          span {
+            font-weight: bold;
+            //color: $pink;
+          }
+        }
+        .group {
+          margin-bottom: 20px;
+        }
+        > span {
+          margin-bottom: 20px;
+        }
+        .shipping {
+          margin-bottom: 30px;
+          > span {
+            font-weight: bold;
+          }
+          .shippingType {
+            .option {
+              height: 42px;
+              padding: 0 10px;
+              background-color: white;
+              border-radius: 5px;
+              margin-bottom: 10px;
+              border: 1px solid rgb(175, 175, 175);
+              display: flex;
+              align-items: center;
+              cursor: pointer;
+              * {
+                cursor: pointer;
+              }
+              input {
+                width: 20px;
+                height: 20px;
+                margin-right: 5px;
+              }
+              label {
+                height: 100%;
+                flex: 1;
+                display: flex;
+                align-items: center;
+              }
+            }
+          }
+        }
+        .giftCard {
+          display: flex;
+          flex-direction: column;
+          margin-bottom: 20px;
+          > div {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            span {
+              &:first-child {
+                font-weight: bold;
+              }
+            }
+          }
+        }
+        .card {
+          margin-bottom: 30px;
+          background-color: white;
+          padding: 10px;
+          height: 42px;
+          font-size: 16px;
+          border: 1px solid black;
+          border-radius: 5px;
+        }
+      }
+    }
+  }
+}
+
+.wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  .background {
+    width: 400px;
+    height: 600px;
+    background-image: url("/liquid.jpeg");
+    background-size: cover;
+    padding: 40px;
+
+    .content {
+      //background-color: $pink;
+      height: 100%;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-align: center;
+
+      .top {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        span {
+          font-size: 30px;
+        }
+      }
+      .bottom {
+        display: flex;
+        flex-direction: column;
+        span {
+          margin-bottom: 20px;
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .checkout {
+    max-width: 520px;
+    margin: auto;
+  }
+}
+
+@media (min-width: 1024px) {
+  .checkout {
+    display: flex;
+    max-width: 1200px;
+    flex-direction: row-reverse;
+    justify-content: space-around;
+    .steps {
+      width: 400px;
+    }
+    .summary {
+      width: 400px;
+    }
+  }
+}

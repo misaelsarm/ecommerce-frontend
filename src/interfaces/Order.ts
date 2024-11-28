@@ -1,4 +1,4 @@
-import { CartInterface, ProductInterface, UserInterface } from "."
+import { CartInterface, CartItemInterface, ProductInterface, UserInterface } from "."
 
 export type PaymentMethod = 'paypal' | 'stripe'
 
@@ -39,7 +39,7 @@ export interface OrderInterface {
     deliveryInstructions: string
   }
 
-  products: ProductInterface[]
+  products: CartItemInterface[]
 
   createdAt: Date
 

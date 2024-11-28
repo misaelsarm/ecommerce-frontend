@@ -1,7 +1,9 @@
 
 import { Sortable } from '@/components/admin/Sortable'
+import Auth from '@/components/Auth'
 import Chip from '@/components/common/Chip'
 import Input from '@/components/common/Input'
+import Modal from '@/components/common/Modal'
 import Select from '@/components/common/Select'
 import TextArea from '@/components/common/TextArea'
 import React, { useState } from 'react'
@@ -9,6 +11,8 @@ import React, { useState } from 'react'
 const Index = () => {
 
   const [items, setItems] = useState(['1', '2', '3', '4', '5', '6', '7', '8', '9']);
+
+  const [visible, setVisible] = useState(false)
 
   const options = [
     {
@@ -79,7 +83,31 @@ const Index = () => {
       </div>
       <div className='mb-30'>
         <h3>Sortable</h3>
-       {/*  <Sortable items={items} label='' setItems={setItems} uploading={false} /> */}
+        {/*  <Sortable items={items} label='' setItems={setItems} uploading={false} /> */}
+      </div>
+      <div className='mb-30'>
+        <h3>Modal</h3>
+        <div>
+          <button
+            onClick={() => setVisible(true)}
+            className='btn btn-black'>Open Auth Modal</button>
+          <Modal
+            wrapperStyle={{
+              width: 500
+            }}
+            bodyStyle={{
+              height: 'auto',
+              padding: 25,
+              paddingTop: 0,
+            }}
+            onClose={() => setVisible(false)}
+            showButtons={false}
+            visible={visible as boolean}
+          >
+            <Auth />
+          </Modal>
+        </div>
+        {/*  <Sortable items={items} label='' setItems={setItems} uploading={false} /> */}
       </div>
     </div>
   )

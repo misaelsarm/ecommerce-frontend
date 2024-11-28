@@ -59,10 +59,22 @@ const OrdersAdminPage = ({ page, limit, batchSize, totalRecords, orders = [], er
         : record.user?.name
     },
     {
-      title: 'Fecha de compra',
-      dataIndex: 'createdAt',
-      key: 'createdAt',
-      render: (text: string) => moment(text).format('lll')
+      title: 'Productos',
+      dataIndex: 'products',
+      key: 'products',
+      render: (_text: string, record: OrderInterface) => {
+        return record.cart &&
+          <div className='flex column'>
+            {
+              record.products?.map(item => (
+                <div key={item.cartItemId} className='flex'>
+                  <span>-</span>
+                  <span className='ml-10'>{item.name}</span>
+                </div>
+              ))
+            }
+          </div>
+      },
     },
     {
       title: 'Estado',
@@ -77,28 +89,16 @@ const OrdersAdminPage = ({ page, limit, batchSize, totalRecords, orders = [], er
       }
     },
     {
-      title: 'Productos',
-      dataIndex: 'products',
-      key: 'products',
-      render: (_text: string, record: OrderInterface) => {
-        return record.cart &&
-          <div className='flex column'>
-            {
-              record.cart.items?.map(item => (
-                <div key={item.cartItemId} className='flex'>
-                  <span>-</span>
-                  <span className='ml-10'>{item.name}</span>
-                </div>
-              ))
-            }
-          </div>
-      },
+      title: 'Fecha de compra',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      render: (text: string) => moment(text).format('lll')
     },
     {
       title: 'Ubicación',
-      dataIndex: 'city',
-      key: 'city',
-      //render: (_text: string, record: Order) => `${record.shippingAddress?.city}, ${record.shippingAddress?.state}`,
+      dataIndex: 'shippingAddress.city',
+      key: 'shippingAddress.city',
+      render: (_text: string, record: OrderInterface) => `${record.shippingAddress?.city}, ${record.shippingAddress?.state}`,
     },
     {
       title: 'Total',
@@ -171,7 +171,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
   let orders = []
 
   let errorCode = null;
-  
+
   let errorMessage = null;
 
   let data
