@@ -4,6 +4,8 @@ import styles from '../styles/CartSummary.module.scss'
 import { CartInterface, CartItemInterface, DiscountInterface } from '@/interfaces'
 import { makeRequest } from '@/utils/makeRequest'
 import CartItem from './common/CartItem'
+import { formatCurrency } from '@/utils/formatCurrency'
+import { useRouter } from 'next/router'
 
 interface Props {
   cart: CartInterface,
@@ -24,6 +26,27 @@ const CartSummary: FC<Props> = ({ cart, fetchCart, shippingFee, discount, items,
   const [summary, setSummary] = useState(true)
 
   const [name, setName] = useState('');
+
+  const { replace } = useRouter()
+
+  const remove = async (product: CartItemInterface) => {
+    const cartId = localStorage.getItem('cartId')
+    const data = {
+      cartItemId: product.cartItemId,
+      cartId
+    }
+    try {
+      const items = await makeRequest('post', '/api/cart/remove', data)
+
+      if (items.items.length === 0) {
+        replace('/cart')
+      } else {
+        fetchCart()
+      }
+    } catch (error) {
+      alert('error')
+    }
+  }
 
   const [cartDiscount, setcartDiscount] = useState<DiscountInterface | undefined>(discount);
 
@@ -88,11 +111,11 @@ const CartSummary: FC<Props> = ({ cart, fetchCart, shippingFee, discount, items,
                   key={product.cartItemId}
                   {...product}
                   showAttributes
-                // onRemove={(e)=>{
-                //   remove(product)
-                //   e.preventDefault()
-                //   fetchCart()
-                // }}
+                  onRemove={(e) => {
+                    remove(product)
+                    e.preventDefault()
+                    fetchCart()
+                  }}
                 />
               ))
             }
@@ -112,19 +135,16 @@ const CartSummary: FC<Props> = ({ cart, fetchCart, shippingFee, discount, items,
                   name='discount'
                   autoComplete='off'
                 />
-                <button onClick={applyDiscount} className='btn btn-black'>Aplicar</button>
+                <button onClick={applyDiscount} className='btn btn-primary'>Aplicar</button>
               </div>
             }
             <div className={styles.item}>
               <span>Subtotal de articulos</span>
-
-              <span>${originalTotal} MXN</span>
+              <span>{formatCurrency(originalTotal)}</span>
             </div>
             <div className={styles.item}>
               <span>Envío</span>
-              {
-                originalTotal > 999 ? 'GRATIS' : '$100 MXN'
-              }
+              {formatCurrency(shippingFee)}
             </div>
             {
               cartDiscount &&
@@ -142,16 +162,13 @@ const CartSummary: FC<Props> = ({ cart, fetchCart, shippingFee, discount, items,
                 </div>
                 <div className={styles.item}>
                   <span>  Descuentos</span>
-                  <span>${discountedAmount} MXN</span>
-                  {/* <span>{cartDiscount.type === 'percentage' ?
-                    `${cartDiscount?.value} %` : `$${cartDiscount?.value} MXN`
-                  }</span> */}
+                  <span>- {formatCurrency(discountedAmount)}</span>
                 </div>
               </>
             }
             <div className={styles.item}>
               <span>Total</span>
-              <span>${total + shippingFee} MXN</span>
+              <span>{formatCurrency(total + shippingFee)}</span>
             </div>
           </div>
         </>

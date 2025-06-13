@@ -1,7 +1,6 @@
-import { CSSProperties, useEffect, useState } from 'react'
+import { CSSProperties, useState } from 'react'
 import styles from '@/styles/admin/Table.module.scss'
 import { useRouter } from 'next/router'
-//import Loading from '../Loading'
 
 interface Props {
   columns: any[]
@@ -16,13 +15,7 @@ interface Props {
   showButtons?: boolean
 }
 
-const Table = ({ data, columns, style, page, limit, navigateTo, batchSize, totalRecords, loading, showButtons = true }: Props) => {
-
-  console.log({ batchSize, totalRecords })
-
-  useEffect(() => {
-    window.scrollTo(0, 0)
-  }, [limit, page])
+const Table = ({ data, columns, style, page = 0, limit = 0, navigateTo, batchSize, totalRecords, showButtons = true }: Props) => {
 
   const [sortConfig, setSortConfig] = useState<any>(null);
 
@@ -78,6 +71,10 @@ const Table = ({ data, columns, style, page, limit, navigateTo, batchSize, total
     setSortConfig({ key: sortBy || key, direction });
   }
 
+  const currentPage = page || 1
+
+  const totalPages = !limit ? 1 : Math.ceil(totalRecords / limit)
+
   return (
     <div style={{ ...style }} className={styles.table}>
       <div className={styles.header}>
@@ -103,55 +100,52 @@ const Table = ({ data, columns, style, page, limit, navigateTo, batchSize, total
         }
       </div>
       {
-
-        //loading ? <Loading /> :
-        loading ? 'loading...' :
-          sortedProducts?.map((item: any, index: number) => (
-            <div key={index} className={styles.row}>
-              {
-                columns.map((col: any, index: number) => {
-                  return (
-                    <div key={index} className={styles.col}>
-                      <div className={styles.colTitle}>
-                        {
-                          col.title
-                        }
-                      </div>
+        sortedProducts?.map((item: any, index: number) => (
+          <div key={index} className={styles.row}>
+            {
+              columns.map((col: any, index: number) => {
+                return (
+                  <div key={index} className={styles.col}>
+                    <div className={styles.colTitle}>
                       {
-                        ('render' in col) ?
-                          <div title={item[col.dataIndex]}>
-                            {col.render(item[col.dataIndex], item)}
-                          </div> :
-                          <span title={item[col.dataIndex]} className={styles.fontSmall}>{item[col.dataIndex]}</span>
+                        col.title
                       }
                     </div>
-                  )
-                })
-              }
-            </div>
-          )
-          )
+                    {
+                      ('render' in col) ?
+                        <div title={item[col.dataIndex]}>
+                          {col.render(item[col.dataIndex], item)}
+                        </div> :
+                        <span title={item[col.dataIndex]} className={styles.fontSmall}>{item[col.dataIndex]}</span>
+                    }
+                  </div>
+                )
+              })
+            }
+          </div>
+        )
+        )
       }
       {
-        (!loading && (limit && page) && showButtons) &&
         <div className={styles.footer}>
           <span>
-            Página {page}/{Math.ceil(totalRecords / limit)}
-          </span>          <div className={styles.buttons}>
+            Página {currentPage}/{totalPages}
+          </span>
+          <div className={styles.buttons}>
             <button
               onClick={() => {
-                push(`/admin/${navigateTo}?page=${page - 1}&limit=${limit}`);
+                push(`/${navigateTo}?page=${currentPage - 1}&limit=${limit}`);
               }}
-              disabled={page <= 1} // Disable when on the first page
+              disabled={currentPage <= 1} // Disable when on the first page
               className="btn btn-black"
             >
               Anterior
             </button>
             <button
               onClick={() => {
-                push(`/admin/${navigateTo}?page=${page + 1}&limit=${limit}`);
+                push(`/${navigateTo}?page=${currentPage + 1}&limit=${limit}`);
               }}
-              disabled={page >= Math.ceil(totalRecords / limit)} // Disable when on the last page
+              disabled={currentPage >= totalPages} // Disable when on the last page
               className="btn btn-black"
             >
               Siguiente
@@ -160,7 +154,7 @@ const Table = ({ data, columns, style, page, limit, navigateTo, batchSize, total
         </div>
       }
       {
-        (!loading && sortedProducts?.length === 0) &&
+        sortedProducts?.length === 0 &&
         <div className={styles.empty}>
           <img src="/empty-folder.png" alt="" />
           <span>No hay registros</span>

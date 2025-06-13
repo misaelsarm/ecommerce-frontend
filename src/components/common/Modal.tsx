@@ -17,6 +17,7 @@ interface Props {
   headerStyle?: CSSProperties
   okText?: string,
   cancelText?: string
+  closeOnOutsideClick?: boolean
 }
 
 const modalVariants = {
@@ -70,17 +71,20 @@ const Modal = ({
   bodyStyle,
   loadingState,
   okText = 'Aceptar',
-  cancelText = 'Cancelar'
+  cancelText = 'Cancelar',
+  closeOnOutsideClick
 }: Props) => {
-
   useEffect(() => {
     if (visible) {
-      document.body.style.overflow = 'hidden'
+      document.documentElement.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = ''
+      document.documentElement.style.overflow = "";
     }
-  }, [visible])
 
+    return () => {
+      document.documentElement.style.overflow = ""; // Cleanup on unmount
+    };
+  }, [visible]);
   return (
     <AnimatePresence>
       {
@@ -93,7 +97,7 @@ const Modal = ({
               variants={backdropVariants}
               className={styles.modalBackdrop}
               onClick={() => {
-                if (onClose) {
+                if (closeOnOutsideClick && onClose) {
                   onClose()
                 }
               }}
@@ -140,7 +144,7 @@ const Modal = ({
                 showButtons &&
                 <div className={styles.modalFooter}>
                   <button disabled={loadingState} onClick={onCancel} className='btn'>{cancelText}</button>
-                  <button disabled={loadingState} onClick={onOk} className='btn btn-black'>{okText}</button>
+                  <button disabled={loadingState} onClick={onOk} className='btn btn-primary'>{okText}</button>
                 </div>
               }
             </motion.div>

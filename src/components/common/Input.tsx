@@ -10,6 +10,7 @@ interface Props {
   defaultValue?: any,
   errors?: any,
   minLength?: number,
+  max?: number
   pattern?: any
   disabled?: boolean,
   inputMode?: any
@@ -19,7 +20,7 @@ interface Props {
   onChange?: ChangeEventHandler<HTMLInputElement>
 }
 
-const Input = ({ placeholder, type = 'text', pattern, register, required, minLength, name = 'name', defaultValue, errors, disabled, inputMode, label, validate, value, onChange }: Props) => {
+const Input = ({ placeholder, type = 'text', pattern, register, required, max, minLength, name = 'name', defaultValue, errors, disabled, inputMode, label, validate, value, onChange }: Props) => {
 
   const [showPassword, setShowPassword] = useState(false)
 
@@ -30,7 +31,7 @@ const Input = ({ placeholder, type = 'text', pattern, register, required, minLen
         type === 'password' ?
           <div className="password-wrapper">
             <input
-              autoComplete='new-password'
+              //autoComplete='new-password'
               className='input'
               type={
                 showPassword ? 'text' : 'password'
@@ -41,11 +42,15 @@ const Input = ({ placeholder, type = 'text', pattern, register, required, minLen
                 ...register(name, {
                   required: {
                     value: required || false,
-                    message: 'Campo requerido'
+                    message: 'Required'
                   },
                   minLength: {
                     value: minLength || 0,
                     message: 'Minimo ' + minLength + ' caracteres'
+                  },
+                  maxLength: {
+                    value: max as number,
+                    message: 'Máximo ' + minLength + ' caracteres'
                   },
                   pattern: {
                     value: pattern,
@@ -71,14 +76,14 @@ const Input = ({ placeholder, type = 'text', pattern, register, required, minLen
             }
           </div>
           : <input
-            autoComplete='new-password'
+            //autoComplete='new-password'
             inputMode={inputMode}
             disabled={disabled}
             {...register && {
               ...register(name, {
                 required: {
                   value: required || false,
-                  message: 'Campo requerido'
+                  message: 'Requerido'
                 },
                 minLength: {
                   value: minLength || 0,
@@ -101,6 +106,10 @@ const Input = ({ placeholder, type = 'text', pattern, register, required, minLen
       {
         errors && errors[name] &&
         <span className='error'>{errors[name].message}</span>
+      }
+      {
+        typeof errors === 'string' &&
+        <span className='error'>{errors}</span>
       }
     </div>
   )

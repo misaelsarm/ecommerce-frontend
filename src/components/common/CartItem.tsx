@@ -7,29 +7,16 @@ import { AttributeInterface, CartItemInterface } from '@/interfaces'
 
 interface Props extends CartItemInterface {
   onRemove?: (e?: any) => void,
-  showAttributes: boolean,
-  attributeList?: any,
+  showAttributes?: boolean,
   original?: number,
   wasCustomized?: boolean
+  showImage?: boolean
+  showPrice?: boolean
 }
 
-const CartItem = ({ name, description, price, images, code, onRemove, hasDiscount, discountValue, showAttributes, attributes, attributeList, original }: Props) => {
+const CartItem = ({ name, description, isCustomizable, price, images, code, onRemove, discount, showAttributes = true, attributes, original, showImage = true, showPrice = true }: Props) => {
 
-  console.log({attributeList, attributes})
-
-  const [attributeItems, setAttributeItems] = useState<AttributeInterface[]>([])
-
-  console.log({attributeItems})
-
-  useEffect(() => {
-    if (attributes.length === 0) {
-      setAttributeItems(attributeList)
-    } else {
-      setAttributeItems(attributes)
-    }
-  }, [attributeList, attributes])
-
-  const discount = {
+  const discountStyles = {
     textDecoration: 'line-through',
     color: 'gray',
     fontWeight: 'normal'
@@ -63,9 +50,12 @@ const CartItem = ({ name, description, price, images, code, onRemove, hasDiscoun
 
   return (
     <Link className={styles.item} href={`/products/${code}`}>
-      <div className={styles.image}>
-        <Image objectFit='cover' layout='fill' src={images[0]} alt="" />
-      </div>
+      {
+        showImage &&
+        <div className={styles.image}>
+          <Image objectFit='cover' layout='fill' src={images[0]} alt="" />
+        </div>
+      }
       <div className={styles.info}>
         {
           onRemove &&
@@ -81,40 +71,40 @@ const CartItem = ({ name, description, price, images, code, onRemove, hasDiscoun
           <span>{name}</span>
         </div>
         {
-          showAttributes ?
+          showAttributes && isCustomizable &&
             <div className={styles.attributes}>
               {
-                attributeItems?.map(attribute => (
+                attributes?.map(attribute => (
                   <div key={attribute.shortName} className={styles.attribute}>
                     <span className={styles.name}>{attribute.shortName}</span>
                     {renderValues(attribute.values)}
                   </div>
                 ))
               }
-            </div> :
-            <div className={styles.description}>
-              <span>{description}</span>
             </div>
         }
-        <div className={styles.price}
-          style={{
-            display: 'flex',
-            flexDirection: 'column'
-          }}
-        >
-          {
-            original && (original !== price) && <span style={discount}>$ {original} MXN</span>
-          }
-          <span
-            style={
-              hasDiscount ? discount : undefined
+        {
+          showPrice &&
+          <div className={styles.price}
+            style={{
+              display: 'flex',
+              flexDirection: 'column'
+            }}
+          >
+            {
+              original && (original !== price) && <span style={discountStyles}>$ {original} MXN</span>
             }
-          >${price} MXN</span>
-          {
-            hasDiscount &&
-            <span>${discountValue && price - discountValue} MXN</span>
-          }
-        </div>
+            <span
+              style={
+                discount?.hasDiscount ? discountStyles : undefined
+              }
+            >${price} MXN</span>
+            {
+              discount?.hasDiscount &&
+              <span>${discount.discountValue && price - discount.discountValue} MXN</span>
+            }
+          </div>
+        }
       </div>
     </Link>
   )
