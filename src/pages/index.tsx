@@ -1,5 +1,7 @@
 
 import { Sortable } from '@/components/admin/Sortable'
+import Card from '@/components/common/Card/Card'
+import CardItem from '@/components/common/CardItem/CardItem'
 //import Auth from '@/components/Auth'
 import Chip from '@/components/common/Chip/Chip'
 import Input from '@/components/common/Input/Input'
@@ -50,6 +52,7 @@ const Index = () => {
       <div className='mb-30'>
         <h3>Chips</h3>
         <div className='d-flex'>
+          <Chip text='Default chip' />
           <Chip color='dark' text='Dark chip' />
           <Chip color='blue' text='Blue chip' />
           <Chip color='green' text='Green chip' />
@@ -73,6 +76,19 @@ const Index = () => {
         <h3>TextArea</h3>
         <div>
           <TextArea />
+        </div>
+      </div>
+      <div className='mb-30'>
+        <h3>Card</h3>
+        <div>
+          <Card>
+            <CardItem
+              title='Card title'
+              content={<>
+                <span>This is the content</span>
+              </>}
+            />
+          </Card>
         </div>
       </div>
       <div className='mb-30'>
@@ -101,10 +117,10 @@ const Index = () => {
               paddingTop: 0,
             }}
             onClose={() => setVisible(false)}
-            showButtons={false}
             visible={visible as boolean}
+            title='Modal title'
           >
-           {/*  <Auth /> */}
+            <div>This is the modal body!</div>
           </Modal>
         </div>
         {/*  <Sortable items={items} label='' setItems={setItems} uploading={false} /> */}

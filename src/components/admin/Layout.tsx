@@ -1,13 +1,14 @@
-import Sidebar from './Sidebar'
+import Sidebar from '../common/Sidebar/Sidebar'
 import styles from '@/styles/admin/Layout.module.scss'
-import { FC, useContext, useState } from 'react'
-import TabBar from './TabBar'
+import { FC, useContext, useEffect, useState } from 'react'
+import TabBar from '../common/TabBar/TabBar'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import { useWindowWidth } from '@/hooks/useWindowWidth'
 import Cookies from 'js-cookie'
 import { AuthContext } from '@/context/auth/AuthContext'
 import { UserInterface } from '@/interfaces'
+import { LinkInterface, links } from '@/utils/links'
 
 interface Props {
   title: string
@@ -24,6 +25,30 @@ const Layout: FC<Props> = ({ children, title }) => {
 
   const { user, setUser } = useContext(AuthContext)
 
+  // Extract pages from user permissions
+  const pages = user.permissions?.map(item => item.page);
+
+  // State for filtered links
+  const [filtered, setFiltered] = useState<LinkInterface[]>([]);
+
+  useEffect(() => {
+    if (user.role === 'admin') {
+      // Admin has access to all links
+      setFiltered(links);
+    } else {
+      // Filter main links based on user permissions
+      const filteredLinks = links.filter(link => pages?.includes(link.path));
+
+      // Filter sub-links based on user permissions
+      const filteredLinksWithSub = filteredLinks.map(link => ({
+        ...link,
+        sub: link.sub.filter(sub => pages?.includes(sub.path)),
+      }));
+
+      setFiltered(filteredLinksWithSub);
+    }
+  }, [user]);
+
   return (
     <>
       <Head>
@@ -31,7 +56,7 @@ const Layout: FC<Props> = ({ children, title }) => {
       </Head>
       {
         windowWidth && windowWidth >= 768 ?
-          <Sidebar /> : <TabBar />
+          <Sidebar links={filtered} /> : <TabBar links={filtered} />
       }
 
       <div className="topBar">

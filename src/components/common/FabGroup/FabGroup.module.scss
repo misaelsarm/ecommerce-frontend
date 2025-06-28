@@ -7,3 +7,9 @@
   align-items: flex-end;
   z-index: 10;
 }
+
+@media(min-width: 768px) {
+  .fabGroup {
+    display: none;
+  }
+}

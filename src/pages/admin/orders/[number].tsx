@@ -2,6 +2,7 @@ import Layout from '@/components/admin/Layout'
 import CartItem from '@/components/common/CartItem/CartItem'
 import Chip from '@/components/common/Chip/Chip'
 import Modal from '@/components/common/Modal/Modal'
+import Page from '@/components/common/Page/Page'
 import { AuthContext } from '@/context/auth/AuthContext'
 import { OrderInterface } from '@/interfaces'
 import { getServerSideToken } from '@/utils/getServerSideToken'
@@ -45,7 +46,7 @@ const OrderDetailsPage = ({ order }: Props) => {
 
   return (
     <>
-      <div className='detailPage'>
+      <Page>
         <div className="page-actions">
           <button
             style={{
@@ -153,7 +154,7 @@ const OrderDetailsPage = ({ order }: Props) => {
             </div>
           </>
         </div>
-      </div >
+      </Page>
       <Modal
         visible={editing}
         //loadingState={saving}

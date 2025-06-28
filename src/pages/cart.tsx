@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { CartInterface, CartItemInterface } from '@/interfaces'
 import { makeRequest } from '@/utils/makeRequest'
 import styles from '@/styles/Cart.module.scss'
-import CartItem from '@/components/common/CartItem/CartItem'
+import CartItem from '@/components/common/CartItem'
 
 const CartComponent = () => {
 

@@ -1,18 +1,22 @@
-import { links } from '@/utils/links'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
+import styles from './TabBar.module.scss'
+import { LinkInterface } from '@/utils/links'
 
-import styles from '../../styles/admin/TabBar.module.scss'
+interface Props {
+  links: LinkInterface[]
+}
 
-const TabBar = () => {
+const TabBar = ({ links }: Props) => {
 
-  const { pathname } = useRouter()
+  const firstFive = links.slice(0, 4)
+
+  const last = links.slice(4)
 
   const [menuVisible, setMenuVisible] = useState(false)
 
-  const firstFive = links.slice(0, 4)
-  const last = links.slice(4)
+  const { pathname } = useRouter()
 
   return (
     <div>
@@ -26,13 +30,15 @@ const TabBar = () => {
                 link.path.includes(pathname) ? `${styles.link} ${styles.active}` : styles.link}
               href={`${link.path}?page=1&limit=20`}
             >
-              {link.icon}
+              {
+                link.path.includes(pathname) ? link.selectedIcon : link.icon
+              }
               <span>{link.name}</span>
             </Link>
           ))
         }
         {
-          links.length > 4 &&
+          links.length > 5 &&
           <div
             onClick={() => {
               setMenuVisible(!menuVisible)

@@ -17,6 +17,10 @@ import Chip from "@/components/common/Chip/Chip"
 import { AuthContext } from "@/context/auth/AuthContext"
 import { hasPermission } from "@/utils/hasPermission"
 import { getServerSideToken } from "@/utils/getServerSideToken"
+import Page from "@/components/common/Page/Page"
+import Card from "@/components/common/Card/Card"
+import CardItem from "@/components/common/CardItem/CardItem"
+import { formatCurrency } from "@/utils/formatCurrency"
 
 interface Props {
   product: ProductInterface
@@ -109,7 +113,7 @@ const ProductDetailsAdminPage = ({ product }: Props) => {
     // }
   };
 
-  console.log({errors})
+  console.log({ errors })
 
   const onSubmit = async (values: any) => {
 
@@ -282,9 +286,9 @@ const ProductDetailsAdminPage = ({ product }: Props) => {
 
   return (
     <>
-      <div className='detailPage'>
+      <Page title={product.name}>
         <>
-          <div className="page-actions">
+          {/*           <div className="page-actions">
             <button
               style={{
                 cursor: 'pointer'
@@ -301,85 +305,82 @@ const ProductDetailsAdminPage = ({ product }: Props) => {
                 await fetchData()
               }}>Editar</button>
             }
-          </div>
-          <div className="card">
-            <>
-              <div className="cardItem">
-                <h4>Nombre</h4>
-                <span>{product.name}</span>
-              </div>
-              <div className="cardItem">
-                <h4>Código</h4>
-                <span>{product.code}</span>
-              </div>
-              <div style={{
-                whiteSpace: 'pre-line'
-              }} className="cardItem">
-                <h4>Descripcion</h4>
-                <span>{product.description}</span>
-              </div>
-              <div className="cardItem">
-                <h4>Colecciones</h4>
-                <div>{
-                  product.collections.map(col => (
-                    <Chip key={col._id} text={col.name} />
-                  ))
-                }
-                </div>
-              </div>
-              <div className="cardItem">
-                <h4>Palabras clave</h4>
-                <span>{product.keywords}</span>
-              </div>
-              <div className="cardItem">
-                <h4>Precio</h4>
-                <span>${numberWithCommas(product.price.toFixed(2))} </span>
-              </div>
-              <div className="cardItem">
-                <h4>Es personalizable</h4>
-                <span>{product.isCustomizable ? 'Si' : 'No'}</span>
-              </div>
-              {
-                product.isCustomizable &&
-                <div className="cardItem">
-                  <h4>Atributos</h4>
-                  {
-                    product.attributes.map(attribute => (
-                      <Chip text={attribute.shortName} key={attribute._id} />
-                    ))
-                  }
-                </div>
+          </div> */}
+          <Card>
+            <CardItem
+              title='Nombre'
+              content={<span>{product.name}</span>}
+            />
+            <CardItem
+              title="Código"
+              content={<span>{product.code}</span>}
+            />
+            <div style={{
+              whiteSpace: 'pre-line'
+            }} className="cardItem">
+              <h4>Descripcion</h4>
+              <span>{product.description}</span>
+            </div>
+            <CardItem
+              title="Colecciones"
+              content={<div>{
+                product.collections.map(col => (
+                  <Chip key={col._id} text={col.name} />
+                ))
               }
-              <div className="cardItem">
-                <h4>Agotado</h4>
-                <span>{product.soldOut ? 'Si' : 'No'}</span>
-              </div>
-              <div className="cardItem">
-                <h4>Estado</h4>
-                {
-                  product.active ? <Chip text='Activo' color='green' /> : <Chip text='No activo' />
-                }
-              </div>
-              <div className="cardItem">
-                <h4>Tiene descuento</h4>
-                <span>{product.discount?.hasDiscount ? 'Si' : 'No'}</span>
-              </div>
-              {
-                product.discount?.hasDiscount &&
-                <div className="cardItem">
-                  <h4>Valor del descuento</h4>
-                  <span>{product.discount?.discountValue}</span>
-                </div>
+              </div>}
+            />
+            <CardItem
+              title="Palabras clave"
+              content={<span>{product.keywords}</span>}
+            />
+            <CardItem
+              title="Precio"
+              content={<span>{formatCurrency(product.price)} </span>
               }
-              {
-                product.inventory.isTracked &&
-                <div className="cardItem">
-                  <h4>Inventario disponible</h4>
-                  <span>{product.inventory.availableQuantity}</span>
-                </div>
-              }
-              <div className="cardItem">
-                <h4>Imagenes</h4>
+            />
+            <CardItem
+              title="Es personalizable"
+              content={<span>{product.isCustomizable ? 'Si' : 'No'}</span>}
+            />
+            {
+              product.isCustomizable &&
+              <CardItem
+                title="Atributos"
+                content={product.attributes.map(attribute => (
+                  <Chip text={attribute.shortName} key={attribute._id} />
+                ))}
+              />
+            }
+            <CardItem
+              title="Agotado"
+              content={<span>{product.soldOut ? 'Si' : 'No'}</span>}
+            />
+            <CardItem
+              title="Estado"
+              content={<span>{product.active ? 'Activo' : 'No activo'}</span>}
+            />
+            <CardItem
+              title="Tiene descuento"
+              content={<span>{product.discount?.hasDiscount ? 'Si' : 'No'}</span>}
+            />
+            {
+              product.discount?.hasDiscount &&
+              <CardItem
+                title="Valor del descuento"
+                content={<span>{product.discount?.discountValue}</span>}
+              />
+            }
+            {
+              product.inventory.isTracked &&
+              <CardItem
+                title="Inventario disponible"
+                content={<span>{product.inventory.availableQuantity}</span>}
+              />
+            }
+            <CardItem
+              title="Imagenes"
+              content={
                 <div className='flex wrap'>
                   {
                     product.images.map(image => (
@@ -389,11 +390,11 @@ const ProductDetailsAdminPage = ({ product }: Props) => {
                     ))
                   }
                 </div>
-              </div>
-            </>
-          </div>
+              }
+            />
+          </Card>
         </>
-      </div >
+      </Page >
       <Modal
         visible={editing}
         loadingState={saving /* || uploading */}
@@ -418,6 +419,10 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req }) =>
 
   let product
 
+  let errorCode = null;
+
+  let errorMessage = null;
+
   try {
     const token = getServerSideToken(req)
 
@@ -430,13 +435,24 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req }) =>
 
     product = data.product
 
-  } catch (error) {
+  } catch (error: any) {
+    errorCode = error.response?.status
+    errorMessage = error.response?.data.message
+  }
 
+  if (errorCode) {
+    return {
+      props: {
+        error: {
+          error: errorCode,
+          message: errorMessage
+        }
+      },
+    };
   }
 
   return {
     props: {
-
       product
     }
   }

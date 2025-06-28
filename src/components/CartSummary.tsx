@@ -3,7 +3,7 @@ import toast from 'react-hot-toast'
 import styles from '../styles/CartSummary.module.scss'
 import { CartInterface, CartItemInterface, DiscountInterface } from '@/interfaces'
 import { makeRequest } from '@/utils/makeRequest'
-import CartItem from './common/CartItem/CartItem'
+import CartItem from './common/CartItem'
 import { formatCurrency } from '@/utils/formatCurrency'
 import { useRouter } from 'next/router'
 

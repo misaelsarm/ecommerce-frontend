@@ -88,6 +88,7 @@ p {
 }
 
 .DraftEditor-editorContainer {
+
   ul,
   ol {
     margin: 0 0 10px 25px;
@@ -168,7 +169,7 @@ p {
   display: flex;
   flex-direction: column;
 
-  > label {
+  >label {
     text-align: left !important;
     margin-bottom: 10px;
   }
@@ -245,25 +246,7 @@ p {
   color: black;
 }
 
-.card {
-  background-color: white;
 
-  height: fit-content;
-  margin-bottom: 20px;
-
-  &__item {
-    margin-bottom: 20px;
-
-    h4 {
-      font-weight: 600;
-      margin-bottom: 10px;
-    }
-
-    span {
-      display: block;
-    }
-  }
-}
 
 .attribute {
   margin-bottom: 20px;
@@ -305,7 +288,7 @@ p {
         display: none;
 
         &:checked {
-          ~ label {
+          ~label {
             border: 2px solid rgb(109, 109, 109);
           }
         }
@@ -370,7 +353,7 @@ p {
 //   right: 20px;
 //   z-index: 99;
 
-  
+
 
 //   .fab-wa {
 //     background-color: #14b364;
@@ -585,6 +568,7 @@ p {
 }
 
 @media (min-width: 768px) {
+
   .container-white,
   .container-beige,
   .container-gray {
@@ -593,6 +577,7 @@ p {
 }
 
 @media (min-width: 1200px) {
+
   .container-white,
   .container-beige,
   .container-gray {
@@ -855,6 +840,7 @@ body {
   text-align: center;
   justify-content: center;
   margin: 10px 0;
+
   h2 {
     margin-right: 20px;
   }
@@ -887,7 +873,7 @@ body {
 }
 
 .specs {
-  > div {
+  >div {
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
@@ -920,7 +906,7 @@ body {
     flex-direction: column;
     margin-top: 10px;
 
-    > div {
+    >div {
       display: flex;
     }
 
@@ -943,7 +929,7 @@ body {
   flex-direction: column;
   margin-top: 10px;
 
-  > div {
+  >div {
     display: flex;
   }
 
@@ -976,9 +962,7 @@ button {
   }
 }
 
-.page {
-
-}
+.page {}
 
 .radio {
   display: flex;
@@ -1015,43 +999,7 @@ button {
   }
 }
 
-.card {
-  max-width: 700px;
-  margin: auto;
-  padding: 20px;
-  border: 1px solid rgb(226, 226, 226);
 
-  .cardItem {
-    margin-bottom: 20px;
-    border-bottom: 1px solid rgb(226, 226, 226);
-    padding-bottom: 20px;
-
-    img {
-      width: 300px;
-    }
-
-    span {
-      display: block;
-    }
-  }
-
-  .listItem {
-    width: 400px;
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 5px;
-
-    &:last-child {
-      font-weight: 600;
-    }
-
-    span {
-      &:last-child {
-        text-align: right;
-      }
-    }
-  }
-}
 
 .pageLinks {
   margin-bottom: 20px;
