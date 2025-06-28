@@ -1,5 +1,5 @@
 import { CSSProperties, useState } from 'react'
-import styles from '@/styles/admin/Table.module.scss'
+import styles from './Table.module.scss'
 import { useRouter } from 'next/router'
 
 interface Props {

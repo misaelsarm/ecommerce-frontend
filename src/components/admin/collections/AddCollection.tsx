@@ -2,11 +2,11 @@ import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { makeRequest } from '@/utils/makeRequest';
 import toast from 'react-hot-toast';
-import Modal from '@/components/common/Modal';
-import Input from '@/components/common/Input';
-import TextArea from '@/components/common/TextArea';
-import Checkbox from '@/components/common/Checkbox';
-import Select from '@/components/common/Select';
+import Modal from '@/components/common/Modal/Modal';
+import Input from '@/components/common/Input/Input';
+import TextArea from '@/components/common/TextArea/TextArea';
+import Checkbox from '@/components/common/Checkbox/Checkbox';
+import Select from '@/components/common/Select/Select';
 import { CollectionInterface, ProductInterface } from '@/interfaces';
 
 interface Props {

@@ -1,12 +1,12 @@
-import Input from "@/components/common/Input"
-import Modal from "@/components/common/Modal"
-import Select from "@/components/common/Select"
+import Input from "@/components/common/Input/Input"
+import Modal from "@/components/common/Modal/Modal"
+import Select from "@/components/common/Select/Select"
 import { ValueInterface } from "@/interfaces"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import { attributeTypes } from "@/utils/attributeTypes"
-import Checkbox from "@/components/common/Checkbox"
+import Checkbox from "@/components/common/Checkbox/Checkbox"
 import { makeRequest } from "@/utils/makeRequest"
 
 interface Props {

@@ -14,7 +14,7 @@ import Link from 'next/link'
 //import useFileUpload from '@/hooks/useFileUpload'
 import { AttributeInterface, CartInterface, ProductInterface } from '@/interfaces'
 import Notification from '@/components/online-store/Notification'
-import Modal from '@/components/common/Modal'
+import Modal from '@/components/common/Modal/Modal'
 import { makeRequest } from '@/utils/makeRequest'
 
 interface Props {

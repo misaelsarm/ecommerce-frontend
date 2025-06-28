@@ -1,7 +1,6 @@
-import { FC, useEffect, useReducer } from "react";
+import { FC, useReducer } from "react";
 import { UIContext } from "./UIContext";
 import { uiReducer } from "./uiReducer";
-import { makeRequest } from "@/utils/makeRequest";
 import { CollectionInterface, ProductInterface } from "@/interfaces";
 export interface UIState {
   visible: boolean,
@@ -22,7 +21,6 @@ const UI_INITIAL_STATE: UIState = {
   products: [],
   searchVisible: false,
   collections: []
-  //categoriesVisible: false,
 }
 
 export const UIProvider: FC<Props> = ({ children }) => {
@@ -45,26 +43,19 @@ export const UIProvider: FC<Props> = ({ children }) => {
     dispatch({ type: 'UI - Set Search Visible', payload: visible })
   }
 
-/*   const setCategoriesVisible = (visible: boolean) => {
-    dispatch({ type: 'UI - Set Collections Visible', payload: visible })
-  }
- */
   const setModalType = (modalType: string) => {
     dispatch({ type: 'UI - Set Modal Type', payload: modalType })
   }
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const data = await makeRequest('get', '/api/products?active=true')
-      /*  const { data: categoriesData } = await makeRequest('get', '/api/categories?active=true')
-       const { data: subCategoriesData } = await makeRequest('get', '/api/subcategories?active=true') */
-
-      //setSubCategories(subCategoriesData.subcategories)
-      setProducts(data.products)
-      // setCategories(categoriesData.categories)
-    }
-    fetchData()
-  }, [])
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const data = await makeRequest('get', '/api/products?active=true')
+  //     const collections = await makeRequest('get', '/api/collections?active=true')
+  //     setCollections(collections.collections.filter((col: any) => !col.parentCollection))
+  //     setProducts(data.products)
+  //   }
+  //   fetchData()
+  // }, [])
 
   return (
     <UIContext.Provider
@@ -72,13 +63,9 @@ export const UIProvider: FC<Props> = ({ children }) => {
         ...state,
         setProducts,
         setCollections,
-        //setCategories,
-        //setSubCategories,
-        //setCategoriesVisible,
         setVisible,
         setSearchVisible,
         setModalType,
-
       }}>
       {
         children

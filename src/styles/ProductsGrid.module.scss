@@ -1,0 +1,36 @@
+.filters {
+  margin-bottom: 20px;
+  span {
+    display: block;
+    margin-bottom: 10px;
+  }
+  select {
+    width: 100%;
+  }
+}
+
+.grid {
+  grid-template-columns: repeat(1, 1fr);
+  display: grid;
+  gap: 30px;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .filters {
+    max-width: 1200px;
+    margin: auto;
+    margin-bottom: 20px;
+    select {
+      width: 300px;
+    }
+  }
+}
+@media (min-width: 1200px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

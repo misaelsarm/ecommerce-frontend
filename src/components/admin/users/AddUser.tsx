@@ -1,7 +1,7 @@
-import Checkbox from "@/components/common/Checkbox";
-import Input from "@/components/common/Input";
-import Modal from "@/components/common/Modal";
-import Select from "@/components/common/Select";
+import Checkbox from "@/components/common/Checkbox/Checkbox";
+import Input from "@/components/common/Input/Input";
+import Modal from "@/components/common/Modal/Modal";
+import Select from "@/components/common/Select/Select";
 import { makeRequest } from "@/utils/makeRequest";
 import { useState } from "react";
 import { useForm } from "react-hook-form";

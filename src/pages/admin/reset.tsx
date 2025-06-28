@@ -1,14 +1,12 @@
 import React, { useState } from 'react'
 import styles from '@/styles/Reset.module.scss'
 import Image from 'next/image'
-import Input from '@/components/common/Input'
+import Input from '@/components/common/Input/Input'
 import { useForm } from 'react-hook-form'
 import { makeRequest } from '@/utils/makeRequest'
 import toast from 'react-hot-toast'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import Modal from '@/components/common/Modal'
-import Auth from '@/components/Auth'
 
 const ResetPage = () => {
 
@@ -21,8 +19,6 @@ const ResetPage = () => {
   const [loading, setLoading] = useState(false)
 
   const [ok, setOk] = useState(true)
-
-  const [visible, setVisible] = useState(false)
 
   const onSubmit = async (values: any) => {
     try {
@@ -42,9 +38,9 @@ const ResetPage = () => {
     <>
       <div className={styles.reset}>
         <div className={styles.logo}>
-          <Image alt='' fill src='/logo.png' />
+          <Image alt='' fill src='/globemily.svg' />
         </div>
-        <h2>Restablecer contraseña</h2>
+        <h2> {ok ? 'Contraseña actualizada' : 'Restablecer contraseña'}</h2>
         {
           ok ?
             <>
@@ -54,16 +50,10 @@ const ResetPage = () => {
                 </svg>
               </div>
               <div className={styles.fields}>
-
                 <span>Tu contraseña ha cambiado de manera exitosa.</span>
-                <button
-                  onClick={() => setVisible(true)}
-                  className='btn btn-ghost mb-25' style={{
-                    width: 300,
-                  }}>Iniciar sesión</button>
-                <Link href='/' className='btn btn-black' style={{
+                <Link href='/admin/login' className='btn btn-primary' style={{
                   width: 300
-                }}>Ir a Inicio</Link>
+                }}>Iniciar sesión</Link>
               </div>
             </>
             : <form onSubmit={handleSubmit(onSubmit)} className={styles.fields}>
@@ -90,25 +80,10 @@ const ResetPage = () => {
                   }
                 }
               />
-              <button disabled={loading} className='btn btn-black btn-block'>Aceptar</button>
+              <button disabled={loading} className='btn btn-primary btn-block'>Aceptar</button>
             </form>
         }
       </div>
-      <Modal
-        wrapperStyle={{
-          width: 500
-        }}
-        bodyStyle={{
-          height: 'auto',
-          padding: 25,
-          paddingTop: 0,
-        }}
-        onClose={() => setVisible(false)}
-        showButtons={false}
-        visible={visible as boolean}
-      >
-        <Auth />
-      </Modal>
     </>
   )
 }

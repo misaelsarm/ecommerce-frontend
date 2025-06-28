@@ -364,32 +364,21 @@ p {
   }
 }
 
-.fabs {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 99;
+// .fabs {
+//   position: fixed;
+//   bottom: 20px;
+//   right: 20px;
+//   z-index: 99;
 
-  .fab {
-    display: block;
-    position: relative;
-    overflow: hidden;
-    width: 70px;
-    height: 70px;
-    border-radius: 70px;
+  
 
-    &:first-child {
-      margin-bottom: 10px;
-    }
-  }
-
-  .fab-wa {
-    background-color: #14b364;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-}
+//   .fab-wa {
+//     background-color: #14b364;
+//     display: flex;
+//     justify-content: center;
+//     align-items: center;
+//   }
+// }
 
 .favorites-slider {
   .swiper-slide {
@@ -988,32 +977,7 @@ button {
 }
 
 .page {
-  .pageHeader {
-    // margin-bottom: 20px;
-    // display: flex;
-    // justify-content: space-between;
-    // align-items: center;
-    .pageHeaderTop {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 20px;
-      align-items: center;
 
-      .pageHeaderActions {
-        display: flex;
-
-        button {
-          &:not(:last-child) {
-            margin-right: 10px;
-          }
-        }
-      }
-    }
-
-    .pageHeaderBottom {
-      margin-bottom: 20px;
-    }
-  }
 }
 
 .radio {

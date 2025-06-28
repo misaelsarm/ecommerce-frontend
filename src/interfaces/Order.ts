@@ -1,6 +1,5 @@
-import { CartInterface, CartItemInterface, ProductInterface, UserInterface } from "."
-
-export type PaymentMethod = 'paypal' | 'stripe'
+import { PaymentMethod } from "@/utils/types"
+import { CartInterface, CartItemInterface, UserInterface } from "."
 
 export interface OrderInterface {
 

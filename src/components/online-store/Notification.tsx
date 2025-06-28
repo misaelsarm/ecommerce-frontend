@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import styles from '@/styles/Notification.module.scss'
 import Link from 'next/link'
 import { ProductInterface } from '@/interfaces'
-import CartItem from '../common/CartItem'
+import CartItem from '../common/CartItem/CartItem'
 
 
 interface Props {

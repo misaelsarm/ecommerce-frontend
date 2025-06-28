@@ -11,8 +11,6 @@ export interface UIContextInterface {
   setProducts: (products: ProductInterface[]) => void,
   collections: CollectionInterface[],
   setCollections: (collections: CollectionInterface[]) => void
- // categoriesVisible: boolean,
-  //setCategoriesVisible: (visible: boolean) => void
 }
 
 export const UIContext = createContext({} as UIContextInterface)

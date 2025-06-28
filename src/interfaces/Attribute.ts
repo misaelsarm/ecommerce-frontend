@@ -1,7 +1,5 @@
+import { AttributeType } from "@/utils/types"
 import { ValueInterface } from "."
-
-// Define a separate type for the attribute type
-export type AttributeType = 'dropdown' | 'color' | 'short-text' | 'long-text' | 'font'
 
 export interface AttributeInterface {
   _id: string

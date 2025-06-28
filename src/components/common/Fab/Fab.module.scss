@@ -1,0 +1,32 @@
+.fabWrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  cursor: pointer;
+
+  .actionName {
+    margin-right: 10px;
+    background-color: black;
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+  }
+
+  .fab {
+    width: 56px;
+    height: 56px;
+    border-radius: 56px;
+    background-color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+
+    svg {
+      width: 30px;
+      height: 30px;
+      flex-shrink: 0;
+      color: white;
+    }
+  }
+}

@@ -4,6 +4,7 @@ import type { AppProps } from "next/app";
 import { useRouter } from "next/router";
 import { Toaster } from "react-hot-toast";
 import NextNProgress from 'nextjs-progressbar'
+import { UIProvider } from "@/context/ui/UIProvider";
 
 export default function App({ Component, pageProps }: AppProps) {
 
@@ -16,7 +17,9 @@ export default function App({ Component, pageProps }: AppProps) {
     <NextNProgress color={router.pathname.startsWith('/admin') ? '#000' : '#fff'} height={4} />
     <Toaster />
     <AuthProvider>
-      {getLayout(<Component {...pageProps} />)}
+      <UIProvider>
+        {getLayout(<Component {...pageProps} />)}
+      </UIProvider>
     </AuthProvider>
   </>
 }

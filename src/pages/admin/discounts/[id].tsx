@@ -1,10 +1,10 @@
 import Layout from '@/components/admin/Layout'
-import Checkbox from '@/components/common/Checkbox';
-import Chip from '@/components/common/Chip';
-import DatePicker from '@/components/common/DatePicker';
-import Input from '@/components/common/Input';
-import Modal from '@/components/common/Modal';
-import Select from '@/components/common/Select';
+import Checkbox from '@/components/common/Checkbox/Checkbox';
+import Chip from '@/components/common/Chip/Chip';
+import DatePicker from '@/components/common/DatePicker/DatePicker';
+import Input from '@/components/common/Input/Input';
+import Modal from '@/components/common/Modal/Modal';
+import Select from '@/components/common/Select/Select';
 import { AuthContext } from '@/context/auth/AuthContext';
 import { CollectionInterface, DiscountInterface, ProductInterface } from '@/interfaces';
 import { getServerSideToken } from '@/utils/getServerSideToken';

@@ -1,3 +1,4 @@
+import { UserRole } from "@/utils/types";
 
 interface PagePermissions {
   page: string;
@@ -15,7 +16,7 @@ export interface UserInterface {
 
   password: string,
 
-  role: 'admin' | 'customer' | 'user',
+  role: UserRole
 
   active: boolean
 

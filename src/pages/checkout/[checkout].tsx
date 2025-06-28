@@ -9,10 +9,10 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import styles from '@/styles/Checkout.module.scss'
 import statesData from '@/utils/states.json'
-import Input from "@/components/common/Input";
-import Select from "@/components/common/Select";
-import TextArea from "@/components/common/TextArea";
-import Checkbox from "@/components/common/Checkbox";
+import Input from "@/components/common/Input/Input";
+import Select from "@/components/common/Select/Select";
+import TextArea from "@/components/common/TextArea/TextArea";
+import Checkbox from "@/components/common/Checkbox/Checkbox";
 import { cfdiUsos } from "@/utils/cfdi";
 import CartSummary from "@/components/CartSummary";
 

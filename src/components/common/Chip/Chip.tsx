@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from '@/styles/Chips.module.scss';
+import styles from './Chip.module.scss';
 
 interface ChipProps {
   text: string;

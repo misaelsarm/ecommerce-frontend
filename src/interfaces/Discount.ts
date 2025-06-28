@@ -1,9 +1,5 @@
+import { DiscountType, LimitBy } from "@/utils/types"
 import { CollectionInterface, ProductInterface } from "."
-
-// Define a separate type for the attribute type
-export type DiscountType = 'fixed' | 'percentage'
-
-export type LimitBy = 'collection' | 'product'
 
 export interface DiscountInterface {
   _id: string

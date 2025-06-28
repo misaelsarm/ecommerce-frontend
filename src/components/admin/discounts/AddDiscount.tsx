@@ -1,8 +1,8 @@
-import Checkbox from "@/components/common/Checkbox";
-import DatePicker from "@/components/common/DatePicker";
-import Input from "@/components/common/Input";
-import Modal from "@/components/common/Modal";
-import Select from "@/components/common/Select";
+import Checkbox from "@/components/common/Checkbox/Checkbox";
+import DatePicker from "@/components/common/DatePicker/DatePicker";
+import Input from "@/components/common/Input/Input";
+import Modal from "@/components/common/Modal/Modal";
+import Select from "@/components/common/Select/Select";
 import { CollectionInterface, ProductInterface } from "@/interfaces";
 import { makeRequest } from "@/utils/makeRequest";
 import { useEffect, useState } from "react";

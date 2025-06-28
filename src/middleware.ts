@@ -146,5 +146,5 @@ export default async function Middleware(req: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/admin/:path*', '/account'],
+    matcher: [/* '/admin/:path*', '/account' */],
 };

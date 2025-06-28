@@ -1,11 +1,11 @@
 
 import { Sortable } from '@/components/admin/Sortable'
-import Auth from '@/components/Auth'
-import Chip from '@/components/common/Chip'
-import Input from '@/components/common/Input'
-import Modal from '@/components/common/Modal'
-import Select from '@/components/common/Select'
-import TextArea from '@/components/common/TextArea'
+//import Auth from '@/components/Auth'
+import Chip from '@/components/common/Chip/Chip'
+import Input from '@/components/common/Input/Input'
+import Modal from '@/components/common/Modal/Modal'
+import Select from '@/components/common/Select/Select'
+import TextArea from '@/components/common/TextArea/TextArea'
 import React, { useState } from 'react'
 
 const Index = () => {
@@ -104,7 +104,7 @@ const Index = () => {
             showButtons={false}
             visible={visible as boolean}
           >
-            <Auth />
+           {/*  <Auth /> */}
           </Modal>
         </div>
         {/*  <Sortable items={items} label='' setItems={setItems} uploading={false} /> */}
