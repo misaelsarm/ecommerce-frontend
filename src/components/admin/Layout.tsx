@@ -9,6 +9,7 @@ import Cookies from 'js-cookie'
 import { AuthContext } from '@/context/auth/AuthContext'
 import { UserInterface } from '@/interfaces'
 import { LinkInterface, links } from '@/utils/links'
+import { useAuthStore } from '@/store/auth'
 
 interface Props {
   title: string
@@ -23,7 +24,7 @@ const Layout: FC<Props> = ({ children, title }) => {
 
   const { replace } = useRouter()
 
-  const { user, setUser } = useContext(AuthContext)
+  const user = useAuthStore(state => state.user)
 
   // Extract pages from user permissions
   const pages = user.permissions?.map(item => item.page);
@@ -77,7 +78,6 @@ const Layout: FC<Props> = ({ children, title }) => {
                   setVisible(false)
                   Cookies.remove('token')
                   replace('/admin/login')
-                  setUser({} as UserInterface)
                 }}
               > Cerrar sesión</span>
             </div>

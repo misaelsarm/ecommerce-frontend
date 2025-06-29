@@ -52,7 +52,7 @@ export const orderShippingTypeMap = {
   'pickUp': 'Recoge en tienda'
 }
 
-export const statusColorMap: Record<OrderStatus, string> = {
+export const orderStatusColorMap: Record<OrderStatus, string> = {
   "Nuevo": 'blue',
   'En ruta': 'yellow',
   'Cancelado': 'red',
@@ -77,7 +77,7 @@ export const orderChannelMap: Record<OrderChannel, string> = {
   'whatsApp': 'WhatsApp',
 };
 
-export const permissionsMap: Record<string, string[]> = {
+export const pagePermissionsMap: Record<string, string[]> = {
   '/admin/orders': ['view'],
   '/admin/tablero': ['view'],
   '/admin/products': ['view'],
@@ -98,6 +98,29 @@ export const permissionsMap: Record<string, string[]> = {
   '/admin/reports/ventas': ['view'],
   '/admin/reports/pedidos': ['view'],
 };
+
+export const pageTitleMap = {
+  '/admin/orders': 'Pedidos',
+  '/admin/products': 'Productos',
+  '/admin/attributes': 'Atributos',
+  '/admin/values': 'Valores',
+  '/admin/collections': 'Colecciones',
+  '/admin/customers': 'Clientes',
+  '/admin/users': 'Usuarios',
+  '/admin/discounts': 'Descuentos',
+}
+
+export const pageResourceMap = {
+  '/admin/orders': "/api/orders",
+  '/admin/attributes': "/api/attributes"
+}
+
+export const permissionLabelMap = {
+  'view': 'Puede ver',
+  'create': 'Puede crear',
+  'edit': 'Puede editar',
+  'delete': 'Puede eliminar'
+}
 
 export const occasionTypesMap = {
   "birthday": "Cumpleaños",

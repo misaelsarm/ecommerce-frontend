@@ -12,6 +12,8 @@ import Chip from '@/components/common/Chip/Chip';
 import { getServerSideToken } from '@/utils/getServerSideToken';
 import { makeRequest } from '@/utils/makeRequest';
 import moment from 'moment';
+import Page from '@/components/common/Page/Page';
+import { orderStatusColorMap } from '@/utils/mappings';
 
 interface Props {
   orders: OrderInterface[],
@@ -25,20 +27,7 @@ interface Props {
   totalRecords: number
 }
 
-// Define a type for your possible statuses
-type Status = 'Nuevo' | 'En camino' | 'Cancelado' | 'Entregado';
-
-// Create a mapping of status to color
-const statusColorMap: Record<Status, string> = {
-  "Nuevo": 'blue',
-  'En camino': 'yellow',
-  'Cancelado': 'red',
-  'Entregado': 'green',
-};
-
-const OrdersAdminPage = ({ page, limit, batchSize, totalRecords, orders = [], error }: Props) => {
-
-  console.log({ orders })
+const OrdersAdminPage = ({ page, limit, batchSize, totalRecords, orders, error }: Props) => {
 
   const { push, query } = useRouter()
 
@@ -52,28 +41,26 @@ const OrdersAdminPage = ({ page, limit, batchSize, totalRecords, orders = [], er
     },
     {
       title: 'Nombre de cliente',
-      dataIndex: 'customer',
-      key: 'customer',
-      render: (text: string, record: OrderInterface) => record.type === 'manual' || !record.user ? record.guestUser?.name
-
-        : record.user?.name
+      dataIndex: 'name',
+      key: 'name',
     },
     {
       title: 'Productos',
       dataIndex: 'products',
       key: 'products',
       render: (_text: string, record: OrderInterface) => {
-        return record.cart &&
+        return (
           <div className='flex column'>
             {
               record.products?.map(item => (
-                <div key={item.cartItemId} className='flex'>
+                <div key={item.cartItemId || item.product} className='flex'>
                   <span>-</span>
-                  <span className='ml-10'>{item.name}</span>
+                  <span className='ml-10'>{item.name || item.product}</span>
                 </div>
               ))
             }
           </div>
+        )
       },
     },
     {
@@ -82,7 +69,7 @@ const OrdersAdminPage = ({ page, limit, batchSize, totalRecords, orders = [], er
       key: 'status',
       render: (text: string) => {
         //@ts-ignore
-        const color = statusColorMap[text];
+        const color = orderStatusColorMap[text];
         return (
           <Chip color={color} text={text} />
         )
@@ -106,60 +93,48 @@ const OrdersAdminPage = ({ page, limit, batchSize, totalRecords, orders = [], er
       key: 'total',
       render: (_text: string, record: OrderInterface) => `$ ${numberWithCommas(record.total?.toFixed(2))}`
     },
-    {
-      title: 'Detalles',
-      dataIndex: 'detalles',
-      key: 'detalles',
-      render: (_text: string, record: OrderInterface) => <Link href={`/admin/orders/${record.number}`} className='btn btn-auto btn-black'>Ver pedido</Link>
-    }
+    // {
+    //   title: 'Detalles',
+    //   dataIndex: 'detalles',
+    //   key: 'detalles',
+    //   render: (_text: string, record: OrderInterface) => <Link href={`/admin/orders/${record.number}`} className='btn btn-auto btn-black'>Ver pedido</Link>
+    // }
   ]
 
   return (
     <>
-      <div className="page">
-        {
-          error ? error.message :
-            <>
-              <PageHeader
-                title='Pedidos'
-                actions={
-                  [
-                    {
-                      name: "Action 1",
-                      onClick: () => {
-                        alert('Action 1')
-                      }
-                    },
-                    {
-                      name: "Action 2",
-                      onClick: () => {
-                        alert('Action 2')
-                      }
-                    },
-                  ]
-                }
-                handleSearch={handleSearch}
-                searchQuery={query.search}
-                searchTerm={searchTerm}
-                onClearSearch={() => {
-                  push(`/admin/orders?page=1&limit=20`);
-                  setSearchTerm('')
-                }}
-              />
-              <div className="pageContent">
-                <Table
-                  page={page}
-                  limit={limit}
-                  columns={columns}
-                  data={orders}
-                  batchSize={batchSize}
-                  totalRecords={totalRecords}
-                  navigateTo='orders'
-                />
-              </div>
-            </>
-        }
-      </div>
+      {
+        error ?
+          <Page>
+            {error.message}
+          </Page> :
+          <Page
+            title='Pedidos'
+            primaryAction={{
+              name: "Nuevo pedido",
+              onClick: () => console.log('nuevo pedido'),
+              //className: 'btn btn-primary'
+            }}
+            search={{
+              searchTerm: searchTerm as string,
+              handleSearch,
+              onClearSearch: () => {
+                push(`/admin/orders?page=1&limit=20`);
+                setSearchTerm('')
+              }
+            }}
+          >
+            <Table
+              page={page}
+              limit={limit}
+              columns={columns}
+              data={orders}
+              batchSize={batchSize}
+              totalRecords={totalRecords}
+              navigateTo='admin/orders'
+            />
+          </Page>
+      }
     </>
   )
 }

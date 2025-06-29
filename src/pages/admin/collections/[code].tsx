@@ -3,6 +3,7 @@ import Checkbox from "@/components/common/Checkbox/Checkbox"
 import Chip from "@/components/common/Chip/Chip"
 import Input from "@/components/common/Input/Input"
 import Modal from "@/components/common/Modal/Modal"
+import Page from "@/components/common/Page/Page"
 import Select from "@/components/common/Select/Select"
 import TextArea from "@/components/common/TextArea/TextArea"
 import { AuthContext } from "@/context/auth/AuthContext"
@@ -10,6 +11,7 @@ import { CollectionInterface, ProductInterface } from "@/interfaces"
 import { getServerSideToken } from "@/utils/getServerSideToken"
 import { hasPermission } from "@/utils/hasPermission"
 import { makeRequest } from "@/utils/makeRequest"
+import { createServerSideFetcher } from "@/utils/serverSideFetcher"
 import { GetServerSideProps } from "next"
 import { useRouter } from "next/router"
 import { ReactElement, useContext, useRef, useState } from "react"
@@ -18,10 +20,20 @@ import toast from "react-hot-toast"
 
 interface Props {
   collection: CollectionInterface,
+  error: {
+    error: number,
+    message: string
+  }
 
 }
 
-const CollectionDetailsPage = ({ collection }: Props) => {
+const CollectionDetailsPage = ({ collection, error }: Props) => {
+
+  console.log({ error })
+
+  if (error) {
+    return <Page>{error.message}</Page>
+  }
 
   const [editing, setEditing] = useState(false)
 
@@ -34,7 +46,7 @@ const CollectionDetailsPage = ({ collection }: Props) => {
         label: collection.parentCollection?.name,
         value: collection.parentCollection?._id
       },
-      products: collection.products?.map(prod=>({
+      products: collection.products?.map(prod => ({
         label: prod?.name,
         value: prod?._id
       })),
@@ -148,7 +160,7 @@ const CollectionDetailsPage = ({ collection }: Props) => {
           errors={errors}
           required
         />
-         <Select
+        <Select
           control={control}
           options={collections}
           name="parentCollection"
@@ -265,14 +277,14 @@ const CollectionDetailsPage = ({ collection }: Props) => {
                   <Chip text={collection.parentCollection?.name} />
                 </div>
               }
-               <div className="cardItem">
-                  <h4>Productos</h4>
-                  {
-                    collection.products?.map(product => (
-                      <Chip text={product.name} key={product._id} />
-                    ))
-                  }
-                </div>
+              <div className="cardItem">
+                <h4>Productos</h4>
+                {
+                  collection.products?.map(product => (
+                    <Chip text={product.name} key={product._id} />
+                  ))
+                }
+              </div>
               <div className="cardItem">
                 <h4>Palabras clave</h4>
                 <span>{collection.keywords}</span>
@@ -317,47 +329,14 @@ const CollectionDetailsPage = ({ collection }: Props) => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ params, req }) => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
 
-  const code = params?.code
-
-  try {
-
-    const token = getServerSideToken(req)
-
-    // Fetch the specific collection by code
-    const collectionResponse = await makeRequest('get', `/api/collections/${code}`, {}, {
-      headers: {
-        "x-access-token": token,
-        "x-location": "admin"
-      }
-    })
-    const collection = collectionResponse.collection
-
-    // Fetch all collections
-    const collectionsResponse = await makeRequest('get', `/api/collections?active=true`, {}, {
-      headers: {
-        "x-access-token": token,
-        "x-location": "admin"
-      }
-    })
-    const collections = collectionsResponse.collections
-
-    return {
-      props: {
-        collection,
-        collections
-      }
-    }
-  } catch (error: any) {
-    return {
-      props: {
-        collection: {},
-        collections: [],
-        error: error.response.data.message || 'An error ocurred.'
-      }
-    }
-  }
+  return createServerSideFetcher(context, {
+    endpoint: "/api/collections/:code",
+    dataKey: "collection",
+    propKey: "collection",
+    paramKey: "code"
+  });
 }
 
 CollectionDetailsPage.getLayout = function getLayout(page: ReactElement) {

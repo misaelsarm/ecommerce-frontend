@@ -1,4 +1,6 @@
 import Layout from '@/components/admin/Layout'
+import Card from '@/components/common/Card/Card'
+import CardItem from '@/components/common/CardItem/CardItem'
 import CartItem from '@/components/common/CartItem/CartItem'
 import Chip from '@/components/common/Chip/Chip'
 import Modal from '@/components/common/Modal/Modal'
@@ -8,6 +10,8 @@ import { OrderInterface } from '@/interfaces'
 import { getServerSideToken } from '@/utils/getServerSideToken'
 import { hasPermission } from '@/utils/hasPermission'
 import { makeRequest } from '@/utils/makeRequest'
+import { orderStatusColorMap } from '@/utils/mappings'
+import { createServerSideFetcher } from '@/utils/serverSideFetcher'
 import axios from 'axios'
 import moment from 'moment'
 import { GetServerSideProps } from 'next'
@@ -15,23 +19,18 @@ import { useRouter } from 'next/router'
 import React, { ReactElement, useContext, useState } from 'react'
 
 interface Props {
-  order: OrderInterface
+  order: OrderInterface,
+  error: {
+    message: string,
+    error: number
+  }
 }
 
-// Define a type for your possible statuses
-type Status = 'Nuevo' | 'En camino' | 'Cancelado' | 'Entregado';
+const OrderDetailsPage = ({ order, error }: Props) => {
 
-// Create a mapping of status to color
-const statusColorMap: Record<Status, string> = {
-  "Nuevo": 'blue',
-  'En camino': 'yellow',
-  'Cancelado': 'red',
-  'Entregado': 'green',
-};
-
-const OrderDetailsPage = ({ order }: Props) => {
-
-  console.log({ order })
+  if (error) {
+    return <Page>{error.message}</Page>
+  }
 
   const { back, replace, pathname } = useRouter()
 
@@ -42,79 +41,76 @@ const OrderDetailsPage = ({ order }: Props) => {
   const canCreateEdit = user.role === 'admin' ? true : hasPermission(pathname, 'create-edit', user.permissions)
 
   //@ts-ignore
-  const color = statusColorMap[order.status];
+  const color = orderStatusColorMap[order.status];
 
   return (
     <>
-      <Page>
-        <div className="page-actions">
-          <button
-            style={{
-              cursor: 'pointer'
-            }}
-            onClick={() => {
-              back()
-            }}
-            className='back'><svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg></button>
-          {
-            !editing && canCreateEdit && <button className='btn btn-black' onClick={() => { setEditing(true) }}>Editar</button>
-          }
-        </div>
-        <div className="card">
+      <Page
+        maxwidth='700px'
+        fullWidth={false}
+        title={`Pedido #${order.number}`}
+        backAction={{
+          url: '/admin/orders',
+        }}
+        primaryAction={{
+          name: 'Editar',
+          onClick: () => {
+            setEditing(true)
+          },
+          //disabled: !canCreateEdit,
+        }}
+      >
+        <Card>
           <>
-            <div className="cardItem">
-              <h4>Numero de pedido</h4>
-              <span>{order.number}</span>
-            </div>
-            <div className="cardItem">
-              <h4>Estado</h4>
-              <Chip color={color} text={order.status} />
-            </div>
-            <div className="cardItem">
-              <h4>Dirección de entrega</h4>
-              <span>{order.shippingAddress?.street}, {order.shippingAddress.colonia}, {order.shippingAddress.postalCode}, {order.shippingAddress.city}, {order.shippingAddress.state}, {order.shippingAddress.country}</span>
-            </div>
-            <div className="cardItem">
-              <h4>Instrucciones de entrega</h4>
-              {
-                <span>{order.shippingAddress.deliveryInstructions} {order.shippingAddress.apartment}</span>
-              }
-            </div>
-            <div className="cardItem">
-              <h4>Información de cliente</h4>
-              {
-                order.user ? <>
-                  <span>{order.user.name}</span>
-                  <span>{order.user.email}</span>
-                  <span>{order.user.phone}</span>
-                </> : <>
-                  <span>{order.guestUser.name}</span>
-                  <span>{order.guestUser.email}</span>
-                  <span>{order.guestUser.phone}</span>
-                </>
-              }
-            </div>
+            <CardItem
+              title='Número de pedido'
+              content={<span>{order.number}</span>}
+            />
+            <CardItem
+              title='Estado'
+              content={<Chip color={color} text={order.status} />}
+            />
+            <CardItem
+              title='Dirección de entrega'
+              content={<span>{order.shippingAddress?.street}, {order.shippingAddress.colonia}, {order.shippingAddress.postalCode}, {order.shippingAddress.city}, {order.shippingAddress.state}, {order.shippingAddress.country}</span>}
+            />
+            <CardItem
+              title='Instrucciones de entrega'
+              content={<span>{order.shippingAddress?.deliveryInstructions}</span>}
+            />
+            <CardItem
+              title='Tipo de edificio'
+              content={<span>{order.shippingAddress?.apartment}</span>}
+            />
+
+
+
+
+            <CardItem>
+              <h4>Información de cliente / quien envía</h4>
+              <span>{order.name}</span>
+              <span>{order.email}</span>
+              <span>{order.phone}</span>
+            </CardItem>
             {/* {
               order.invoiceRequired &&
-              <div className="cardItem">
+              <CardItem>
                 <h4>Información de facturación</h4>
                 <span>RFC: {order.tax.rfc}</span>
                 <span>Razón social: {order.tax.razonSocial}</span>
                 <span>Uso CFDI: {order.tax.usoCfdi.label}</span>
                 <a target='_blank' rel='noreferrer' href={order.tax.fileUrl} >Ver Constancia de situacion fiscal</a>
-              </div>
+              </CardItem>
             } */}
-            <div className="cardItem">
+            <CardItem>
               <h4>Tipo de pedido</h4>
               {/* <span>{order.type}</span> */}
-            </div>
-            <div className="cardItem">
+            </CardItem>
+            <CardItem>
               <h4>Fecha de compra</h4>
               <span>{moment(order.createdAt).format('lll')}</span>
-            </div>
-            <div className="cardItem">
+            </CardItem>
+            <CardItem>
               <h4>Productos</h4>
               {
                 order.products.map(product => (
@@ -125,8 +121,8 @@ const OrderDetailsPage = ({ order }: Props) => {
                   />
                 ))
               }
-            </div>
-            <div className="cardItem">
+            </CardItem>
+            <CardItem>
               <h4>Información de pago</h4>
               <div className="listItem">
                 <span>Subtotal de articulos:</span>
@@ -151,9 +147,9 @@ const OrderDetailsPage = ({ order }: Props) => {
                 <span>Total:</span>
                 <span>$ {order.total.toFixed(2)} MXN</span>
               </div>
-            </div>
+            </CardItem>
           </>
-        </div>
+        </Card>
       </Page>
       <Modal
         visible={editing}
@@ -174,32 +170,14 @@ const OrderDetailsPage = ({ order }: Props) => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ params, req: nextReq }) => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
 
-  const number = params?.number
-
-  let order
-
-  try {
-
-    const token = getServerSideToken(nextReq)
-
-    const data = await makeRequest('get', `/api/orders/${number}`, {}, {
-      headers: {
-        "x-access-token": token,
-        "x-location": "admin"
-      }
-    })
-    order = data.order
-  } catch (error) {
-    console.log({ error })
-  }
-
-  return {
-    props: {
-      order
-    }
-  }
+  return createServerSideFetcher(context, {
+    endpoint: '/api/orders/:number',
+    dataKey: 'order',
+    propKey: 'order',
+    paramKey: 'number',
+  })
 }
 
 OrderDetailsPage.getLayout = function getLayout(page: ReactElement) {

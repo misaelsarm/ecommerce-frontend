@@ -10,13 +10,13 @@ import Link from "next/link"
 import { useRouter } from "next/router"
 import { ReactElement, useContext, useState } from "react"
 import toast from "react-hot-toast"
-import Cookies from "js-cookie";
 import { getServerSideToken } from "@/utils/getServerSideToken"
 import Chip from "@/components/common/Chip/Chip"
 import { hasPermission } from "@/utils/hasPermission"
 import { AuthContext } from "@/context/auth/AuthContext"
 import { makeRequest } from "@/utils/makeRequest"
 import { valueTypesMap } from "@/utils/mappings"
+import Page from "@/components/common/Page/Page"
 
 interface Props {
   values: ValueInterface[],
@@ -30,7 +30,7 @@ interface Props {
   totalRecords: number
 }
 
-const ValuesAdminPage = ({ values = [], page, limit, batchSize, totalRecords }: Props) => {
+const ValuesAdminPage = ({ values = [], page, limit, batchSize, totalRecords, error }: Props) => {
 
   const [confirmDelete, setConfirmDelete] = useState(false)
 
@@ -104,73 +104,71 @@ const ValuesAdminPage = ({ values = [], page, limit, batchSize, totalRecords }: 
 
   return (
     <>
-      <div className="page">
-        <PageHeader
-          title='Valores de atributos'
-          actions={
-            [
-              {
-                name: "Nuevo valor",
-                onClick: () => {
-                  setVisible(true)
-                }
+      {
+        error ? <Page>{error.message}</Page> : <>
+          <Page
+            title="Valores de atributos"
+            primaryAction={{
+              name: "Nuevo valor",
+              onClick: () => {
+                setVisible(true)
               }
-            ]
-          }
-          handleSearch={handleSearch}
-          searchQuery={query.search}
-          searchTerm={searchTerm}
-          onClearSearch={() => {
-            push(`/admin/values?page=1&limit=20`);
-            setSearchTerm('')
-          }}
-        />
-        <div className="pageContent">
-          <Table
-            columns={columns}
-            data={values}
-            navigateTo="values"
-            batchSize={batchSize}
-            totalRecords={totalRecords}
-            page={page}
-            limit={limit}
+            }}
+            search={{
+              searchTerm,
+              handleSearch,
+              onClearSearch: () => {
+                push(`/admin/values?page=1&limit=20`);
+                setSearchTerm('')
+              }
+            }}
+          >
+            <Table
+              columns={columns}
+              data={values}
+              navigateTo="values"
+              batchSize={batchSize}
+              totalRecords={totalRecords}
+              page={page}
+              limit={limit}
+            />
+          </Page>
+          <AddValue
+            visible={visible}
+            setVisible={setVisible}
+            onOk={() => {
+              setVisible(false)
+              replace('/admin/values?page=1&limit=20')
+            }}
           />
-        </div>
-      </div>
-      <AddValue
-        visible={visible}
-        setVisible={setVisible}
-        onOk={() => {
-          setVisible(false)
-          replace('/admin/values?page=1&limit=20')
-        }}
-      />
-      <Modal
-        title="Eliminar valor de atributo"
-        wrapperStyle={{
-          height: 'auto',
-          width: 400
-        }}
-        bodyStyle={{
-          height: 'auto'
-        }}
-        visible={confirmDelete}
-        onClose={() => setConfirmDelete(false)}
-        onCancel={() => setConfirmDelete(false)}
-        onOk={async () => {
-          try {
-            await makeRequest('put', `/api/values/${deletedValue._id}`, { deleted: true })
-            toast.success(`Se elimino el valor ${deletedValue.label}`)
-            setConfirmDelete(false);
-            setDeletedValue({} as ValueInterface);
-            replace('/admin/values?page=1&limit=20')
-          } catch (error: any) {
-            toast.error(error.response.data.message)
-          }
-        }}
-      >
-        <div><span>¿Confirmar eliminación del valor <b>{deletedValue.label}</b>? Esta acción no se puede deshacer.</span></div>
-      </Modal>
+          <Modal
+            title="Eliminar valor de atributo"
+            wrapperStyle={{
+              height: 'auto',
+              width: 400
+            }}
+            bodyStyle={{
+              height: 'auto'
+            }}
+            visible={confirmDelete}
+            onClose={() => setConfirmDelete(false)}
+            onCancel={() => setConfirmDelete(false)}
+            onOk={async () => {
+              try {
+                await makeRequest('put', `/api/values/${deletedValue._id}`, { deleted: true })
+                toast.success(`Se elimino el valor ${deletedValue.label}`)
+                setConfirmDelete(false);
+                setDeletedValue({} as ValueInterface);
+                replace('/admin/values?page=1&limit=20')
+              } catch (error: any) {
+                toast.error(error.response.data.message)
+              }
+            }}
+          >
+            <div><span>¿Confirmar eliminación del valor <b>{deletedValue.label}</b>? Esta acción no se puede deshacer.</span></div>
+          </Modal>
+        </>
+      }
     </>
   )
 }

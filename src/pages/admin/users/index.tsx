@@ -14,6 +14,7 @@ import { useDebouncedSearch } from '@/hooks/useDebouncedSearch'
 import AddUser from '@/components/admin/users/AddUser'
 import { makeRequest } from '@/utils/makeRequest'
 import { userRolesMap } from '@/utils/mappings';
+import Page from '@/components/common/Page/Page';
 
 interface Props {
   users: UserInterface[],
@@ -27,7 +28,7 @@ interface Props {
   totalRecords: number
 }
 
-const UsersAdminPage = ({ users, page, limit, batchSize, totalRecords }: Props) => {
+const UsersAdminPage = ({ users, page, limit, batchSize, totalRecords, error }: Props) => {
 
   const columns = [
     {
@@ -83,47 +84,46 @@ const UsersAdminPage = ({ users, page, limit, batchSize, totalRecords }: Props) 
 
   return (
     <>
-      <div className="page">
-        <PageHeader
-          title='Usuarios'
-          actions={
-            [
-              {
-                name: "Nuevo usuario",
-                onClick: () => {
-                  setVisible(true)
-                }
+      {
+        error ? <Page>{error.message}</Page> : <>
+          <Page
+            title='Usuarios'
+            primaryAction={{
+              name: "Nuevo usuario",
+              onClick: () => {
+                setVisible(true)
               }
-            ]
-          }
-          handleSearch={handleSearch}
-          searchQuery={query.search}
-          searchTerm={searchTerm}
-          onClearSearch={() => {
-            push(`/admin/users?page=1&limit=20`);
-            setSearchTerm('')
-          }}
-        />
-        <div className="pageContent">
-          <Table
-            columns={columns}
-            data={users}
-            page={page}
-            limit={limit}
-            batchSize={batchSize}
-            totalRecords={totalRecords}
-            navigateTo='users'
+            }}
+            search={{
+              handleSearch: handleSearch,
+              searchQuery: query.search,
+              searchTerm: searchTerm,
+              onClearSearch: () => {
+                push(`/admin/users?page=1&limit=20`);
+                setSearchTerm('')
+              }
+            }}
+          >
+            <Table
+              columns={columns}
+              data={users}
+              page={page}
+              limit={limit}
+              batchSize={batchSize}
+              totalRecords={totalRecords}
+              navigateTo='users'
+            />
+          </Page>
+          <AddUser
+            visible={visible}
+            setVisible={setVisible}
+            onOk={() => {
+              setVisible(false)
+              replace('/admin/users?page=1&limit=20')
+            }}
           />
-        </div>
-      </div>
-      <AddUser
-        visible={visible}
-        setVisible={setVisible}
-        onOk={() => {
-          setVisible(false)
-          replace('/admin/users?page=1&limit=20')
-        }}
-      />
+        </>
+      }
     </>
   )
 }

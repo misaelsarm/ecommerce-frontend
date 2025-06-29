@@ -14,12 +14,22 @@ import { getServerSideToken } from "@/utils/getServerSideToken"
 import moment from "moment"
 import { hasPermission } from "@/utils/hasPermission"
 import { AuthContext } from "@/context/auth/AuthContext"
+import Page from "@/components/common/Page/Page"
+import { createServerSideFetcher } from "@/utils/serverSideFetcher"
 
 interface Props {
-  user: UserInterface
+  user: UserInterface,
+  error?: {
+    error: number,
+    message: string
+  }
 }
 
-const CustomerDetailsAdminPage = ({ user }: Props) => {
+const CustomerDetailsAdminPage = ({ user, error }: Props) => {
+
+  if (error) {
+    return <Page>{error.message}</Page>
+  }
 
   const [editing, setEditing] = useState(false)
 
@@ -188,31 +198,13 @@ const CustomerDetailsAdminPage = ({ user }: Props) => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ params, req }) => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
 
-  const id = params?.id
-
-  let user
-
-  const token = getServerSideToken(req)
-
-  try {
-    const data = await makeRequest('get', `/api/users/${id}`, {}, {
-      headers:
-      {
-        "x-access-token": token
-      }
-    })
-    user = data.user
-  } catch (error) {
-
-  }
-
-  return {
-    props: {
-      user
-    }
-  }
+  return createServerSideFetcher(context, {
+    endpoint: '/api/users/:id',
+    dataKey: 'user',
+    propKey: 'user'
+  })
 }
 
 CustomerDetailsAdminPage.getLayout = function getLayout(page: ReactElement) {

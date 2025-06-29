@@ -17,6 +17,7 @@ import Chip from "@/components/common/Chip/Chip"
 import { hasPermission } from "@/utils/hasPermission"
 import { AuthContext } from "@/context/auth/AuthContext"
 import { makeRequest } from "@/utils/makeRequest"
+import Page from "@/components/common/Page/Page"
 
 interface Props {
   products: ProductInterface[],
@@ -80,14 +81,14 @@ const ProductsAdminPage = ({ products = [], page, limit, totalRecords, batchSize
         }
       </div>
     },
-    {
-      title: 'Detalles',
-      dataIndex: 'detalles',
-      key: 'detalles',
-      render: (_text: string, record: ProductInterface) => (
-        <Link href={`/admin/products/${record.code}`} className='btn btn-black btn-auto'>Ver</Link>
-      )
-    }
+    // {
+    //   title: 'Detalles',
+    //   dataIndex: 'detalles',
+    //   key: 'detalles',
+    //   render: (_text: string, record: ProductInterface) => (
+    //     <Link href={`/admin/products/${record.code}`} className='btn btn-black btn-auto'>Ver</Link>
+    //   )
+    // }
   ]
 
   const [visible, setVisible] = useState(false)
@@ -96,55 +97,50 @@ const ProductsAdminPage = ({ products = [], page, limit, totalRecords, batchSize
 
   const { push, query, replace, pathname } = useRouter()
 
-  if (hasPermission(pathname, 'delete', user.permissions) || user.role === 'admin') {
-    columns.push({
-      title: 'Eliminar',
-      dataIndex: 'eliminar',
-      key: 'eliminar',
-      render: (_text: string, record: ProductInterface) => (
-        <button onClick={() => {
-          setConfirmDelete(true)
-          setDeletedProduct(record)
-        }} className="btn">Eliminar</button>
-      )
-    },)
-  }
+  // if (hasPermission(pathname, 'delete', user.permissions) || user.role === 'admin') {
+  //   columns.push({
+  //     title: 'Eliminar',
+  //     dataIndex: 'eliminar',
+  //     key: 'eliminar',
+  //     render: (_text: string, record: ProductInterface) => (
+  //       <button onClick={() => {
+  //         setConfirmDelete(true)
+  //         setDeletedProduct(record)
+  //       }} className="btn">Eliminar</button>
+  //     )
+  //   },)
+  // }
 
   return (
     <>
-      <div className="page">
-        <PageHeader
-          title='Productos'
-          actions={
-            [
-              {
-                name: "Nuevo producto",
-                onClick: () => {
-                  setVisible(true)
-                }
-              }
-            ]
+      <Page
+        title="Productos"
+        primaryAction={{
+          name: "Nuevo producto",
+          onClick: () => {
+            setVisible(true)
           }
-          handleSearch={handleSearch}
-          searchQuery={query.search}
-          searchTerm={searchTerm}
-          onClearSearch={() => {
+        }}
+        search={{
+          handleSearch,
+          searchTerm,
+          onClearSearch: () => {
             push(`/admin/products?page=1&limit=20`);
             setSearchTerm('')
-          }}
+          }
+        }}
+      >
+        <Table
+          columns={columns}
+          data={products}
+          navigateTo="products"
+          paramKey="code"
+          batchSize={batchSize}
+          totalRecords={totalRecords}
+          page={page}
+          limit={limit}
         />
-        <div className="pageContent">
-          <Table
-            columns={columns}
-            data={products}
-            navigateTo="products"
-            batchSize={batchSize}
-            totalRecords={totalRecords}
-            page={page}
-            limit={limit}
-          />
-        </div>
-      </div>
+      </Page>
       <AddProduct
         visible={visible}
         setVisible={setVisible}

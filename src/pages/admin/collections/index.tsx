@@ -16,13 +16,18 @@ import Chip from '@/components/common/Chip/Chip'
 import { AuthContext } from '@/context/auth/AuthContext'
 import { hasPermission } from '@/utils/hasPermission'
 import { makeRequest } from '@/utils/makeRequest'
+import Page from '@/components/common/Page/Page'
 
 interface Props {
   collections: CollectionInterface[],
   page: number,
   limit: number,
   batchSize: number,
-  totalRecords: number
+  totalRecords: number,
+  error: {
+    error: number,
+    message: string
+  }
 }
 
 const CollectionsAdminPage = ({ collections = [], page, limit, batchSize, totalRecords }: Props) => {
@@ -96,7 +101,6 @@ const CollectionsAdminPage = ({ collections = [], page, limit, batchSize, totalR
     }
   ]
 
-
   if (hasPermission(pathname, 'delete', user.permissions) || user.role === 'admin') {
     columns.push({
       title: 'Eliminar',
@@ -111,42 +115,35 @@ const CollectionsAdminPage = ({ collections = [], page, limit, batchSize, totalR
     })
   }
 
-
   return (
     <>
-      <div className="page">
-        <PageHeader
-          title='Colecciones'
-          actions={
-            [
-              {
-                name: "Nueva colección",
-                onClick: () => {
-                  setVisible(true)
-                }
-              }
-            ]
-          }
-          handleSearch={handleSearch}
-          searchQuery={query.search}
-          searchTerm={searchTerm}
-          onClearSearch={() => {
+      <Page
+        title='Colecciones'
+        search={{
+          handleSearch,
+          searchQuery: query.search,
+          searchTerm,
+          onClearSearch: () => {
             push(`/admin/collections?page=1&limit=20`);
             setSearchTerm('')
-          }}
+          }
+        }}
+        primaryAction={{
+          name: 'Nueva colección',
+          onClick: () => setVisible(true),
+          //className: 'btn btn-primary'
+        }}
+      >
+        <Table
+          columns={columns}
+          data={collections}
+          batchSize={batchSize}
+          totalRecords={totalRecords}
+          page={page}
+          limit={limit}
+          navigateTo="admin/collections"
         />
-        <div className="pageContent">
-          <Table
-            columns={columns}
-            data={collections}
-            batchSize={batchSize}
-            totalRecords={totalRecords}
-            page={page}
-            limit={limit}
-            navigateTo="collections"
-          />
-        </div>
-      </div>
+      </Page>
       <AddCollection
         visible={visible}
         setVisible={setVisible}
@@ -192,6 +189,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
   let collections = []
 
   let errorCode = null;
+
   let errorMessage = null;
 
   let data

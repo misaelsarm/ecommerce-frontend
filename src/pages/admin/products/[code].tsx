@@ -21,6 +21,7 @@ import Page from "@/components/common/Page/Page"
 import Card from "@/components/common/Card/Card"
 import CardItem from "@/components/common/CardItem/CardItem"
 import { formatCurrency } from "@/utils/formatCurrency"
+import { createServerSideFetcher } from "@/utils/serverSideFetcher"
 
 interface Props {
   product: ProductInterface
@@ -112,8 +113,6 @@ const ProductDetailsAdminPage = ({ product }: Props) => {
     //   setImage(data as string)
     // }
   };
-
-  console.log({ errors })
 
   const onSubmit = async (values: any) => {
 
@@ -286,26 +285,23 @@ const ProductDetailsAdminPage = ({ product }: Props) => {
 
   return (
     <>
-      <Page title={product.name}>
+      <Page
+        title={product.name}
+        primaryAction={{
+          name: "Editar",
+          onClick: () => {
+            setEditing(true)
+            fetchData()
+          }
+          //className: 'btn btn-primary'
+        }}
+        backAction={{
+          url: '/admin/products'
+        }}
+        fullWidth={false}
+        maxwidth="700px"
+      >
         <>
-          {/*           <div className="page-actions">
-            <button
-              style={{
-                cursor: 'pointer'
-              }}
-              onClick={() => {
-                back()
-              }}
-              className='back'><svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-              </svg></button>
-            {
-              !editing && canCreateEdit && <button className='btn btn-black' onClick={async () => {
-                setEditing(true)
-                await fetchData()
-              }}>Editar</button>
-            }
-          </div> */}
           <Card>
             <CardItem
               title='Nombre'
@@ -413,49 +409,15 @@ const ProductDetailsAdminPage = ({ product }: Props) => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ params, req }) => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
 
-  const code = params?.code
+  return createServerSideFetcher(context, {
+    endpoint: '/api/products/:code',
+    dataKey: 'product',
+    propKey: 'product',
+    paramKey: 'code',
+  })
 
-  let product
-
-  let errorCode = null;
-
-  let errorMessage = null;
-
-  try {
-    const token = getServerSideToken(req)
-
-    const data = await makeRequest('get', `/api/products/${code}`, {}, {
-      headers: {
-        "x-access-token": token,
-        "x-location": "admin"
-      }
-    })
-
-    product = data.product
-
-  } catch (error: any) {
-    errorCode = error.response?.status
-    errorMessage = error.response?.data.message
-  }
-
-  if (errorCode) {
-    return {
-      props: {
-        error: {
-          error: errorCode,
-          message: errorMessage
-        }
-      },
-    };
-  }
-
-  return {
-    props: {
-      product
-    }
-  }
 }
 
 ProductDetailsAdminPage.getLayout = function getLayout(page: ReactElement) {

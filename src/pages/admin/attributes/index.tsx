@@ -1,6 +1,5 @@
 import AddAttribute from "@/components/admin/attributes/AddAttribute"
 import Layout from "@/components/admin/Layout"
-import PageHeader from "@/components/common/PageHeader/PageHeader"
 import Table from "@/components/common/Table/Table"
 import Modal from "@/components/common/Modal/Modal"
 import { useDebouncedSearch } from "@/hooks/useDebouncedSearch"
@@ -8,25 +7,27 @@ import { AttributeInterface } from "@/interfaces"
 import { GetServerSideProps } from "next"
 import Link from "next/link"
 import { useRouter } from "next/router"
-import { ReactElement, useContext, useState } from "react"
+import { ReactElement, useState } from "react"
 import toast from "react-hot-toast"
-import Cookies from "js-cookie";
 import { getServerSideToken } from "@/utils/getServerSideToken"
 import Chip from "@/components/common/Chip/Chip"
-import { hasPermission } from "@/utils/hasPermission"
-import { AuthContext } from "@/context/auth/AuthContext"
 import { makeRequest } from "@/utils/makeRequest"
 import { attributeTypesMap } from "@/utils/mappings"
+import Page from "@/components/common/Page/Page"
 
 interface Props {
   attributes: AttributeInterface[],
   page: number,
   limit: number,
   batchSize: number
-  totalRecords: number
+  totalRecords: number,
+  error?: {
+    error: number,
+    message: string
+  }
 }
 
-const AttributesAdminPage = ({ attributes = [], page, limit, batchSize, totalRecords }: Props) => {
+const AttributesAdminPage = ({ attributes = [], page, limit, batchSize, totalRecords, error }: Props) => {
 
   const [confirmDelete, setConfirmDelete] = useState(false)
 
@@ -36,9 +37,7 @@ const AttributesAdminPage = ({ attributes = [], page, limit, batchSize, totalRec
 
   const { searchTerm, setSearchTerm, handleSearch } = useDebouncedSearch({ url: 'attributes', limit })
 
-  const { push, query, replace, pathname } = useRouter()
-
-  const { user } = useContext(AuthContext)
+  const { push, replace } = useRouter()
 
   const columns = [
     {
@@ -67,100 +66,90 @@ const AttributesAdminPage = ({ attributes = [], page, limit, batchSize, totalRec
         }
       </div>
     },
-    {
-      title: 'Detalles',
-      dataIndex: 'detalles',
-      key: 'detalles',
-      render: (text: string, record: AttributeInterface) => (
-        <Link href={`/admin/attributes/${record._id}`} className='btn btn-black btn-auto'>Ver</Link>
-      )
-    },
+    // {
+    //   title: 'Detalles',
+    //   dataIndex: 'detalles',
+    //   key: 'detalles',
+    //   render: (text: string, record: AttributeInterface) => (
+    //     <Link href={`/admin/attributes/${record._id}`} className='btn btn-black btn-auto'>Ver</Link>
+    //   )
+    // },
 
   ]
 
-  if (hasPermission(pathname, 'delete', user.permissions) || user.role === 'admin') {
-    columns.push({
-      title: 'Eliminar',
-      dataIndex: 'eliminar',
-      key: 'eliminar',
-      render: (_text: string, record: AttributeInterface) => (
-        <button onClick={() => {
-          setConfirmDelete(true)
-          setDeletedAttribute(record)
-        }} className="btn">Eliminar</button>
-      )
-    },)
-  }
-
   return (
     <>
-      <div className="page">
-        <PageHeader
-          title='Atributos'
-          actions={
-            [
-              {
+      {
+        error ?
+          <Page>
+            {error.message}
+          </Page> :
+          <>
+            <Page
+              title="Atributos"
+              primaryAction={{
                 name: "Nuevo atributo",
                 onClick: () => {
                   setVisible(true)
+                },
+                //disabled: !hasPermission(pathname, 'create', user.permissions) && user.role !== 'admin'
+              }}
+              search={{
+                handleSearch,
+                searchTerm,
+                onClearSearch: () => {
+                  push(`/admin/attributes?page=1&limit=20`);
+                  setSearchTerm('')
                 }
-              }
-            ]
-          }
-          handleSearch={handleSearch}
-          searchQuery={query.search}
-          searchTerm={searchTerm}
-          onClearSearch={() => {
-            push(`/admin/attributes?page=1&limit=20`);
-            setSearchTerm('')
-          }}
-        />
-        <div className="pageContent">
-          <Table
-            columns={columns}
-            data={attributes}
-            navigateTo="attributes"
-            batchSize={batchSize}
-            page={page}
-            limit={limit}
-            totalRecords={totalRecords}
-          />
-        </div>
-      </div>
-      <AddAttribute
-        visible={visible}
-        setVisible={setVisible}
-        onOk={() => {
-          setVisible(false)
-          replace('/admin/attributes?page=1&limit=20')
-        }}
-      />
-      <Modal
-        title="Eliminar atributo"
-        wrapperStyle={{
-          height: 'auto',
-          width: 400
-        }}
-        bodyStyle={{
-          height: 'auto'
-        }}
-        visible={confirmDelete}
-        onClose={() => setConfirmDelete(false)}
-        onCancel={() => setConfirmDelete(false)}
-        onOk={async () => {
-          try {
-            await makeRequest('put', `/api/attributes/${deletedAttribute._id}`, { deleted: true })
-            toast.success(`Se elimino el producto ${deletedAttribute.shortName}`)
-            setConfirmDelete(false);
-            setDeletedAttribute({} as AttributeInterface);
-            replace('/admin/attributes?page=1&limit=20')
-          } catch (error: any) {
-            toast.error(error.response.data.message)
-          }
-        }}
-      >
-        <div><span>¿Confirmar eliminación del atributo <b>{deletedAttribute.shortName}</b>? Esta acción no se puede deshacer.</span></div>
-      </Modal>
+              }}
+            >
+              <Table
+                columns={columns}
+                data={attributes}
+                navigateTo="attributes"
+                paramKey="_id"
+                batchSize={batchSize}
+                page={page}
+                limit={limit}
+                totalRecords={totalRecords}
+              />
+            </Page>
+            <AddAttribute
+              visible={visible}
+              setVisible={setVisible}
+              onOk={() => {
+                setVisible(false)
+                replace('/admin/attributes?page=1&limit=20')
+              }}
+            />
+            <Modal
+              title="Eliminar atributo"
+              wrapperStyle={{
+                height: 'auto',
+                width: 400
+              }}
+              bodyStyle={{
+                height: 'auto'
+              }}
+              visible={confirmDelete}
+              onClose={() => setConfirmDelete(false)}
+              onCancel={() => setConfirmDelete(false)}
+              onOk={async () => {
+                try {
+                  await makeRequest('put', `/api/attributes/${deletedAttribute._id}`, { deleted: true })
+                  toast.success(`Se elimino el producto ${deletedAttribute.shortName}`)
+                  setConfirmDelete(false);
+                  setDeletedAttribute({} as AttributeInterface);
+                  replace('/admin/attributes?page=1&limit=20')
+                } catch (error: any) {
+                  toast.error(error.response.data.message)
+                }
+              }}
+            >
+              <div><span>¿Confirmar eliminación del atributo <b>{deletedAttribute.shortName}</b>? Esta acción no se puede deshacer.</span></div>
+            </Modal>
+          </>
+      }
     </>
   )
 }
@@ -180,7 +169,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
 
     const token = getServerSideToken(nextReq)
 
-     data = await makeRequest('get', `/api/attributes?page=${page}&limit=${limit}&search=${search}`, {}, {
+    data = await makeRequest('get', `/api/attributes?page=${page}&limit=${limit}&search=${search}`, {}, {
       headers: {
         "x-access-token": token
         //"x-location": "admin"
@@ -189,7 +178,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
 
     attributes = data.attributes
 
-  } catch (error:any) {
+  } catch (error: any) {
     errorCode = error.response?.status
     errorMessage = error.response?.data.message
   }

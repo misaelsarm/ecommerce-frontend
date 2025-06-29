@@ -16,6 +16,7 @@ import { AuthContext } from "@/context/auth/AuthContext"
 import { hasPermission } from "@/utils/hasPermission"
 import { makeRequest } from "@/utils/makeRequest"
 import { valueTypesMap } from "@/utils/mappings"
+import { createServerSideFetcher } from "@/utils/serverSideFetcher"
 
 interface Props {
   value: ValueInterface
@@ -201,32 +202,13 @@ const ValueDetailsAdminPage = ({ value }: Props) => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ req, query, params }) => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
 
-  const id = params?.id
-
-  let value
-
-  const token = getServerSideToken(req)
-
-  try {
-    const data = await makeRequest('get', `/api/values/${id}`, {}, {
-      headers: {
-        "x-access-token": token,
-      },
-    })
-
-    value = data.value
-
-  } catch (error) {
-
-  }
-
-  return {
-    props: {
-      value
-    }
-  }
+  return createServerSideFetcher(context, {
+    endpoint: '/api/values/:id',
+    dataKey: 'value',
+    propKey: 'value'
+  })
 }
 
 ValueDetailsAdminPage.getLayout = function getLayout(page: ReactElement) {

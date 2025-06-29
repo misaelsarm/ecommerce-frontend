@@ -1,5 +1,6 @@
 
 import { Sortable } from '@/components/admin/Sortable'
+import Button from '@/components/common/Button/Button'
 import Card from '@/components/common/Card/Card'
 import CardItem from '@/components/common/CardItem/CardItem'
 //import Auth from '@/components/Auth'
@@ -8,13 +9,19 @@ import Input from '@/components/common/Input/Input'
 import Modal from '@/components/common/Modal/Modal'
 import Select from '@/components/common/Select/Select'
 import TextArea from '@/components/common/TextArea/TextArea'
+import { useAuthStore } from '@/store/auth'
+import { useCounterStore } from '@/store/counter'
 import React, { useState } from 'react'
 
 const Index = () => {
 
-  const [items, setItems] = useState(['1', '2', '3', '4', '5', '6', '7', '8', '9']);
+  const [items, setItems] = useState(['1', '2', '3', '4', '5', '6', '7', '8', '9'])
 
   const [visible, setVisible] = useState(false)
+
+  const user = useAuthStore((state) => state.user)
+
+  const loading = useAuthStore((state) => state.loading)
 
   const options = [
     {
@@ -40,6 +47,9 @@ const Index = () => {
       }}
     >
       <h1 className='mb-30'>Componentes </h1>
+      {
+        loading ? <h2>Loading...</h2> : <h2>¡Hola, {user.name}!</h2>
+      }
       <div className='mb-30'>
         <h3>Boton</h3>
         <div className='d-flex'>

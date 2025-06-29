@@ -1,6 +1,7 @@
 import { CSSProperties, useState } from 'react'
 import styles from './Table.module.scss'
 import { useRouter } from 'next/router'
+import Link from 'next/link'
 
 interface Props {
   columns: any[]
@@ -13,9 +14,10 @@ interface Props {
   totalRecords: number
   loading?: boolean,
   showButtons?: boolean
+  paramKey: string
 }
 
-const Table = ({ data, columns, style, page = 0, limit = 0, navigateTo, batchSize, totalRecords, showButtons = true }: Props) => {
+const Table = ({ data, columns, style, page = 0, limit = 0, navigateTo, batchSize, totalRecords, showButtons = true, paramKey }: Props) => {
 
   const [sortConfig, setSortConfig] = useState<any>(null);
 
@@ -73,7 +75,7 @@ const Table = ({ data, columns, style, page = 0, limit = 0, navigateTo, batchSiz
 
   const currentPage = page || 1
 
-  const totalPages = !limit ? 1 : Math.ceil(totalRecords / limit)
+  const totalPages = !limit || totalRecords === 0 ? 1 : Math.ceil(totalRecords / limit)
 
   return (
     <div style={{ ...style }} className={styles.table}>
@@ -101,7 +103,7 @@ const Table = ({ data, columns, style, page = 0, limit = 0, navigateTo, batchSiz
       </div>
       {
         sortedProducts?.map((item: any, index: number) => (
-          <div key={index} className={styles.row}>
+          <Link href={`/${navigateTo}/${item[paramKey]}`} key={index} className={styles.row}>
             {
               columns.map((col: any, index: number) => {
                 return (
@@ -122,9 +124,16 @@ const Table = ({ data, columns, style, page = 0, limit = 0, navigateTo, batchSiz
                 )
               })
             }
-          </div>
+          </Link>
         )
         )
+      }
+      {
+        sortedProducts?.length === 0 &&
+        <div className={styles.empty}>
+          <img src="/empty-folder.png" alt="" />
+          <span>No hay registros</span>
+        </div>
       }
       {
         <div className={styles.footer}>
@@ -153,14 +162,6 @@ const Table = ({ data, columns, style, page = 0, limit = 0, navigateTo, batchSiz
           </div>
         </div>
       }
-      {
-        sortedProducts?.length === 0 &&
-        <div className={styles.empty}>
-          <img src="/empty-folder.png" alt="" />
-          <span>No hay registros</span>
-        </div>
-      }
-
     </div>
   )
 }

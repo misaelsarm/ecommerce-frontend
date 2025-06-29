@@ -14,15 +14,19 @@ import Chip from "@/components/common/Chip/Chip"
 import styles from '@/styles/admin/Users.module.scss'
 import { getServerSideToken } from "@/utils/getServerSideToken"
 import moment from "moment"
-import { permissionsMap } from "@/utils/permissionsMap"
-import { pagesMap } from "@/utils/pagesMap"
 import { hasPermission } from "@/utils/hasPermission"
 import { AuthContext } from "@/context/auth/AuthContext"
 import { views } from "@/utils/views"
-import { userRolesMap } from "@/utils/mappings"
+import { pageTitleMap, permissionLabelMap, userRolesMap } from "@/utils/mappings"
+import Page from "@/components/common/Page/Page"
+import { createServerSideFetcher } from "@/utils/serverSideFetcher"
 
 interface Props {
-  user: UserInterface
+  user: UserInterface,
+  error?: {
+    error: number,
+    message: string
+  }
 }
 
 function transformResponseToDefaultValues(dbResponse: any[]) {
@@ -32,7 +36,11 @@ function transformResponseToDefaultValues(dbResponse: any[]) {
   }, {});
 }
 
-const UserDetailsAdminPage = ({ user }: Props) => {
+const UserDetailsAdminPage = ({ user, error }: Props) => {
+
+  if (error) {
+    return <Page>{error.message}</Page>
+  }
 
   const [editing, setEditing] = useState(false)
 
@@ -259,12 +267,12 @@ const UserDetailsAdminPage = ({ user }: Props) => {
                       <div className="mb-20" key={page.page}>
                         <b >
                           {/* @ts-ignore */}
-                          {pagesMap[page.page]}
+                          {pageTitleMap[page.page]}
                         </b>
                         {
                           page.permissions?.map(perm => (
                             //@ts-ignore
-                            <span key={perm}>{permissionsMap[perm]}</span>
+                            <span key={perm}>{permissionLabelMap[perm]}</span>
                           ))
                         }
                       </div>
@@ -310,32 +318,12 @@ const UserDetailsAdminPage = ({ user }: Props) => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ params, req }) => {
-
-  const id = params?.id
-
-  let user
-
-  const token = getServerSideToken(req)
-
-  try {
-    const data = await makeRequest('get', `/api/users/${id}`, {}, {
-      headers:
-      {
-        "x-access-token": token
-      }
-    })
-    user = data.user
-  } catch (error) {
-
-  }
-
-  return {
-    props: {
-
-      user
-    }
-  }
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  return createServerSideFetcher(context, {
+    endpoint: "/api/users/:id",
+    dataKey: "user",
+    propKey: "user",
+  });
 }
 
 UserDetailsAdminPage.getLayout = function getLayout(page: ReactElement) {

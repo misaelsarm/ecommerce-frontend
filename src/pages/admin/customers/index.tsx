@@ -13,6 +13,7 @@ import Link from 'next/link'
 import Chip from '@/components/common/Chip/Chip'
 import { useDebouncedSearch } from '@/hooks/useDebouncedSearch'
 import { makeRequest } from '@/utils/makeRequest'
+import Page from '@/components/common/Page/Page';
 
 interface Props {
   customers: UserInterface[],
@@ -26,7 +27,7 @@ interface Props {
   totalRecords: number
 }
 
-const CustomersAdminPage = ({ customers, page, limit, batchSize, totalRecords }: Props) => {
+const CustomersAdminPage = ({ customers, page, limit, batchSize, totalRecords, error }: Props) => {
 
   const [confirmDelete, setConfirmDelete] = useState(false)
 
@@ -85,39 +86,34 @@ const CustomersAdminPage = ({ customers, page, limit, batchSize, totalRecords }:
   const { push, query, replace } = useRouter()
 
   return (
-    <div className="page">
-      <PageHeader
-        title='Clientes'
-        actions={
-          [
-            {
-              name: "Nuevo cliente",
-              onClick: () => {
-                setVisible(true)
-              }
-            }
-          ]
+    error ? <Page>{error.message}</Page> : <Page
+      title='Clientes'
+      primaryAction={{
+        name: "Nuevo cliente",
+        onClick: () => {
+          setVisible(true)
         }
-        handleSearch={handleSearch}
-        searchQuery={query.search}
-        searchTerm={searchTerm}
-        onClearSearch={() => {
+      }}
+      search={{
+        handleSearch,
+        searchQuery: query.search,
+        searchTerm,
+        onClearSearch: () => {
           push(`/admin/customers?page=1&limit=20`);
           setSearchTerm('')
-        }}
+        }
+      }}
+    >
+      <Table
+        columns={columns}
+        data={customers}
+        page={page}
+        limit={limit}
+        batchSize={batchSize}
+        totalRecords={totalRecords}
+        navigateTo='customers'
       />
-      <div className="pageContent">
-        <Table
-          columns={columns}
-          data={customers}
-          page={page}
-          limit={limit}
-          batchSize={batchSize}
-          totalRecords={totalRecords}
-          navigateTo='customers'
-        />
-      </div>
-    </div>
+    </Page>
   )
 }
 

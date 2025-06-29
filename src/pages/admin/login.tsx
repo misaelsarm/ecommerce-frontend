@@ -2,16 +2,18 @@ import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import styles from '@/styles/admin/Auth.module.scss'
 import Cookies from 'js-cookie';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Input from '@/components/common/Input/Input';
-import { AuthContext } from '@/context/auth/AuthContext';
 import { makeRequest } from '@/utils/makeRequest';
 import Link from 'next/link';
+import { useAuthStore } from '@/store/auth';
 
 const AdminLoginPage = () => {
 
-  const { setUser, setLoading: setContextLoading } = useContext(AuthContext)
+  const setUser = useAuthStore(state => state.setUser);
+
+  const setContextLoading = useAuthStore(state => state.setLoading);
 
   const { register, handleSubmit, formState: { errors } } = useForm();
 
@@ -34,7 +36,7 @@ const AdminLoginPage = () => {
       setContextLoading(false)
 
     } catch (error: any) {
-      toast.error(error.response.data.message)
+      toast.error(error.response?.data?.message || error.message)
       setLoading(false)
     }
 

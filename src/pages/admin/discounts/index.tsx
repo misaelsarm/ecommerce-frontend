@@ -13,6 +13,7 @@ import { GetServerSideProps } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { ReactElement, useCallback, useState } from 'react'
+import Page from '@/components/common/Page/Page'
 
 interface Props {
   discounts: DiscountInterface[],
@@ -26,7 +27,7 @@ interface Props {
   totalRecords: number
 }
 
-const DiscountsAdminPage = ({ discounts = [], page, limit, batchSize, totalRecords }: Props) => {
+const DiscountsAdminPage = ({ discounts = [], page, limit, batchSize, totalRecords, error }: Props) => {
 
   const [visible, setVisible] = useState(false)
 
@@ -76,47 +77,50 @@ const DiscountsAdminPage = ({ discounts = [], page, limit, batchSize, totalRecor
 
   return (
     <>
-      <div className="page">
-        <PageHeader
-          title='Descuentos'
-          actions={
-            [
-              {
+      {
+        error ?
+          <Page>
+            {error.message}
+          </Page> :
+          <>
+            <Page
+              title='Descuentos'
+              primaryAction={{
                 name: "Nuevo descuento",
                 onClick: () => {
                   setVisible(true)
                 }
-              }
-            ]
-          }
-          handleSearch={handleSearch}
-          searchQuery={query.search}
-          searchTerm={searchTerm}
-          onClearSearch={() => {
-            push(`/admin/discounts?page=1&limit=20`);
-            setSearchTerm('')
-          }}
-        />
-        <div className="pageContent">
-          <Table
-            columns={columns}
-            data={discounts}
-            page={page}
-            limit={limit}
-            batchSize={batchSize}
-            totalRecords={totalRecords}
-            navigateTo='discounts'
-          />
-        </div>
-      </div>
-      <AddDiscount
-        visible={visible}
-        setVisible={setVisible}
-        onOk={() => {
-          replace("/admin/discounts?page=1&limit=20")
-          setVisible(false)
-        }}
-      />
+              }}
+              search={{
+                handleSearch: handleSearch,
+                searchQuery: query.search,
+                searchTerm: searchTerm,
+                onClearSearch: () => {
+                  push(`/admin/discounts?page=1&limit=20`);
+                  setSearchTerm('')
+                }
+              }}
+            >
+              <Table
+                columns={columns}
+                data={discounts}
+                page={page}
+                limit={limit}
+                batchSize={batchSize}
+                totalRecords={totalRecords}
+                navigateTo='discounts'
+              />
+            </Page>
+            <AddDiscount
+              visible={visible}
+              setVisible={setVisible}
+              onOk={() => {
+                replace("/admin/discounts?page=1&limit=20")
+                setVisible(false)
+              }}
+            />
+          </>
+      }
     </>
   )
 }

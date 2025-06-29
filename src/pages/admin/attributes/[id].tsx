@@ -16,6 +16,7 @@ import { hasPermission } from "@/utils/hasPermission"
 import { AuthContext } from "@/context/auth/AuthContext"
 import { makeRequest } from "@/utils/makeRequest"
 import { attributeTypesMap } from "@/utils/mappings"
+import { createServerSideFetcher } from "@/utils/serverSideFetcher"
 
 interface Props {
   attribute: AttributeInterface
@@ -255,32 +256,12 @@ const AttributeDetailsAdminPage = ({ attribute }: Props) => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, query, params }) => {
-
-  const id = params?.id
-
-  let attribute
-
-  const token = getServerSideToken(nextReq)
-
-  try {
-    const data = await makeRequest('get', `/api/attributes/${id}`, {}, {
-      headers: {
-        "x-access-token": token,
-      },
-    })
-
-    attribute = data.attribute
-
-  } catch (error) {
-
-  }
-
-  return {
-    props: {
-      attribute
-    }
-  }
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  return createServerSideFetcher(context, {
+    endpoint: '/api/attributes/:id',
+    dataKey: 'attribute',
+    propKey: 'attribute'
+  })
 }
 
 AttributeDetailsAdminPage.getLayout = function getLayout(page: ReactElement) {

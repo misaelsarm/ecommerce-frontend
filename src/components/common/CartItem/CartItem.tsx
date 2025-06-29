@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
-import styles from '@/styles/CartItem.module.scss'
+import styles from './CartItem.module.scss'
 import { AttributeInterface, CartItemInterface } from '@/interfaces'
 
 
@@ -53,7 +53,7 @@ const CartItem = ({ name, description, isCustomizable, price, images, code, onRe
       {
         showImage &&
         <div className={styles.image}>
-          <Image objectFit='cover' layout='fill' src={images[0]} alt="" />
+          <Image objectFit='cover' layout='fill' src={images && images[0]} alt="" />
         </div>
       }
       <div className={styles.info}>
@@ -72,16 +72,16 @@ const CartItem = ({ name, description, isCustomizable, price, images, code, onRe
         </div>
         {
           showAttributes && isCustomizable &&
-            <div className={styles.attributes}>
-              {
-                attributes?.map(attribute => (
-                  <div key={attribute.shortName} className={styles.attribute}>
-                    <span className={styles.name}>{attribute.shortName}</span>
-                    {renderValues(attribute.values)}
-                  </div>
-                ))
-              }
-            </div>
+          <div className={styles.attributes}>
+            {
+              attributes?.map(attribute => (
+                <div key={attribute.shortName} className={styles.attribute}>
+                  <span className={styles.name}>{attribute.shortName}</span>
+                  {renderValues(attribute.values)}
+                </div>
+              ))
+            }
+          </div>
         }
         {
           showPrice &&
