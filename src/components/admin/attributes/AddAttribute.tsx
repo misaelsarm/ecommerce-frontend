@@ -1,13 +1,14 @@
-import Input from "@/components/common/Input/Input"
-import Modal from "@/components/common/Modal/Modal"
-import Select from "@/components/common/Select/Select"
 import { ValueInterface } from "@/interfaces"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
+import Cookies from "js-cookie"
 import { attributeTypes } from "@/utils/attributeTypes"
-import Checkbox from "@/components/common/Checkbox/Checkbox"
 import { makeRequest } from "@/utils/makeRequest"
+import Modal from "@/components/common/Modal/Modal"
+import Input from "@/components/common/Input/Input"
+import Select from "@/components/common/Select/Select"
+import Checkbox from "@/components/common/Checkbox/Checkbox"
 
 interface Props {
   visible: boolean,
@@ -21,13 +22,13 @@ const AddAttribute = ({ visible, setVisible, onOk }: Props) => {
 
   const [values, setValues] = useState([] as ValueInterface[])
 
-  const [type, setType] = useState()
+  const [type, setType] = useState<'dropdown' | 'color' | 'long-text' | 'short-text' | ''>('')
 
   const [saving, setSaving] = useState(false)
 
   const resetForm = () => {
     reset()
-    setType(undefined)
+    setType('')
   }
 
   useEffect(() => {
@@ -38,7 +39,14 @@ const AddAttribute = ({ visible, setVisible, onOk }: Props) => {
 
   async function fetchData() {
     try {
-      const data = await makeRequest('get', '/api/values')
+      const data = await makeRequest('get', '/api/values?active=true',
+        {
+          headers: {
+            "x-access-token": Cookies.get('token')
+            //"x-location": "admin"
+          }
+        }
+      )
       setValues(data.values)
     } catch (error: any) {
       toast.error(error?.response?.data?.message || 'Error')
@@ -54,7 +62,7 @@ const AddAttribute = ({ visible, setVisible, onOk }: Props) => {
         values: values.values?.map((value: any) => value.value),
         type: values.type.value
       }
-      await makeRequest('post', '/api/attributes', attribute)
+      await makeRequest('post', '/api/attributes?active=true', attribute)
       toast.success('Atributo agregado')
       setSaving(false)
       onOk && onOk()
@@ -129,7 +137,7 @@ const AddAttribute = ({ visible, setVisible, onOk }: Props) => {
           <Select
             label="Valores de atributo"
             options={values.filter((option) => {
-              return option?.value === 'option'
+              return option.type === 'option'
             }).map((item) => ({
               label: item.label,
               value: item._id
@@ -143,17 +151,26 @@ const AddAttribute = ({ visible, setVisible, onOk }: Props) => {
         }
         {
           (type === 'short-text' || type === 'long-text') &&
-          <div className="group">
-            <Input
-              type='number'
-              inputMode='numeric'
-              register={register}
-              label='Máximo de caracteres'
-              placeholder='Máximo de caracteres'
-              name='max'
-              errors={errors}
-            />
-          </div>
+          <Input
+            type='number'
+            inputMode='numeric'
+            register={register}
+            label='Máximo de caracteres'
+            name='max'
+            errors={errors}
+          />
+        }
+        {
+          (type === 'color') &&
+          <Input
+            type='number'
+            inputMode='numeric'
+            register={register}
+            label='Máximo de opciones permitidas a elegir'
+            name='max'
+            errors={errors}
+          />
+
         }
         <Checkbox
           register={register}

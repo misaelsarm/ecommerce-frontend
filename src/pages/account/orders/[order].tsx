@@ -1,110 +1,295 @@
-import { api } from '@/api_config/api';
-import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
-import { Layout } from '@/components/Layout';
-import { Order as OrderInterface } from '@/interfaces';
-import styles from '@/styles/Order.module.scss'
-import CartItem from '@/components/CartItem';
-import Cookies from 'js-cookie';
+import Image from "next/image";
+import React, { ReactElement } from 'react';
+import { OrderInterface } from "@/interfaces";
+import { Layout } from "@/components/online-store/Layout";
+import { makeRequest } from "@/utils/makeRequest";
+import Chip from "@/components/common/Chip";
+import { formatCurrency } from "@/utils/formatCurrency";
+import CartItem from "@/components/common/CartItem";
+import { orderPaymentMethodMap, orderShippingTypeMap, statusColorMap } from "@/utils/mappings";
+import moment from "moment";
+import AccountLayout from "@/components/online-store/AccountLayout";
+import { GetServerSideProps } from "next";
+import { getServerSideToken } from "@/utils/getServerSideToken";
+import styles from '@/styles/online-store/account/OrderDetails.module.scss'
+import ProgressTracker, { steps } from "@/components/ProgressTracker";
 
-const Order = () => {
+interface Props {
+  order: OrderInterface
+  error: {
+    error: number,
+    message: string
+  }
+}
 
-  const [order, setOrder] = useState({} as OrderInterface);
+const AccountOrderDetailsPage = ({ order, error }: Props) => {
 
-  const { query, back } = useRouter()
-
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchOrder = async () => {
-      if (query.order) {
-        try {
-          const { data } = await api.get(`/api/orders/${query.order}`, {
-            headers: {
-              "x-access-token": Cookies.get('token')
-            }
-          })
-          setOrder(data.order)
-          setLoading(false)
-        } catch (error) {
-          setLoading(false)
-        }
-      }
-    }
-    fetchOrder()
-  }, [query])
-
-
-  if (loading) return <span>Loading...</span>
+  const step = order?.status === 'Nuevo' ? 0 : steps.indexOf(order?.status)
 
   return (
-    <Layout
-      title='Detalles de pedido'
-    >
-      <div className={styles.order}>
-        <button onClick={back} className='btn btn-white no-border'> Regresar</button>
+
+    error ? <div style={{
+      height: '50dvh'
+    }}>
+      <h2>{error.message}</h2>
+    </div> : <>
+      <div className={styles.orderDetails}>
+
         <div className={styles.header}>
-          <h2>Pedido {order.number}</h2>
-          <span>{new Date(order.createdAt).toLocaleDateString()}</span>
-          <span>{order.customer}</span>
+          <div className={styles.number}>
+            <h3>  Pedido No. {order.number}</h3>
+          </div>
+          <div className={styles.progress}>
+            <ProgressTracker currentStep={step} />
+          </div>
         </div>
-
-        <div className={styles.details}>
-          <h3>Detalles de pedido</h3>
-          <div className={styles.group}>
-            <span>Estado de pedido</span>
-            <span>{order.status}</span>
-          </div>
-          <div className={styles.group}>
-            <span>Telefono</span>
-            <span>{order.phone}</span>
-          </div>
-          <div className={styles.group}>
-            <span>Direccion de entrega</span>
-            <span>{order.shippingAddress.street}, {order.shippingAddress.colonia}, {order.shippingAddress.postalCode}, {order.shippingAddress.city}, {order.shippingAddress.state}</span>
-          </div>
-          <div className={styles.group}>
-            <span>Productos</span>
-            {
-              order.cart && order.cart.items.map(product => (
-                <CartItem
-                  key={product.id}
-                  {...product}
-                  showAttributes
-                />
-              ))
-            }
-          </div>
-
-        </div>
-        <div className={styles.payment}>
-          <div className={styles.item}>
-            <span>Subtotal de articulos</span>
-            <span>$ {order.subTotal} MXN</span>
-          </div>
-          <div className={styles.item}>
-            <span>Envío </span>
-            <span>$ {order.shippingFee} MXN</span>
-          </div>
-          {
-            order.cart && order.cart.discount &&
-            <div className={styles.item}>
-              <span>Descuentos</span>
-              <span>Código: {order.cart.discount.name}</span>
-              <span>- $ {
-                order.cart.discount.type.value === 'percentage' ? order.subTotal * (order.cart.discount.value / 100) : 0
-              } MXN</span>
+        <div className={styles.content}>
+          <div className={`${styles.card} ${styles.info}`}>
+            <div className={styles.cardHeader}>
+              <h4>Información del pedido</h4>
             </div>
-          }
-          <div className={styles.item}>
-            <span>Total</span>
-            <span>$ {order.total} MXN</span>
+            <div className={styles.cardBody}>
+              <div className={styles.cardItem}>
+                <h4>Numero de pedido</h4>
+                <span>{order.number}</span>
+              </div>
+              <div className={styles.cardItem}>
+                <h4>Estado</h4>
+                {/* @ts-ignore */}
+                <Chip color={statusColorMap[order.status]} text={order.status} />
+              </div>
+              <div className={styles.cardItem}>
+                <h4>Fecha de entrega</h4>
+                <span>{moment(order.deliveryDate, 'YYYY-MM-DD').format('ll')}</span>
+              </div>
+              {
+                order.shippingType !== 'pickUp' &&
+                <>
+
+                  <div className={styles.cardItem}>
+                    <h4>Dirección de entrega</h4>
+                    <span>{order.shippingAddress?.street}, {order.shippingAddress.colonia}, {order.shippingAddress.postalCode}, {order.shippingAddress.city}, {order.shippingAddress.state}, {order.shippingAddress.country}</span>
+                  </div>
+                  <div className={styles.cardItem}>
+                    <h4>Instrucciones de entrega</h4>
+                    {
+                      <span>{order.shippingAddress.deliveryInstructions}</span>
+                    }
+                  </div>
+                  <div className={styles.cardItem}>
+                    <h4>Tipo de edificio</h4>
+                    {
+                      <span>{order.shippingAddress.apartment}</span>
+                    }
+                  </div>
+                </>
+              }
+              <div className={styles.cardItem}>
+                <h4>Información de cliente / quien envía</h4>
+                <span>{order.name}</span>
+                <span>{order.email}</span>
+                <span>{order.phone}</span>
+              </div>
+              {
+                order.shippingType !== 'pickUp' &&
+                <>
+                  <div className={styles.cardItem}>
+                    <h4>Información de quien recibe</h4>
+                    <span>{order.receiverName}</span>
+                    <span>{order.receiverPhone}</span>
+                  </div>
+                </>
+              }
+
+              <div className={styles.cardItem}>
+                <h4>Método de pago</h4>
+                <Chip /* color={color}  */ text={orderPaymentMethodMap[order.paymentMethod]} />
+              </div>
+
+              <div className={styles.cardItem}>
+                <h4>Fecha de compra</h4>
+                <span>{moment(order.createdAt).format('lll')}</span>
+              </div>
+
+              <div className={styles.cardItem}>
+                <h4>Tipo de envío</h4>
+                <Chip /* color={color} */ text={orderShippingTypeMap[order.shippingType]} />
+              </div>
+
+              <div className={styles.cardItem}>
+                <h4>Mensaje en tarjeta dedicatoria</h4>
+                <span>{order.dedicationCardMessage}</span>
+              </div>
+              {
+                order.image &&
+                <div className={styles.cardItem}>
+                  <h4>Imagen de referencia</h4>
+                  <div className={styles.image}>
+                    <Image alt='' fill src={order.image as string} />
+                  </div>
+                </div>
+              }
+
+              <div className={styles.cardItem}>
+                <h4>Información de pago</h4>
+
+                <div className={styles.listItem}>
+                  <span>Subtotal de articulos:</span>
+                  <span>{formatCurrency(order.subTotal)}</span>
+                </div>
+
+                <div className={styles.listItem}>
+                  <span>Envío:</span>
+                  <span>{formatCurrency(order.shippingFee)}</span>
+                </div>
+
+                {
+                  order.type === 'manual' && <>
+                    <div className={styles.listItem}>
+                      <span>Anticipo:</span>
+                      <span>{formatCurrency(order.anticipo)}</span>
+                    </div>
+
+                    <div className={styles.listItem}>
+                      <span>Restante:</span>
+                      <span>{formatCurrency(order.remaining)}</span>
+                    </div>
+                  </>
+                }
+
+                {
+                  order.cart && order.cart.discount &&
+                  <div className={styles.listItem} >
+                    <span>Descuento: {order.cart.discount.name} (-{order.cart.discount.type === 'fixed' ? `$ ${order.cart.discount.value.toFixed(2)} MXN` : `${order.cart.discount.value}%`})</span>
+                    <span>- $ {
+                      order.cart.discount.type === 'percentage' ? (order.subTotal * (order.cart.discount.value / 100)).toFixed(2) : 0
+                    } MXN</span>
+                  </div>
+                }
+                <div className={styles.listItem}>
+                  <span>Total:</span>
+                  <span>$ {order.total.toFixed(2)} MXN</span>
+                </div>
+              </div>
+
+              {
+                order.status === 'Entregado' &&
+                <>
+                  <div className={styles.cardItem}>
+                    <h4>Fecha entregado:</h4>
+                    <span>{moment(order.deliveredDate).format("lll")}</span>
+                  </div>
+                  <div className={styles.cardItem}>
+                    <h4>Notas de entrega:</h4>
+                    <span>{order.deliveryNotes}</span>
+                  </div>
+                  <div className={styles.cardItem}>
+                    <h4>Evidencia de entrega</h4>
+                    <div className={styles.image}>
+                      <Image alt='' fill src={order.deliveryEvidence} />
+                    </div>
+                  </div>
+                  <div className={styles.cardItem}>
+                    <h4>Autoriza redes sociales:</h4>
+                    {
+                      order.authorizesSocialMedia ?
+                        <Chip text='Si autoriza' color='green' /> : <Chip text='No autoriza' />
+                    }
+                  </div>
+                </>
+              }
+            </div>
+          </div>
+
+          <div className={styles.right}>
+            <div className={`${styles.card} ${styles.products}`}>
+              <div className={styles.cardHeader}>
+                <h4>Productos</h4>
+              </div>
+              <div className={styles.cardBody}>
+                <div className={styles.cardItem}>
+                  {
+                    order.products.map(product => (
+                      <>
+                        {
+                          product.product ? <div
+                            key={product}
+                            style={{ marginBottom: 20, whiteSpace: 'pre-line' }}
+                          >
+                            <b style={{ marginBottom: 10 }}>{product.product}</b>
+                            <span>{product.specs}</span>
+                          </div> : <CartItem
+                            showAttributes
+                            key={product.cartItemId}
+                            {...product}
+                          />
+                        }
+                      </>
+                    ))
+                  }
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-
       </div>
+    </>
+
+  );
+};
+
+export const getServerSideProps: GetServerSideProps = async ({ params, req }) => {
+
+  const number = params?.order
+
+  let order
+
+  let errorCode = null;
+
+  let errorMessage = null;
+
+  try {
+
+    const token = getServerSideToken(req)
+
+    const data = await makeRequest('get', `/api/me/orders/${number}`, {}, {
+      headers: {
+        "x-access-token": token,
+        "x-location": "admin"
+      }
+    })
+    order = data.order
+  } catch (error: any) {
+    errorCode = error.response?.status
+    errorMessage = error.response?.data.message
+  }
+
+  if (errorCode) {
+    console.log({ errorCode, errorMessage })
+    return {
+      props: {
+        error: {
+          error: errorCode,
+          message: errorMessage
+        }
+      },
+    };
+  }
+
+  return {
+    props: {
+      order
+    }
+  }
+}
+
+AccountOrderDetailsPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <Layout title="Pedidos">
+      <AccountLayout>{page}</AccountLayout>
     </Layout>
   );
 };
 
-export default Order;
+
+export default AccountOrderDetailsPage;

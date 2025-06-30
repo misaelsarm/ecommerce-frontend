@@ -1,20 +1,20 @@
 import Layout from "@/components/admin/Layout"
+import Card from "@/components/common/Card/Card"
+import CardItem from "@/components/common/CardItem/CardItem"
 import Checkbox from "@/components/common/Checkbox/Checkbox"
 import Chip from "@/components/common/Chip/Chip"
+import DropZone from "@/components/common/DropZone/DropZone"
 import Input from "@/components/common/Input/Input"
 import Modal from "@/components/common/Modal/Modal"
 import Page from "@/components/common/Page/Page"
 import Select from "@/components/common/Select/Select"
 import TextArea from "@/components/common/TextArea/TextArea"
-import { AuthContext } from "@/context/auth/AuthContext"
-import { CollectionInterface, ProductInterface } from "@/interfaces"
-import { getServerSideToken } from "@/utils/getServerSideToken"
-import { hasPermission } from "@/utils/hasPermission"
+import { CollectionInterface } from "@/interfaces"
 import { makeRequest } from "@/utils/makeRequest"
 import { createServerSideFetcher } from "@/utils/serverSideFetcher"
 import { GetServerSideProps } from "next"
 import { useRouter } from "next/router"
-import { ReactElement, useContext, useRef, useState } from "react"
+import { ReactElement, useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 
@@ -29,15 +29,13 @@ interface Props {
 
 const CollectionDetailsPage = ({ collection, error }: Props) => {
 
-  console.log({ error })
-
   if (error) {
     return <Page>{error.message}</Page>
   }
 
   const [editing, setEditing] = useState(false)
 
-  const { register, handleSubmit, control, formState: { errors } } = useForm<any>({
+  const { register, handleSubmit, control, formState: { errors }, setValue } = useForm<any>({
     defaultValues: {
       name: collection.name,
       description: collection.description,
@@ -56,79 +54,38 @@ const CollectionDetailsPage = ({ collection, error }: Props) => {
 
   const [collections, setCollections] = useState<any[]>([])
 
-  const [products, setProducts] = useState([])
-
   async function fetchData() {
     try {
 
-      const data = await makeRequest('get', `/api/collections?active=true`, {}, {
-        headers: {
-          //"x-access-token": token
-          //"x-location": "admin"
-        }
-      })
-
-      const productData = await makeRequest('get', `/api/products?active=true`, {}, {
-        headers: {
-          //"x-access-token": token
-          //"x-location": "admin"
-        }
-      })
+      const data = await makeRequest('get', `/api/collections?active=true`)
 
       setCollections(data.collections.map((col: CollectionInterface) => ({
         label: col.name,
         value: col._id
       })))
-
-      setProducts(productData.products.map((prod: ProductInterface) => ({
-        label: prod.name,
-        value: prod._id
-      })))
-
     } catch (error: any) {
       toast.error(error?.response?.data?.message || 'Error')
     }
   }
 
-
   const [saving, setSaving] = useState(false)
 
   const { replace, back, pathname } = useRouter()
 
-  const { user } = useContext(AuthContext)
-
-  const canCreateEdit = user.role === 'admin' ? true : hasPermission(pathname, 'create-edit', user.permissions)
-
-  const [uploading, setUploading] = useState(false)
-
-  const imageRef = useRef<any>()
-
-  const [image, setImage] = useState(collection.image)
-
-  //const { handleFileUpload, uploading } = useFileUpload();
-
-  const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    // const file = e.target.files?.[0];
-    // if (file) {
-    //   const data = await handleFileUpload(file);
-    //   setImage(data as string)
-    // }
-  };
-
   const onSubmit = async (values: any) => {
-
-    console.log({ values })
-
-    //if (images.length === 0) return toast.error('Elige al menos 1 imagen')
-
 
     try {
       setSaving(true)
       const update = {
-        ...values,
-        parentCollection: values.parentCollection?.value,
-        products: values.products.map((prod: any) => prod.value),
-        image,
+        name: values.name,
+        description: values.description,
+        parents: values.parents?.map((item: any) => item.value),
+        keywords: values.keywords,
+        color: values.color,
+        active: values.active,
+        highlight: values.highlight,
+        image: values.image,
+        banner: values.banner,
       }
       await makeRequest('put', `/api/collections/${collection._id}`, update)
       toast.success('Colección actualizada')
@@ -163,14 +120,8 @@ const CollectionDetailsPage = ({ collection, error }: Props) => {
         <Select
           control={control}
           options={collections}
-          name="parentCollection"
-          label="Colección agrupadora"
-        />
-        <Select
-          control={control}
-          options={products}
-          name="products"
-          label="Añadir productos a la colección"
+          name="parents"
+          label="Colecciones agrupadoras"
           isMulti
         />
         <Input
@@ -180,137 +131,83 @@ const CollectionDetailsPage = ({ collection, error }: Props) => {
           name='keywords'
         />
         <Checkbox
+          register={register}
+          label='Destacar'
+          id='highlight'
+          name='highlight'
+        />
+        <Checkbox
           label='Activa'
           id='active'
           name='active'
           register={register}
         />
-        <div className="input-group">
-          <label htmlFor="">Subir imagen principal</label>
-          <input
-            onChange={onFileChange}
-            ref={imageRef}
-            style={{ display: 'none' }}
-            type='file'
-            accept='image/*'
-          />
-          <div style={{ marginTop: 20, display: 'flex', alignItems: 'center' }}>
-            {
-              image !== '' &&
-              <div
-                className='imagePreview'>
-                <button onClick={() => imageRef.current.click()} className='btn delete'>Elegir otra imagen</button>
-                <img src={image} alt='' />
-              </div>
-            }
-            {
-              image === '' &&
-              <div onClick={() => { imageRef.current.click() }} style={
-                {
-                  width: 150,
-                  height: 150,
-                  border: '2px dashed #cdcdcd',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  textAlign: 'center',
-                  fontSize: 14,
-                  cursor: 'pointer',
-                  marginLeft: image ? 20 : 0,
-                  flexShrink: 0
-                }
-              }>
-                <span>
-                  Elegir imagen
-                </span>
-              </div>
-            }
-          </div>
-        </div>
+        <DropZone
+          folder='collections/images'
+          label='Subir imagen principal'
+          name='image'
+          register={register}
+          setValue={setValue}
+          required
+          errors={errors}
+          width='100%'
+          height='300px'
+        />
       </>
     )
   }
 
   return (
     <>
-      <div className='detailPage'>
-        <>
-          <div className="page-actions">
-            <button
-              style={{
-                cursor: 'pointer'
-              }}
-              onClick={() => {
-                back()
-              }}
-              className='back'><svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-              </svg></button>
-            {
-              !editing && canCreateEdit &&
-              <button className='btn btn-black' onClick={() => {
-                setEditing(true)
-                fetchData()
-              }}>Editar</button>
-            }
-          </div>
-          <div className="card">
-            <>
-              <div className="cardItem">
-                <h4>Nombre</h4>
-                <span>{collection.name}</span>
-              </div>
-              <div className="cardItem">
-                <h4>Código</h4>
-                <span>{collection.code}</span>
-              </div>
-              <div style={{
-                whiteSpace: 'pre-line'
-              }} className="cardItem">
-                <h4>Descripcion</h4>
-                <span>{collection.description}</span>
-              </div>
-              {
-                collection.parentCollection &&
-                <div className="cardItem">
-                  <h4>Colección agrupadora</h4>
-                  <Chip text={collection.parentCollection?.name} />
-                </div>
-              }
-              <div className="cardItem">
-                <h4>Productos</h4>
-                {
-                  collection.products?.map(product => (
-                    <Chip text={product.name} key={product._id} />
-                  ))
-                }
-              </div>
-              <div className="cardItem">
-                <h4>Palabras clave</h4>
-                <span>{collection.keywords}</span>
-              </div>
-              <div className="cardItem">
-                <h4>Estado</h4>
-                {
-                  collection.active ? <Chip text='Activo' color='green' /> : <Chip text='No activo' />
-                }
-              </div>
-              <div className="cardItem">
-                <h4>Imagenes</h4>
-                <div className='flex wrap'>
-                  {/* {
-                    collection.images.map(image => (
-                      <div key={image} className='mr-20 mb-20'>
-                        <img style={{ width: 150, flexShrink: 0 }} src={image} alt="" />
-                      </div>
-                    ))
-                  } */}
-                </div>
-              </div>
-            </>
-          </div>
-        </>
-      </div >
+      <Page
+        title={`Colección: ${collection.name}`}
+        primaryAction={{
+          name: 'Editar',
+          onClick: () => {
+            setEditing(true)
+            fetchData()
+          },
+          // visible: !editing && hasPermission('collections', 'edit')
+        }}
+        fullWidth={false}
+        maxwidth="700px"
+      >
+        <Card>
+          <CardItem
+            title="Nombre"
+            content={<span>{collection.name}</span>}
+          />
+          <CardItem
+            title="Código"
+            content={<span>{collection.code}</span>}
+          />
+          <CardItem
+            title="Descripción"
+            content={<span style={{ whiteSpace: 'pre-line' }}>{collection.description}</span>}
+          />
+          {
+            collection.parentCollection &&
+            <CardItem
+              title="Colección agrupadora"
+              content={<Chip text={collection.parentCollection?.name} />}
+            />
+          }
+          <CardItem
+            title="Palabras clave"
+            content={<span>{collection.keywords}</span>}
+          />
+          <CardItem
+            title="Estado"
+            content={collection.active ? <Chip text='Activo' color='green' /> : <Chip text='No activo' />}
+          />
+          <CardItem
+            title="Imagen principal"
+            content={<div className="image">
+              {/* <Image alt={collection.name} fill src={collection.image} /> */}
+            </div>}
+          />
+        </Card>
+      </Page>
       <Modal
         visible={editing}
         loadingState={saving /* || uploading */}

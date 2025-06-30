@@ -1,0 +1,49 @@
+.dropZoneWrapper {
+  margin-bottom: 20px;
+
+  >span {
+    margin-bottom: 20px;
+    display: block;
+  }
+
+  .dropZone {
+    background-color: #f7f7f7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
+    position: relative;
+    border: 2px dashed rgb(197, 197, 197);
+    cursor: pointer;
+
+    .icons {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      svg {
+        width: 25px;
+        height: 25px;
+        margin-bottom: 10px;
+      }
+    }
+
+
+  }
+
+  .dropZonePreview {
+    position: relative;
+    border: 2px dashed rgb(197, 197, 197);
+
+    .remove {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+    }
+
+    img {
+      object-fit: contain;
+    }
+  }
+}

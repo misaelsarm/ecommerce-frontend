@@ -1,5 +1,4 @@
 import Layout from "@/components/admin/Layout"
-import PageHeader from "@/components/common/PageHeader/PageHeader"
 import AddProduct from "@/components/admin/products/AddProduct"
 import Table from "@/components/common/Table/Table"
 import Modal from "@/components/common/Modal/Modal"
@@ -7,15 +6,11 @@ import { useDebouncedSearch } from "@/hooks/useDebouncedSearch"
 import { ProductInterface } from "@/interfaces"
 import { GetServerSideProps } from "next"
 import Image from "next/image"
-import Link from "next/link"
 import { useRouter } from "next/router"
-import { ReactElement, useContext, useState } from "react"
+import { ReactElement, useState } from "react"
 import toast from "react-hot-toast"
-import Cookies from "js-cookie";
 import { getServerSideToken } from "@/utils/getServerSideToken"
 import Chip from "@/components/common/Chip/Chip"
-import { hasPermission } from "@/utils/hasPermission"
-import { AuthContext } from "@/context/auth/AuthContext"
 import { makeRequest } from "@/utils/makeRequest"
 import Page from "@/components/common/Page/Page"
 
@@ -30,8 +25,6 @@ interface Props {
 const ProductsAdminPage = ({ products = [], page, limit, totalRecords, batchSize }: Props) => {
 
   const [confirmDelete, setConfirmDelete] = useState(false)
-
-  const { user } = useContext(AuthContext)
 
   const [loading, setLoading] = useState(false)
 
@@ -133,7 +126,7 @@ const ProductsAdminPage = ({ products = [], page, limit, totalRecords, batchSize
         <Table
           columns={columns}
           data={products}
-          navigateTo="products"
+          navigateTo="admin/products"
           paramKey="code"
           batchSize={batchSize}
           totalRecords={totalRecords}

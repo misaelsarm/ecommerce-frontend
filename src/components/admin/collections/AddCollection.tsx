@@ -1,13 +1,15 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { makeRequest } from '@/utils/makeRequest';
 import toast from 'react-hot-toast';
+import { CollectionInterface } from '@/interfaces';
 import Modal from '@/components/common/Modal/Modal';
 import Input from '@/components/common/Input/Input';
 import TextArea from '@/components/common/TextArea/TextArea';
-import Checkbox from '@/components/common/Checkbox/Checkbox';
 import Select from '@/components/common/Select/Select';
-import { CollectionInterface, ProductInterface } from '@/interfaces';
+import Checkbox from '@/components/common/Checkbox/Checkbox';
+import DropZone from '@/components/common/DropZone/DropZone';
+
 
 interface Props {
   visible: boolean,
@@ -17,59 +19,30 @@ interface Props {
 
 const AddCollection = ({ visible, setVisible, onOk }: Props) => {
 
-  const { register, handleSubmit, reset, control, formState: { errors } } = useForm();
+  const [saving, setSaving] = useState(false)
+
+  const { register, handleSubmit, reset, control, formState: { errors }, setValue } = useForm();
 
   const [collections, setCollections] = useState<any[]>([])
 
-  const [products, setProducts] = useState([])
+  const [active, setActive] = useState(false)
 
-  //const { handleFileUpload, uploading } = useFileUpload();
-
-  const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    // const file = e.target.files?.[0];
-    // if (file) {
-    //   const data = await handleFileUpload(file);
-    //   setImage(data as string)
-    // }
-  };
+  const [highlight, setHighlight] = useState(false)
 
   async function fetchData() {
     try {
 
-      const data = await makeRequest('get', `/api/collections?active=true`, {}, {
-        headers: {
-          //"x-access-token": token
-          //"x-location": "admin"
-        }
-      })
-      
-      const productData = await makeRequest('get', `/api/products?active=true`, {}, {
-        headers: {
-          //"x-access-token": token
-          //"x-location": "admin"
-        }
-      })
+      const data = await makeRequest('get', `/api/collections?active=true`)
 
       setCollections(data.collections.map((col: CollectionInterface) => ({
         label: col.name,
         value: col._id
       })))
 
-      setProducts(productData.products.map((prod: ProductInterface) => ({
-        label: prod.name,
-        value: prod._id
-      })))
-
     } catch (error: any) {
       toast.error(error?.response?.data?.message || 'Error')
     }
   }
-
-  const imageRef = useRef<any>()
-
-  const [image, setImage] = useState('')
-
-  const [saving, setSaving] = useState(false)
 
   useEffect(() => {
     if (visible) {
@@ -79,17 +52,22 @@ const AddCollection = ({ visible, setVisible, onOk }: Props) => {
 
   const resetForm = () => {
     reset()
-    setImage('')
   }
 
   const onSubmit = async (values: any) => {
     try {
       setSaving(true)
       const collection = {
-        ...values,
-        parentCollection: values.parentCollection?.value,
-        products: values.products.map((prod:any)=>prod.value),
-        image,
+
+        name: values.name,
+        description: values.description,
+        parents: values.parents?.map((item: any) => item.value),
+        keywords: values.keywords,
+        color: values.color,
+        image: values.image,
+        banner: values.banner,
+        active,
+        highlight
       }
 
       await makeRequest('post', '/api/collections', collection)
@@ -140,14 +118,8 @@ const AddCollection = ({ visible, setVisible, onOk }: Props) => {
         <Select
           control={control}
           options={collections}
-          name="parentCollection"
-          label="Colección agrupadora"
-        />
-        <Select
-          control={control}
-          options={products}
-          name="products"
-          label="Añadir productos a la colección"
+          name="parents"
+          label="Colecciones agrupadoras"
           isMulti
         />
         <Input
@@ -157,54 +129,28 @@ const AddCollection = ({ visible, setVisible, onOk }: Props) => {
           name='keywords'
         />
         <Checkbox
+          register={register}
+          label='Destacar'
+          id='highlight'
+          name='highlight'
+        />
+        <Checkbox
           label='Activa'
           id='active'
           name='active'
           register={register}
         />
-
-        <div className="input-group">
-          <label htmlFor="">Subir imagen principal</label>
-          <input
-            onChange={onFileChange}
-            ref={imageRef}
-            style={{ display: 'none' }}
-            type='file'
-            accept='image/*'
-          />
-          <div style={{ marginTop: 20, display: 'flex', alignItems: 'center' }}>
-            {
-              image !== '' &&
-              <div
-                className='imagePreview'>
-                <button onClick={() => imageRef.current.click()} className='btn delete'>Elegir otra imagen</button>
-                <img src={image} alt='' />
-              </div>
-            }
-            {
-              image === '' &&
-              <div onClick={() => { imageRef.current.click() }} style={
-                {
-                  width: 150,
-                  height: 150,
-                  border: '2px dashed #cdcdcd',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  textAlign: 'center',
-                  fontSize: 14,
-                  cursor: 'pointer',
-                  marginLeft: image ? 20 : 0,
-                  flexShrink: 0
-                }
-              }>
-                <span>
-                  Elegir imagen
-                </span>
-              </div>
-            }
-          </div>
-        </div>
+        <DropZone
+          folder='collections/images'
+          label='Subir imagen principal'
+          name='image'
+          register={register}
+          setValue={setValue}
+          required
+          errors={errors}
+          width='100%'
+          height='300px'
+        />
       </>
     </Modal >
   )

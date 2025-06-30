@@ -1,10 +1,10 @@
-import { AuthContext } from '@/context/auth/AuthContext'
 import { UIContext } from '@/context/ui/UIContext'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useContext, useState } from 'react'
 import styles from '@/styles/Nav.module.scss'
+import { useAuthStore } from '@/store/auth'
 
 const Nav = () => {
 
@@ -12,11 +12,9 @@ const Nav = () => {
 
   const { setVisible: setModalVisible, setModalType, setSearchVisible, collections } = useContext(UIContext)
 
-  console.log({collections})
-
-  const { user } = useContext(AuthContext)
-
   const router = useRouter()
+
+  const user = useAuthStore(state => state.user)
 
   return (
     <>
@@ -61,7 +59,7 @@ const Nav = () => {
             </div>
             <div
               onClick={() => {
-                if (user.token) {
+                if (user._id) {
                   router.push('/account')
                 } else {
                   setModalVisible(true)
@@ -74,11 +72,11 @@ const Nav = () => {
               </svg>
             </div>
             <Link className={styles.icon} href='/cart' >
-             
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-             
+
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+
             </Link>
             <div
               onClick={() => {

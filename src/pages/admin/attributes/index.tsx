@@ -106,7 +106,7 @@ const AttributesAdminPage = ({ attributes = [], page, limit, batchSize, totalRec
               <Table
                 columns={columns}
                 data={attributes}
-                navigateTo="attributes"
+                navigateTo="admin/attributes"
                 paramKey="_id"
                 batchSize={batchSize}
                 page={page}

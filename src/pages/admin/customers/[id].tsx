@@ -6,16 +6,16 @@ import { UserInterface } from "@/interfaces"
 import { makeRequest } from "@/utils/makeRequest"
 import { GetServerSideProps } from "next"
 import { useRouter } from "next/router"
-import { ReactElement, useContext, useState } from "react"
+import { ReactElement, useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import Chip from "@/components/common/Chip/Chip"
-import { getServerSideToken } from "@/utils/getServerSideToken"
 import moment from "moment"
-import { hasPermission } from "@/utils/hasPermission"
-import { AuthContext } from "@/context/auth/AuthContext"
 import Page from "@/components/common/Page/Page"
 import { createServerSideFetcher } from "@/utils/serverSideFetcher"
+import Card from "@/components/common/Card/Card"
+import useActions from "@/hooks/useActions"
+import CardItem from "@/components/common/CardItem/CardItem"
 
 interface Props {
   user: UserInterface,
@@ -35,9 +35,7 @@ const CustomerDetailsAdminPage = ({ user, error }: Props) => {
 
   const { replace, back, pathname } = useRouter()
 
-  const { user: currentUser } = useContext(AuthContext)
-
-  const canCreateEdit = currentUser.role === 'admin' ? true : hasPermission(pathname, 'create-edit', user.permissions)
+  const { canEdit } = useActions()
 
   const { register, handleSubmit, control, formState: { errors } } = useForm<any>({
     defaultValues: {
@@ -99,87 +97,86 @@ const CustomerDetailsAdminPage = ({ user, error }: Props) => {
 
   return (
     <>
-      <div className='detailPage'>
+      <Page
+        title={`Detalle de cliente: ${user.name}`}
+        fullWidth={false}
+        maxwidth="700px"
+        primaryAction={{
+          name: "Editar",
+          onClick: () => {
+            setEditing(true)
+          }
+        }}
+      >
         <>
-          <div className="page-actions">
-            <button
-              style={{
-                cursor: 'pointer'
-              }}
-              onClick={() => {
-                back()
-              }}
-              className='back'><svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-              </svg></button>
-            {
-              !editing && canCreateEdit && <button className='btn btn-black' onClick={async () => {
-                setEditing(true)
-              }}>Editar</button>
-            }
-          </div>
-          <div className="card">
+          <Card>
             <>
-              <div className="cardItem">
-                <h4>Tipo de usuario</h4>
-                <span>{user.role}</span>
-              </div>
-              <div className="cardItem">
-                <h4>Nombre</h4>
-                <span>{user.name}</span>
-              </div>
-              <div className="cardItem">
-                <h4>Correo electrónico</h4>
-                <span>{user.email}</span>
-              </div>
+              <CardItem
+                title="Nombre"
+                content={<span>{user.name}</span>}
+              />
+              <CardItem
+                title="Correo electrónico"
+                content={<span>{user.email}</span>}
+              />
               {
-                canCreateEdit &&
-                <div className="cardItem">
-                  <h4>Contraseña</h4>
-                  <button
-                    disabled={saving}
-                    onClick={async () => {
-                      try {
-                        setSaving(true)
-                        await makeRequest('post', '/api/auth/recover', {
-                          email: user.email
-                        })
-                        toast.success('Se envió un correo con las instrucciones para restablecer la contraseña', {
-                          duration: 6000
-                        })
-                        setSaving(false)
-                      } catch (error: any) {
-                        toast.error(error.response.data.message, {
-                          duration: 6000
-                        })
-                        setSaving(false)
-                      }
-                    }}
-                    className="btn btn-black mt-10">Restablecer contraseña</button>
-                </div>
+                canEdit &&
+                <CardItem
+                  title="Contraseña"
+                  content={
+                    <button
+                      disabled={saving}
+                      onClick={async () => {
+                        try {
+                          setSaving(true)
+                          await makeRequest('post', '/api/auth/recover', {
+                            email: user.email
+                          })
+                          toast.success('Se envió un correo con las instrucciones para restablecer la contraseña', {
+                            duration: 6000
+                          })
+                          setSaving(false)
+                        } catch (error: any) {
+                          toast.error(error.response.data.message, {
+                            duration: 6000
+                          })
+                          setSaving(false)
+                        }
+                      }}
+                      className="btn btn-black mt-10">Restablecer contraseña</button>
+                  }
+                />
               }
-              <div className="cardItem">
+              {/* <CardItem>
                 <h4>Pedidos</h4>
-                {/*    <span>{user.orders}</span> */}
-              </div>
-              <div className="cardItem">
-                <h4>Ultimo acceso</h4>
-                <span>{moment(user.lastLogin).format('lll')}</span>
-              </div>
-              <div className="cardItem">
-                <h4>Estado</h4>
-                {
-                  user.active ? <Chip text='Activo' color='green' /> : <Chip text='No activo' />
-                }
-                {
-                  user.verified ? <Chip text='Verificado' color='green' /> : <Chip text='No verificado' />
-                }
-              </div>
-
+                <span>{user.orders}</span>
+              </CardItem> */}
+              <CardItem
+                title="Fecha de registro"
+                content={<span>{moment(user.createdAt).format('lll')}</span>}
+              />
+              {
+                user.lastLogin &&
+                <CardItem
+                  title="Ultimo acceso"
+                  content={<span>{moment(user.lastLogin).format('lll')}</span>}
+                />
+              }
+              <CardItem
+                title="Estado"
+                content={<>
+                  {
+                    user.active ? <Chip text='Activo' color='green' /> : <Chip text='No activo' />
+                  }
+                  {
+                    user.verified ? <Chip text='Verificado' color='green' /> : <Chip text='No verificado' />
+                  }
+                </>}
+              />
             </>
-          </div>
+          </Card>
         </>
-      </div >
+      </Page >
       <Modal
         visible={editing}
         loadingState={saving /* || uploading */}
@@ -209,7 +206,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 CustomerDetailsAdminPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <Layout title="CustomerDetailsAdminPage">
+    <Layout title={`Clientes | ${page.props.user.name}`}>
       {page}
     </Layout>
   );

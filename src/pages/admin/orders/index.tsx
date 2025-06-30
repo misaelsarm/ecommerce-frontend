@@ -132,6 +132,7 @@ const OrdersAdminPage = ({ page, limit, batchSize, totalRecords, orders, error }
               batchSize={batchSize}
               totalRecords={totalRecords}
               navigateTo='admin/orders'
+              paramKey='number'
             />
           </Page>
       }

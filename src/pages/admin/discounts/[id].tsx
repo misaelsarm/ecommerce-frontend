@@ -6,9 +6,8 @@ import Input from '@/components/common/Input/Input';
 import Modal from '@/components/common/Modal/Modal';
 import Page from '@/components/common/Page/Page';
 import Select from '@/components/common/Select/Select';
-import { AuthContext } from '@/context/auth/AuthContext';
 import { CollectionInterface, DiscountInterface, ProductInterface } from '@/interfaces';
-import { getServerSideToken } from '@/utils/getServerSideToken';
+import { useAuthStore } from '@/store/auth';
 import { hasPermission } from '@/utils/hasPermission';
 import { makeRequest } from '@/utils/makeRequest';
 import { discountLimitByMap, discountTypesMap } from '@/utils/mappings';
@@ -16,7 +15,7 @@ import { createServerSideFetcher } from '@/utils/serverSideFetcher';
 import moment from 'moment';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import React, { ReactElement, useContext, useState } from 'react'
+import React, { ReactElement, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
@@ -153,9 +152,9 @@ const DiscountDetailsPage = ({ discount, error }: Props) => {
     }
   }
 
-  const { user } = useContext(AuthContext)
+  const user = useAuthStore((state) => state.user)
 
-  const canCreateEdit = user.role === 'admin' ? true : hasPermission(pathname, 'create-edit', user.permissions)
+  const canEdit = user.role === 'admin' ? true : hasPermission(pathname, 'edit', user.permissions)
 
   const renderForm = () => {
     return (
@@ -312,7 +311,7 @@ const DiscountDetailsPage = ({ discount, error }: Props) => {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg></button>
               {
-                !editing && canCreateEdit && <button className='btn btn-black' onClick={() => {
+                !editing && canEdit && <button className='btn btn-black' onClick={() => {
                   setEditing(true)
                   fetchProducts()
                   fetchCollections()

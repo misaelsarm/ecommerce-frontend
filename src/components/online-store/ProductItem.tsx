@@ -1,14 +1,15 @@
-import { ProductInterface } from '@/interfaces'
+
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 import styles from '@/styles/ProductItem.module.scss'
+import { ProductInterface } from '@/interfaces'
 
 interface Props {
   product: ProductInterface
 }
 
-const ProductItem = ({ product }: Props) => {
+export const ProductItem = ({ product }: Props) => {
 
   const discount = {
     textDecoration: 'line-through',
@@ -27,24 +28,24 @@ const ProductItem = ({ product }: Props) => {
       </div>
       <div className={styles.info}>
         <h2>{product.name}</h2>
-        {/* <div
+        <div
           style={{
             display: 'flex',
             flexDirection: 'column'
           }}
         >
           {
-            product.hasDiscount &&
-            <span className={styles.price} style={{ marginBottom: 5, color: 'red', fontWeight: 600 }}>${product.discountValue && product.price - product.discountValue} MXN</span>
+            product.discount?.hasDiscount &&
+            <span className={styles.price} style={{ marginBottom: 5, color: 'red', fontWeight: 600 }}>${product.discount.discountValue && product.price - product.discount.discountValue} MXN</span>
           }
           <span className={styles.price}
-                style={
-                  product.hasDiscount ? discount : undefined
-                }
-              >${product.price.toFixed(2)} MXN</span>
-        </div> */}
+            style={
+              product.discount?.hasDiscount ? discount : undefined
+            }
+          >${product.price.toFixed(2)} MXN</span>
+        </div>
         {
-          product.soldOut ? 'AGOTADO' : <button className='btn btn-black btn-block'>Ver producto</button>
+          product.soldOut ? 'AGOTADO' : <button className='btn btn-primary btn-block'>Ver producto</button>
         }
       </div>
 
@@ -52,4 +53,3 @@ const ProductItem = ({ product }: Props) => {
   )
 }
 
-export default ProductItem

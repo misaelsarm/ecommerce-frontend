@@ -1,15 +1,12 @@
 import Layout from '@/components/admin/Layout'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
-import React, { ReactElement, useCallback, useState } from 'react'
-import debounce from 'lodash.debounce';
+import React, { ReactElement, useState } from 'react'
 import Table from '@/components/common/Table/Table'
 import { UserInterface } from '@/interfaces'
-import PageHeader from '@/components/common/PageHeader/PageHeader'
 import moment from 'moment'
 import { getServerSideToken } from '@/utils/getServerSideToken'
 import Chip from '@/components/common/Chip/Chip'
-import Link from 'next/link'
 import { useDebouncedSearch } from '@/hooks/useDebouncedSearch'
 import AddUser from '@/components/admin/users/AddUser'
 import { makeRequest } from '@/utils/makeRequest'
@@ -66,14 +63,14 @@ const UsersAdminPage = ({ users, page, limit, batchSize, totalRecords, error }: 
         }
       </div>
     },
-    {
-      title: 'Detalles',
-      dataIndex: 'detalles',
-      key: 'detalles',
-      render: (_text: string, record: UserInterface) => (
-        <Link href={`/admin/users/${record._id}`} className='btn btn-black btn-auto'>Ver</Link>
-      )
-    },
+    // {
+    //   title: 'Detalles',
+    //   dataIndex: 'detalles',
+    //   key: 'detalles',
+    //   render: (_text: string, record: UserInterface) => (
+    //     <Link href={`/admin/users/${record._id}`} className='btn btn-black btn-auto'>Ver</Link>
+    //   )
+    // },
   ]
 
   const { searchTerm, setSearchTerm, handleSearch } = useDebouncedSearch({ url: 'users', limit })
@@ -96,7 +93,6 @@ const UsersAdminPage = ({ users, page, limit, batchSize, totalRecords, error }: 
             }}
             search={{
               handleSearch: handleSearch,
-              searchQuery: query.search,
               searchTerm: searchTerm,
               onClearSearch: () => {
                 push(`/admin/users?page=1&limit=20`);
@@ -111,7 +107,8 @@ const UsersAdminPage = ({ users, page, limit, batchSize, totalRecords, error }: 
               limit={limit}
               batchSize={batchSize}
               totalRecords={totalRecords}
-              navigateTo='users'
+              navigateTo='admin/users'
+              paramKey='_id'
             />
           </Page>
           <AddUser

@@ -17,6 +17,7 @@ import { AuthContext } from '@/context/auth/AuthContext'
 import { hasPermission } from '@/utils/hasPermission'
 import { makeRequest } from '@/utils/makeRequest'
 import Page from '@/components/common/Page/Page'
+import { useAuthStore } from '@/store/auth'
 
 interface Props {
   collections: CollectionInterface[],
@@ -42,7 +43,7 @@ const CollectionsAdminPage = ({ collections = [], page, limit, batchSize, totalR
 
   const { push, query, replace, pathname } = useRouter()
 
-  const { user } = useContext(AuthContext)
+  const user = useAuthStore((state) => state.user)
 
   const columns = [
     {
@@ -91,29 +92,29 @@ const CollectionsAdminPage = ({ collections = [], page, limit, batchSize, totalR
             }
           </div>
         }, */
-    {
-      title: 'Detalles',
-      dataIndex: 'detalles',
-      key: 'detalles',
-      render: (_text: string, record: CollectionInterface) => (
-        <Link href={`/admin/collections/${record.code}`} className='btn btn-black btn-auto'>Ver</Link>
-      )
-    }
+    // {
+    //   title: 'Detalles',
+    //   dataIndex: 'detalles',
+    //   key: 'detalles',
+    //   render: (_text: string, record: CollectionInterface) => (
+    //     <Link href={`/admin/collections/${record.code}`} className='btn btn-black btn-auto'>Ver</Link>
+    //   )
+    // }
   ]
 
-  if (hasPermission(pathname, 'delete', user.permissions) || user.role === 'admin') {
-    columns.push({
-      title: 'Eliminar',
-      dataIndex: 'eliminar',
-      key: 'eliminar',
-      render: (_text: string, record: CollectionInterface) => (
-        <button onClick={() => {
-          setConfirmDelete(true)
-          setDeletedCollection(record)
-        }} className="btn">Eliminar</button>
-      )
-    })
-  }
+  // if (hasPermission(pathname, 'delete', user.permissions) || user.role === 'admin') {
+  //   columns.push({
+  //     title: 'Eliminar',
+  //     dataIndex: 'eliminar',
+  //     key: 'eliminar',
+  //     render: (_text: string, record: CollectionInterface) => (
+  //       <button onClick={() => {
+  //         setConfirmDelete(true)
+  //         setDeletedCollection(record)
+  //       }} className="btn">Eliminar</button>
+  //     )
+  //   })
+  // }
 
   return (
     <>
@@ -121,7 +122,6 @@ const CollectionsAdminPage = ({ collections = [], page, limit, batchSize, totalR
         title='Colecciones'
         search={{
           handleSearch,
-          searchQuery: query.search,
           searchTerm,
           onClearSearch: () => {
             push(`/admin/collections?page=1&limit=20`);
@@ -142,6 +142,7 @@ const CollectionsAdminPage = ({ collections = [], page, limit, batchSize, totalR
           page={page}
           limit={limit}
           navigateTo="admin/collections"
+          paramKey='code'
         />
       </Page>
       <AddCollection

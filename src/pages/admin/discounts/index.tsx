@@ -1,6 +1,5 @@
 import AddDiscount from '@/components/admin/discounts/AddDiscount'
 import Layout from '@/components/admin/Layout'
-import PageHeader from '@/components/common/PageHeader/PageHeader'
 import Table from '@/components/common/Table/Table'
 import Chip from '@/components/common/Chip/Chip'
 import { useDebouncedSearch } from '@/hooks/useDebouncedSearch'
@@ -10,9 +9,8 @@ import { makeRequest } from '@/utils/makeRequest'
 import { discountTypesMap } from '@/utils/mappings'
 import moment from 'moment'
 import { GetServerSideProps } from 'next'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { ReactElement, useCallback, useState } from 'react'
+import React, { ReactElement, useState } from 'react'
 import Page from '@/components/common/Page/Page'
 
 interface Props {
@@ -69,10 +67,10 @@ const DiscountsAdminPage = ({ discounts = [], page, limit, batchSize, totalRecor
         }
       </div>
     },
-    {
-      title: 'Detalles',
-      render: (_text: string, record: DiscountInterface) => <Link className="btn btn-black btn-auto" href={`/admin/discounts/${record._id}`}>Ver</Link>
-    }
+    // {
+    //   title: 'Detalles',
+    //   render: (_text: string, record: DiscountInterface) => <Link className="btn btn-black btn-auto" href={`/admin/discounts/${record._id}`}>Ver</Link>
+    // }
   ]
 
   return (
@@ -93,7 +91,6 @@ const DiscountsAdminPage = ({ discounts = [], page, limit, batchSize, totalRecor
               }}
               search={{
                 handleSearch: handleSearch,
-                searchQuery: query.search,
                 searchTerm: searchTerm,
                 onClearSearch: () => {
                   push(`/admin/discounts?page=1&limit=20`);
@@ -108,7 +105,8 @@ const DiscountsAdminPage = ({ discounts = [], page, limit, batchSize, totalRecor
                 limit={limit}
                 batchSize={batchSize}
                 totalRecords={totalRecords}
-                navigateTo='discounts'
+                navigateTo='admin/discounts'
+                paramKey='_id'
               />
             </Page>
             <AddDiscount

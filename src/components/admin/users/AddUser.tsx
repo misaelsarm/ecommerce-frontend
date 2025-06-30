@@ -1,13 +1,15 @@
-import Checkbox from "@/components/common/Checkbox/Checkbox";
-import Input from "@/components/common/Input/Input";
-import Modal from "@/components/common/Modal/Modal";
-import Select from "@/components/common/Select/Select";
 import { makeRequest } from "@/utils/makeRequest";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import styles from '@/styles/admin/Users.module.scss'
+import { UserRole } from "@/utils/types";
 import { views } from "@/utils/views";
+import Modal from "@/components/common/Modal/Modal";
+import Input from "@/components/common/Input/Input";
+import Select from "@/components/common/Select/Select";
+import Checkbox from "@/components/common/Checkbox/Checkbox";
+import { userRoles } from "@/utils/catalogs";
 
 interface Props {
   visible: boolean,
@@ -19,7 +21,11 @@ const AddUser = ({ visible, setVisible, onOk }: Props) => {
 
   const { register, handleSubmit, control, formState: { errors } } = useForm();
 
+  const [active, setActive] = useState(false)
+
   const [saving, setSaving] = useState(false)
+
+  const [role, setRole] = useState<UserRole | undefined>()
 
   const onSubmit = async (values: any) => {
 
@@ -36,19 +42,25 @@ const AddUser = ({ visible, setVisible, onOk }: Props) => {
         }))
       }
 
-      const access = [...mapped]
+      let access = []
 
-      const postedUser = {
-        name: values.name,
-        "role": values.role.value,
-        "email": values.email,
-        "active": values.active,
-        permissions: access.filter(role => role.permissions.length > 0),
-        password: values.password
+      if (role !== 'delivery') {
+        access = [...mapped]
+      } else {
+        access = [
+          {
+            page: '/admin/my-orders',
+            permissions: ['view', 'create-edit']
+          }
+        ]
       }
 
-      //return console.log({ postedUser })
-
+      const postedUser = {
+        ...values,
+        active,
+        role: values.role.value,
+        permissions: access.filter(role => role.permissions.length > 0),
+      }
       setSaving(true)
 
       await makeRequest('post', '/api/users', postedUser)
@@ -89,6 +101,7 @@ const AddUser = ({ visible, setVisible, onOk }: Props) => {
           name='email'
           errors={errors}
           required
+          pattern={/^\s*[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\s*$/}
         />
         <Input
           type='password'
@@ -102,70 +115,69 @@ const AddUser = ({ visible, setVisible, onOk }: Props) => {
           control={control}
           errors={errors}
           required
-          options={[
-            {
-              label: 'Administrador',
-              value: 'admin'
-            },
-            {
-              label: 'Usuario',
-              value: 'user'
-            },
-            {
-              label: 'Repartidor',
-              value: 'delivery'
-            },
-          ]}
+          options={userRoles}
           name="role"
           label="Tipo de acceso"
+          onChange={(e: any) => {
+            setRole(e.value)
+          }}
         />
-        <div className={styles.rolesWrapper}>
-          <span>Elegir accesos de usuario</span>
-          {
-            views.map(role => (
-              <div key={role.view} className={styles.viewWrapper}>
-                <div className={styles.view}>
-                  <h4>{role.name}</h4>
-                </div>
-                <div className={styles.roles}>
-                  <div className={styles.role}>
-                    <Checkbox
-                      register={register}
-                      name={`permissions[${role.view}]`}
-                      label='Ver'
-                      id={`permissions[${role.view}]-view`}
-                      value='view'
-                    />
-                  </div>
-                  <div className={styles.role}>
-                    <Checkbox
-                      register={register}
-                      name={`permissions[${role.view}]`}
-                      label='Crear / Editar'
-                      id={`permissions[${role.view}]-create-edit`}
-                      value='create-edit'
-                    />
-                  </div>
-                  <div className={styles.role}>
-                    <Checkbox
-                      register={register}
-                      name={`permissions[${role.view}]`}
-                      label='Eliminar'
-                      id={`permissions[${role.view}]-delete`}
-                      value='delete'
-                    />
-                  </div>
-                </div>
-              </div>
-            ))
-          }
-        </div>
         <Checkbox
           register={register}
           label='Activo'
           id='active'
           name='active'
+          onChange={(e) => {
+            setActive(e.target.checked)
+          }}
         />
+        {
+          (role && role !== 'delivery' && role !== 'admin') &&
+          <div className={styles.rolesWrapper}>
+            <span>Elegir accesos de usuario</span>
+            {
+              views.map(role => (
+                <div key={role.view} className={styles.viewWrapper}>
+                  <div className={styles.view}>
+                    <h4>{role.name}</h4>
+                  </div>
+                  <div className={styles.roles}>
+                    <div className={styles.role}>
+                      <Checkbox
+                        register={register}
+                        name={`permissions[${role.view}]`}
+                        label='Ver'
+                        id={`permissions[${role.view}]-view`}
+                        value='view'
+
+                      />
+                    </div>
+                    <div className={styles.role}>
+                      <Checkbox
+                        register={register}
+                        name={`permissions[${role.view}]`}
+                        label='Crear / Editar'
+                        id={`permissions[${role.view}]-create-edit`}
+                        value='create-edit'
+
+                      />
+                    </div>
+                    <div className={styles.role}>
+                      <Checkbox
+                        register={register}
+                        name={`permissions[${role.view}]`}
+                        label='Eliminar'
+                        id={`permissions[${role.view}]-delete`}
+                        value='delete'
+
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+        }
       </>
     </Modal >
   )

@@ -1,0 +1,49 @@
+
+
+.layout {
+  max-width: 1200px;
+  margin: auto;
+
+
+  .links {
+
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+
+    a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      color: black;
+      text-decoration: none;
+      padding: 0 10px;
+      height: 42px;
+      border-radius: 20px;
+      flex-shrink: 0;
+      margin-right: 20px;
+
+      &:hover {
+        background-color: #e3e3e3;
+      }
+
+
+    }
+  }
+
+  .content {
+    margin-top: 40px;
+    margin-bottom: 40px;
+  }
+}
+
+@media(max-width: 768px) {
+  .layout {
+    padding: 20px;
+    .links {
+      overflow-x: scroll;
+    }
+  }
+}

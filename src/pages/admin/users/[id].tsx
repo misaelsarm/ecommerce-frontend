@@ -7,19 +7,19 @@ import { UserInterface } from "@/interfaces"
 import { makeRequest } from "@/utils/makeRequest"
 import { GetServerSideProps } from "next"
 import { useRouter } from "next/router"
-import { ReactElement, useContext, useState } from "react"
+import { ReactElement, useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import Chip from "@/components/common/Chip/Chip"
 import styles from '@/styles/admin/Users.module.scss'
-import { getServerSideToken } from "@/utils/getServerSideToken"
 import moment from "moment"
-import { hasPermission } from "@/utils/hasPermission"
-import { AuthContext } from "@/context/auth/AuthContext"
 import { views } from "@/utils/views"
 import { pageTitleMap, permissionLabelMap, userRolesMap } from "@/utils/mappings"
 import Page from "@/components/common/Page/Page"
 import { createServerSideFetcher } from "@/utils/serverSideFetcher"
+import Card from "@/components/common/Card/Card"
+import useActions from "@/hooks/useActions"
+import CardItem from "@/components/common/CardItem/CardItem"
 
 interface Props {
   user: UserInterface,
@@ -45,10 +45,6 @@ const UserDetailsAdminPage = ({ user, error }: Props) => {
   const [editing, setEditing] = useState(false)
 
   const { replace, back, pathname } = useRouter()
-
-  const { user: currentUser } = useContext(AuthContext)
-
-  const canCreateEdit = currentUser.role === 'admin' ? true : hasPermission(pathname, 'create-edit', user.permissions)
 
   const { register, handleSubmit, control, formState: { errors } } = useForm<any>({
     defaultValues: {
@@ -196,110 +192,110 @@ const UserDetailsAdminPage = ({ user, error }: Props) => {
     )
   }
 
+  const { canEdit } = useActions()
+
   return (
     <>
-      <div className='detailPage'>
-        <>
-          <div className="page-actions">
-            <button
-              style={{
-                cursor: 'pointer'
-              }}
-              onClick={() => {
-                back()
-              }}
-              className='back'><svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-              </svg></button>
-            {
-              !editing && canCreateEdit && <button className='btn btn-black' onClick={async () => {
-                setEditing(true)
-                //await fetchData()
-              }}>Editar</button>
-            }
-          </div>
-          <div className="card">
-            <>
-              <div className="cardItem">
-                <h4>Tipo de usuario</h4>
-                <span>{userRolesMap[user.role]}</span>
-              </div>
-              <div className="cardItem">
-                <h4>Nombre</h4>
-                <span>{user.name}</span>
-              </div>
-              <div className="cardItem">
-                <h4>Correo electrónico</h4>
-                <span>{user.email}</span>
-              </div>
+      <Page
+        title={`Detalle de usuario: ${user.name}`}
+        fullWidth={false}
+        maxwidth="700px"
+        primaryAction={{
+          name: "Editar",
+          onClick: () => {
+            setEditing(true)
+          }
+        }}
+      >
+        <Card>
+          <CardItem
+            title="Tipo de usuario"
+            content={<span>{userRolesMap[user.role]}</span>}
+          />
+          <CardItem
+            title="Nombre"
+            content={<span>{user.name}</span>}
+          />
+          <CardItem
+            title="Correo electrónico"
+            content={<span>{user.email}</span>}
+          />
+          {
+            canEdit &&
+            <CardItem
+              title="Contraseña"
+              content={
+                <button
+                  disabled={saving}
+                  onClick={async () => {
+                    try {
+                      setSaving(true)
+                      await makeRequest('post', '/api/auth/recover', {
+                        email: user.email
+                      })
+                      toast.success('Se envió un correo con las instrucciones para restablecer la contraseña', {
+                        duration: 6000
+                      })
+                      setSaving(false)
+                    } catch (error: any) {
+                      toast.error(error.response.data.message, {
+                        duration: 6000
+                      })
+                      setSaving(false)
+                    }
+                  }}
+                  className="btn btn-black mt-10">Restablecer contraseña</button>
+              }
+            />
+          }
+          {
+            user.permissions && user.permissions.length > 0 &&
+            <CardItem
+              title="Permisos"
+              content={
+                user.permissions.map(page => (
+                  <div className="mb-20" key={page.page}>
+                    <b >
+                      {/* @ts-ignore */}
+                      {pageTitleMap[page.page]}
+                    </b>
+                    {
+                      page.permissions?.map(perm => (
+                        //@ts-ignore
+                        <span key={perm}>{permissionLabelMap[perm]}</span>
+                      ))
+                    }
+                  </div>
+                )
+
+                )
+              }
+            />
+          }
+          <CardItem
+            title="Fecha de registro"
+            content={<span>{moment(user.createdAt).format('lll')}</span>}
+          />
+          {
+            user.lastLogin &&
+            <CardItem
+              title="Ultimo acceso"
+              content={<span>{moment(user.lastLogin).format('lll')}</span>}
+            />
+          }
+          <CardItem
+            title="Estado"
+            content={<>
               {
-                canCreateEdit &&
-                <div className="cardItem">
-                  <h4>Contraseña</h4>
-                  <button
-                    disabled={saving}
-                    onClick={async () => {
-                      try {
-                        setSaving(true)
-                        await makeRequest('post', '/api/auth/recover', {
-                          email: user.email
-                        })
-                        toast.success('Se envió un correo con las instrucciones para restablecer la contraseña', {
-                          duration: 6000
-                        })
-                        setSaving(false)
-                      } catch (error: any) {
-                        toast.error(error.response.data.message, {
-                          duration: 6000
-                        })
-                        setSaving(false)
-                      }
-                    }}
-                    className="btn btn-black mt-10">Restablecer contraseña</button>
-                </div>
+                user.active ? <Chip text='Activo' color='green' /> : <Chip text='No activo' />
               }
               {
-                user.permissions && user.permissions.length > 0 &&
-                <div className="cardItem">
-                  <h4>Accesos</h4>
-                  {
-                    user.permissions.map(page => (
-                      <div className="mb-20" key={page.page}>
-                        <b >
-                          {/* @ts-ignore */}
-                          {pageTitleMap[page.page]}
-                        </b>
-                        {
-                          page.permissions?.map(perm => (
-                            //@ts-ignore
-                            <span key={perm}>{permissionLabelMap[perm]}</span>
-                          ))
-                        }
-                      </div>
-                    )
-
-                    )
-                  }
-                </div>
+                user.verified ? <Chip text='Verificado' color='green' /> : <Chip text='No verificado' />
               }
-              <div className="cardItem">
-                <h4>Ultimo acceso</h4>
-                <span>{moment(user.lastLogin).format('lll')}</span>
-              </div>
-              <div className="cardItem">
-                <h4>Estado</h4>
-                {
-                  user.active ? <Chip text='Activo' color='green' /> : <Chip text='No activo' />
-                }
-                {
-                  user.verified ? <Chip text='Verificado' color='green' /> : <Chip text='No verificado' />
-                }
-              </div>
-
-            </>
-          </div>
-        </>
-      </div >
+            </>}
+          />
+        </Card>
+      </Page >
       <Modal
         visible={editing}
         loadingState={saving /* || uploading */}
@@ -328,7 +324,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 UserDetailsAdminPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <Layout title="UserDetailsAdminPage">
+    <Layout title={`Usuarios | ${page.props.user.name}`}>
       {page}
     </Layout>
   );

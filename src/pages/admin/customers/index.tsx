@@ -2,14 +2,11 @@ import Layout from '@/components/admin/Layout'
 //import moment from 'moment'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
-import React, { ReactElement, useCallback, useState } from 'react'
-import debounce from 'lodash.debounce';
+import React, { ReactElement, useState } from 'react'
 import Table from '@/components/common/Table/Table'
 import { UserInterface } from '@/interfaces'
-import PageHeader from '@/components/common/PageHeader/PageHeader'
 import moment from 'moment'
 import { getServerSideToken } from '@/utils/getServerSideToken'
-import Link from 'next/link'
 import Chip from '@/components/common/Chip/Chip'
 import { useDebouncedSearch } from '@/hooks/useDebouncedSearch'
 import { makeRequest } from '@/utils/makeRequest'
@@ -71,14 +68,14 @@ const CustomersAdminPage = ({ customers, page, limit, batchSize, totalRecords, e
         }
       </div>
     },
-    {
-      title: 'Detalles',
-      dataIndex: 'detalles',
-      key: 'detalles',
-      render: (_text: string, record: UserInterface) => (
-        <Link href={`/admin/customers/${record._id}`} className='btn btn-black btn-auto'>Ver</Link>
-      )
-    },
+    // {
+    //   title: 'Detalles',
+    //   dataIndex: 'detalles',
+    //   key: 'detalles',
+    //   render: (_text: string, record: UserInterface) => (
+    //     <Link href={`/admin/customers/${record._id}`} className='btn btn-black btn-auto'>Ver</Link>
+    //   )
+    // },
   ]
 
   const { searchTerm, setSearchTerm, handleSearch } = useDebouncedSearch({ url: 'customers', limit })
@@ -96,7 +93,6 @@ const CustomersAdminPage = ({ customers, page, limit, batchSize, totalRecords, e
       }}
       search={{
         handleSearch,
-        searchQuery: query.search,
         searchTerm,
         onClearSearch: () => {
           push(`/admin/customers?page=1&limit=20`);
@@ -111,7 +107,8 @@ const CustomersAdminPage = ({ customers, page, limit, batchSize, totalRecords, e
         limit={limit}
         batchSize={batchSize}
         totalRecords={totalRecords}
-        navigateTo='customers'
+        navigateTo='admin/customers'
+        paramKey='_id'
       />
     </Page>
   )

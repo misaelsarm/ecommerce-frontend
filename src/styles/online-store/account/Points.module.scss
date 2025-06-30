@@ -1,0 +1,63 @@
+.points {
+  max-width: 1200px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;
+    width: 600px;
+    text-align: center;
+
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    .image {
+      position: relative;
+      width: 200px;
+      height: 200px;
+
+      img {
+
+        object-fit: contain;
+      }
+    }
+
+  }
+
+  .current {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+    background-color: rgb(246, 246, 246);
+    border-radius: 30px;
+
+
+    width: 100%;
+
+    h3 {
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 45px;
+      margin-bottom: 30px;
+    }
+  }
+}
+
+@media(max-width: 768px) {
+  .points {
+    .header {
+      width: 100%;
+    }
+  }
+}

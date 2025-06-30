@@ -1,22 +1,19 @@
 import Layout from "@/components/admin/Layout"
-import PageHeader from "@/components/common/PageHeader/PageHeader"
 import Table from "@/components/common/Table/Table"
 import AddValue from "@/components/admin/values/AddValue"
 import Modal from "@/components/common/Modal/Modal"
 import { useDebouncedSearch } from "@/hooks/useDebouncedSearch"
 import { ValueInterface } from "@/interfaces"
 import { GetServerSideProps } from "next"
-import Link from "next/link"
 import { useRouter } from "next/router"
-import { ReactElement, useContext, useState } from "react"
+import { ReactElement, useState } from "react"
 import toast from "react-hot-toast"
 import { getServerSideToken } from "@/utils/getServerSideToken"
 import Chip from "@/components/common/Chip/Chip"
-import { hasPermission } from "@/utils/hasPermission"
-import { AuthContext } from "@/context/auth/AuthContext"
 import { makeRequest } from "@/utils/makeRequest"
 import { valueTypesMap } from "@/utils/mappings"
 import Page from "@/components/common/Page/Page"
+import { useAuthStore } from "@/store/auth"
 
 interface Props {
   values: ValueInterface[],
@@ -69,15 +66,7 @@ const ValuesAdminPage = ({ values = [], page, limit, batchSize, totalRecords, er
           record.active ? <Chip text='Activo' color='green' /> : <Chip text='No activo' />
         }
       </div>
-    },
-    {
-      title: 'Detalles',
-      dataIndex: 'detalles',
-      key: 'detalles',
-      render: (_text: string, record: ValueInterface) => (
-        <Link href={`/admin/values/${record._id}`} className='btn btn-black btn-auto'>Ver</Link>
-      )
-    },
+    }
 
   ]
   const [visible, setVisible] = useState(false)
@@ -85,22 +74,6 @@ const ValuesAdminPage = ({ values = [], page, limit, batchSize, totalRecords, er
   const { searchTerm, setSearchTerm, handleSearch } = useDebouncedSearch({ url: 'values', limit })
 
   const { push, query, replace, pathname } = useRouter()
-
-  const { user } = useContext(AuthContext)
-
-  if (hasPermission(pathname, 'delete', user.permissions) || user.role === 'admin') {
-    columns.push({
-      title: 'Eliminar',
-      dataIndex: 'eliminar',
-      key: 'eliminar',
-      render: (_text: string, record: ValueInterface) => (
-        <button onClick={() => {
-          setConfirmDelete(true)
-          setDeletedValue(record)
-        }} className="btn">Eliminar</button>
-      )
-    })
-  }
 
   return (
     <>
@@ -126,11 +99,12 @@ const ValuesAdminPage = ({ values = [], page, limit, batchSize, totalRecords, er
             <Table
               columns={columns}
               data={values}
-              navigateTo="values"
+              navigateTo="admin/values"
               batchSize={batchSize}
               totalRecords={totalRecords}
               page={page}
               limit={limit}
+              paramKey="_id"
             />
           </Page>
           <AddValue

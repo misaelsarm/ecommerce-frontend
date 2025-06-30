@@ -5,34 +5,38 @@ import Select from "@/components/common/Select/Select"
 import { ValueInterface } from "@/interfaces"
 import { GetServerSideProps } from "next"
 import { useRouter } from "next/router"
-import { ReactElement, useContext, useState } from "react"
+import { ReactElement, useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
-import Cookies from "js-cookie"
 import Chip from "@/components/common/Chip/Chip"
-import { getServerSideToken } from "@/utils/getServerSideToken"
 import Checkbox from "@/components/common/Checkbox/Checkbox"
-import { AuthContext } from "@/context/auth/AuthContext"
-import { hasPermission } from "@/utils/hasPermission"
 import { makeRequest } from "@/utils/makeRequest"
 import { valueTypesMap } from "@/utils/mappings"
 import { createServerSideFetcher } from "@/utils/serverSideFetcher"
+import Page from "@/components/common/Page/Page"
+import { valueTypes } from "@/utils/catalogs"
+import Card from "@/components/common/Card/Card"
+import CardItem from "@/components/common/CardItem/CardItem"
 
 interface Props {
   value: ValueInterface
+  error: {
+    message: string
+    error: number
+  }
 }
 
-const ValueDetailsAdminPage = ({ value }: Props) => {
+const ValueDetailsAdminPage = ({ value, error }: Props) => {
+
+  if (error) {
+    return <Page>{error.message}</Page>
+  }
 
   const [editing, setEditing] = useState(false)
 
   const [type, setType] = useState(value.type)
 
-  const { user } = useContext(AuthContext)
-
-  const { replace, back, pathname } = useRouter()
-
-  const canCreateEdit = user.role === 'admin' ? true : hasPermission(pathname, 'create-edit', user.permissions)
+  const { replace, back } = useRouter()
 
   const { register, handleSubmit, control, resetField, formState: { errors }, reset } = useForm<any>({
     defaultValues: {
@@ -75,16 +79,7 @@ const ValueDetailsAdminPage = ({ value }: Props) => {
           control={control}
           errors={errors}
           required
-          options={[
-            {
-              label: 'Color',
-              value: 'color'
-            },
-            {
-              label: 'Opcion',
-              value: 'option'
-            },
-          ]}
+          options={valueTypes}
           name="type"
           label="Tipo de valor"
           onChange={(e: any) => {
@@ -126,64 +121,55 @@ const ValueDetailsAdminPage = ({ value }: Props) => {
 
   return (
     <>
-      <div className='detailPage'>
-        <>
-          <div className="page-actions">
-            <button
-              style={{
-                cursor: 'pointer'
-              }}
-              onClick={() => {
-                back()
-              }}
-              className='back'><svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-              </svg></button>
-            {
-              !editing && canCreateEdit &&
-              <button className='btn btn-black' onClick={async () => {
-                setEditing(true)
-              }}>Editar</button>
-            }
-          </div>
-          <div className="card">
-            <>
-              <div className="cardItem">
-                <h4>Nombre</h4>
-                <span>{value.label}</span>
-              </div>
-              <div className="cardItem">
-                <h4>Tipo de valor</h4>
-                <span>{valueTypesMap[value.type]}</span>
-              </div>
-              {
-                value.type === 'color' &&
-                <div className="cardItem">
-                  <h4>Código de color</h4>
-                  <div className="d-flex align-center">
-                    <div
-                      style={{
-                        width: 30,
-                        height: 30,
-                        backgroundColor: value.value,
-                        borderRadius: 5,
-                        marginRight: 15
-                      }}
-                    ></div>
-                    <span>{value.value}</span>
-                  </div>
+      <Page
+        fullWidth={false}
+        maxwidth="700px"
+        title={`Valor: ${value.label}`}
+        primaryAction={{
+          name: "Editar",
+          onClick: () => {
+            setEditing(true)
+          },
+          //disabled: !canEdit
+        }}
+      >
+        <Card>
+          <CardItem
+            title="Nombre"
+            content={<span>{value.label}</span>}
+          />
+          <CardItem
+            title="Tipo de valor"
+            content={<span>{valueTypesMap[value.type]}</span>}
+          />
+          {
+            value.type === 'color' &&
+            <CardItem
+              title="Código de color"
+              content={
+                <div className="d-flex align-center">
+                  <div
+                    style={{
+                      width: 30,
+                      height: 30,
+                      backgroundColor: value.value,
+                      borderRadius: 5,
+                      marginRight: 15
+                    }}
+                  ></div>
+                  <span>{value.value}</span>
                 </div>
               }
-              <div className="cardItem">
-                <h4>Estado</h4>
-                {
-                  value.active ? <Chip text='Activo' color='green' /> : <Chip text='No activo' />
-                }
-              </div>
-            </>
-          </div>
-        </>
-      </div >
+            />
+          }
+          <CardItem
+            title="Estado"
+            content={
+              value.active ? <Chip text='Activo' color='green' /> : <Chip text='No activo' />
+            }
+          />
+        </Card>
+      </Page>
       <Modal
         visible={editing}
         loadingState={saving /* || uploading */}

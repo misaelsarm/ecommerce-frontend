@@ -6,23 +6,34 @@ import Select from "@/components/common/Select/Select"
 import { AttributeInterface, ValueInterface } from "@/interfaces"
 import { GetServerSideProps } from "next"
 import { useRouter } from "next/router"
-import { ReactElement, useContext, useState } from "react"
+import { ReactElement, useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import Chip from "@/components/common/Chip/Chip"
-import { getServerSideToken } from "@/utils/getServerSideToken"
 import { attributeTypes } from "@/utils/attributeTypes"
 import { hasPermission } from "@/utils/hasPermission"
-import { AuthContext } from "@/context/auth/AuthContext"
 import { makeRequest } from "@/utils/makeRequest"
 import { attributeTypesMap } from "@/utils/mappings"
 import { createServerSideFetcher } from "@/utils/serverSideFetcher"
+import { useAuthStore } from "@/store/auth"
+import Page from "@/components/common/Page/Page"
+import Card from "@/components/common/Card/Card"
+import CardItem from "@/components/common/CardItem/CardItem"
+import { AttributeType } from "@/utils/types"
 
 interface Props {
-  attribute: AttributeInterface
+  attribute: AttributeInterface,
+  error?: {
+    message: string
+    error: number
+  }
 }
 
-const AttributeDetailsAdminPage = ({ attribute }: Props) => {
+const AttributeDetailsAdminPage = ({ attribute, error }: Props) => {
+
+  if (error) {
+    return <Page>{error.message}</Page>
+  }
 
   async function fetchData() {
     try {
@@ -35,11 +46,9 @@ const AttributeDetailsAdminPage = ({ attribute }: Props) => {
 
   const [editing, setEditing] = useState(false)
 
-  const { user } = useContext(AuthContext)
-
   const [values, setValues] = useState([] as ValueInterface[])
 
-  const [type, setType] = useState()
+  const [type, setType] = useState<AttributeType>(attribute.type)
 
   const { register, handleSubmit, control, resetField, formState: { errors }, reset } = useForm<any>({
     defaultValues: {
@@ -61,7 +70,7 @@ const AttributeDetailsAdminPage = ({ attribute }: Props) => {
 
   const [saving, setSaving] = useState(false)
 
-  const { replace, back, pathname } = useRouter()
+  const { replace } = useRouter()
 
   const onSubmit = async (values: any) => {
 
@@ -163,19 +172,29 @@ const AttributeDetailsAdminPage = ({ attribute }: Props) => {
           label='Activo'
           id='active'
           name='active'
-          defaultChecked={attribute.active}
         />
       </>
     )
   }
 
-  const canCreateEdit = user.role === 'admin' ? true : hasPermission(pathname, 'create-edit', user.permissions)
 
   return (
     <>
-      <div className='detailPage'>
+      <Page
+        title={`Detalles de atributo: ${attribute.longName}`}
+        fullWidth={false}
+        maxwidth="700px"
+        primaryAction={{
+          name: 'Editar',
+          onClick: async () => {
+            setEditing(true)
+            await fetchData()
+          },
+          //visible: !editing && hasPermission('attributes', 'update')
+        }}
+      >
         <>
-          <div className="page-actions">
+          {/* <div className="page-actions">
             <button
               style={{
                 cursor: 'pointer'
@@ -187,57 +206,60 @@ const AttributeDetailsAdminPage = ({ attribute }: Props) => {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg></button>
             {
-              !editing && canCreateEdit && <button className='btn btn-black' onClick={async () => {
+              !editing && canEdit && <button className='btn btn-black' onClick={async () => {
                 setEditing(true)
                 await fetchData()
               }}>Editar</button>
             }
-          </div>
-          <div className="card">
-            <>
-              <div className="cardItem">
-                <h4>Nombre largo</h4>
-                <span>{attribute.longName}</span>
-              </div>
-              <div className="cardItem">
-                <h4>Nombre corto</h4>
-                <span>{attribute.shortName}</span>
-              </div>
-              <div className="cardItem">
-                <h4>Tipo de atributo</h4>
-                <span>{attributeTypesMap[attribute.type]}</span>
-              </div>
-              {
-                attribute.values.length > 0 &&
-                <div className="cardItem">
-                  <h4>Valores de atributo</h4>
-                  <div>
-                    {
-                      attribute.values.map(col => (
-                        <Chip key={col._id} text={col.label} />
-                      ))
-                    }
-                  </div>
-                </div>
-              }
-              {
-                (type === 'short-text' || type === 'long-text') &&
-
-                <div className="cardItem">
-                  <h4>Máximo de caracteres permitidos</h4>
-                  <span>{attribute.max}</span>
-                </div>
-              }
-              <div className="cardItem">
-                <h4>Estado</h4>
-                {
-                  attribute.active ? <Chip text='Activo' color='green' /> : <Chip text='No activo' />
+          </div> */}
+          <Card>
+            <CardItem
+              title="Nombre largo"
+              content={<span>{attribute.longName}</span>}
+            />
+            <CardItem
+              title="Nombre corto"
+              content={<span>{attribute.shortName}</span>}
+            />
+            <CardItem
+              title="Tipo de atributo"
+              content={<span>{attributeTypesMap[attribute.type]}</span>}
+            />
+            {
+              attribute.values.length > 0 &&
+              <CardItem
+                title="Valores de atributo"
+                content={
+                  attribute.values.map(col => (
+                    <Chip key={col._id} text={col.label} />
+                  ))
                 }
-              </div>
-            </>
-          </div>
+              >
+              </CardItem>
+            }
+            {
+              (type === 'short-text' || type === 'long-text') &&
+              <CardItem
+                title="Máximo de caracteres permitidos"
+                content={<span>{attribute.max}</span>}
+              />
+            }
+            {
+              type === 'color' &&
+              <CardItem
+                title="Máximo de opciones permitidas"
+                content={<span>{attribute.max}</span>}
+              />
+            }
+            <CardItem
+              title="Estado"
+              content={
+                attribute.active ? <Chip text='Activo' color='green' /> : <Chip text='No activo' />
+              }
+            />
+          </Card>
         </>
-      </div >
+      </Page >
       <Modal
         visible={editing}
         loadingState={saving /* || uploading */}

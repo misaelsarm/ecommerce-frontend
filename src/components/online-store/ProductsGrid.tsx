@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import styles from '@/styles/ProductsGrid.module.scss'
 import { useRouter } from 'next/router'
 import { ProductInterface } from '@/interfaces'
-import ProductItem from './ProductItem'
+import { ProductItem } from './ProductItem'
 
 interface Props {
   products: ProductInterface[]
@@ -21,43 +21,6 @@ const ProductsGrid = ({ products: propProducts }: Props) => {
     setProducts(propProducts)
   }, [propProducts])
 
-  const filters = [
-    {
-      product: 'party-cup',
-      size: '24',
-      label: '24 oz',
-    },
-    {
-      product: 'party-cup',
-      size: '16',
-      label: '16 oz',
-    },
-    {
-      product: 'active',
-      size: '18',
-      label: '18 oz',
-    },
-    {
-      product: 'active',
-      size: '24',
-      label: '24 oz',
-    },
-    {
-      product: 'active',
-      size: '32',
-      label: '32 oz',
-    },
-    {
-      product: 'voyager',
-      size: '30',
-      label: '30 oz',
-    },
-    {
-      product: 'voyager',
-      size: '36',
-      label: '36 oz',
-    },
-  ]
 
   const { query: { subcategory } } = useRouter()
 
@@ -119,18 +82,17 @@ const ProductsGrid = ({ products: propProducts }: Props) => {
             }}
             className='input' name="" id="">
             <option value="">Todos</option>
-            {
-              filters.filter(option => option.product === subcategory).map(option => (
-                <option key={option.size} value={option.size}>{option.label}</option>
-              ))
-            }
+
           </select>
         </div>
       }
       <div className={styles.grid}>
         {
           products.map((product) => (
-            <ProductItem product={product} key={product.id} />
+            <ProductItem
+              product={product}
+              key={product._id}
+            />
           ))
         }
       </div>

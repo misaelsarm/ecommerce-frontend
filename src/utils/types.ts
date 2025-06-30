@@ -19,4 +19,10 @@ export type SlideType = 'collection' | 'product'
 //user
 export type UserRole = 'admin' | 'customer' | 'user' | 'delivery'
 
+//permissions
+export type Permission = 'view' | 'create' | 'edit' | 'delete'
+
+//value
+export type ValueType = 'option' | 'color';
+
 

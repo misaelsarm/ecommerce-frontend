@@ -1,6 +1,4 @@
-import { AuthContext } from "@/context/auth/AuthContext";
 import { UIContext } from "@/context/ui/UIContext";
-import useFileUpload from "@/hooks/useFileUpload";
 import { CartInterface } from "@/interfaces";
 import { makeRequest } from "@/utils/makeRequest";
 import { useRouter } from "next/router";
@@ -15,6 +13,7 @@ import TextArea from "@/components/common/TextArea/TextArea";
 import Checkbox from "@/components/common/Checkbox/Checkbox";
 import { cfdiUsos } from "@/utils/cfdi";
 import CartSummary from "@/components/CartSummary";
+import { useAuthStore } from "@/store/auth";
 
 const Checkout = () => {
 
@@ -109,9 +108,9 @@ const Checkout = () => {
 
   const { query, replace } = useRouter()
 
-  const { setVisible, setModalType } = useContext(UIContext)
+  const user = useAuthStore((state) => state.user)
 
-  const { user } = useContext(AuthContext)
+  const { setVisible, setModalType } = useContext(UIContext)
 
   const fetchCart = async () => {
     //setPaypalVisible(false)

@@ -1,0 +1,24 @@
+.profile {
+  .form {
+    input {
+      max-width: 400px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+
+      .actions {
+        display: flex;
+
+        button {
+          &:not(:last-child) {
+            margin-right: 10px;
+          }
+        }
+      }
+    }
+  }
+}

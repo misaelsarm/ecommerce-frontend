@@ -1,15 +1,14 @@
 import Sidebar from '../common/Sidebar/Sidebar'
 import styles from '@/styles/admin/Layout.module.scss'
-import { FC, useContext, useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import TabBar from '../common/TabBar/TabBar'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import { useWindowWidth } from '@/hooks/useWindowWidth'
 import Cookies from 'js-cookie'
-import { AuthContext } from '@/context/auth/AuthContext'
-import { UserInterface } from '@/interfaces'
 import { LinkInterface, links } from '@/utils/links'
 import { useAuthStore } from '@/store/auth'
+import { Skeleton } from '../common/Skeleton/Skeleton'
 
 interface Props {
   title: string
@@ -25,6 +24,10 @@ const Layout: FC<Props> = ({ children, title }) => {
   const { replace } = useRouter()
 
   const user = useAuthStore(state => state.user)
+
+  const loading = useAuthStore(state => state.loading)
+
+  console.log({ loading })
 
   // Extract pages from user permissions
   const pages = user.permissions?.map(item => item.page);
@@ -59,17 +62,19 @@ const Layout: FC<Props> = ({ children, title }) => {
         windowWidth && windowWidth >= 768 ?
           <Sidebar links={filtered} /> : <TabBar links={filtered} />
       }
-
       <div className="topBar">
         <div className="menuWrapper">
-          <div onClick={() => {
-            setVisible(!visible)
-          }} className="menu">
-            {user.name}
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-            </svg>
-          </div>
+          {
+            loading ? <Skeleton width='150px' height='20px' /> :
+              <div onClick={() => {
+                setVisible(!visible)
+              }} className="menu">
+                {user.name}
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+          }
           {
             visible &&
             <div className="menuOverlay">

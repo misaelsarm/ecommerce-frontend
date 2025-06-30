@@ -1,0 +1,154 @@
+//@import '../../Colors.scss';
+
+.orderDetails {
+
+
+  .header {
+    border: 1px solid gainsboro;
+    margin-bottom: 40px;
+    border-radius: 20px;
+    overflow: hidden;
+
+    .number {
+      color: white;
+      background-color: black;//$primary;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .progress {
+      padding: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+
+      .description {
+
+        display: flex;
+        justify-content: space-between;
+        width: 650px;
+
+
+      }
+
+      .steps {
+        display: flex;
+        align-items: center;
+
+
+
+
+        .step {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          margin-right: 60px;
+
+        }
+
+        svg {
+          color: black;//$primary;
+          width: 40px;
+          height: 40px;
+          margin: -4px;
+          flex-shrink: 0;
+        }
+
+        .line {
+          width: 180px;
+          background-color: black;//$primary;
+          height: 3px;
+        }
+      }
+    }
+  }
+
+  .content {
+
+    display: flex;
+    align-items: flex-start;
+
+    .info {
+      width: 40%;
+      margin-right: 40px;
+    }
+
+    .right {
+      width: 60%;
+    }
+
+    .card {
+      border: 1px solid rgb(226, 226, 226);
+
+      .cardHeader {
+        background-color: gainsboro;
+        padding: 20px;
+      }
+
+      .cardBody {
+        padding: 20px;
+
+        .cardItem {
+          margin-bottom: 20px;
+          border-bottom: 1px solid rgb(226, 226, 226);
+          padding-bottom: 20px;
+
+          .image {
+            position: relative;
+            width: 300px;
+            height: 300px;
+
+            img {
+              object-fit: contain;
+            }
+          }
+
+          img {
+            width: 300px;
+          }
+
+          span {
+            display: block;
+          }
+
+          .listItem {
+            max-width: 400px;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+
+            &:last-child {
+              font-weight: 600;
+            }
+
+            span {
+              &:last-child {
+                text-align: right;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+
+
+}
+
+@media(max-width: 768px) {
+  .orderDetails {
+    .header {}
+
+    .content {
+      flex-direction: column;
+
+      .info,
+      .right {
+        width: 100%;
+      }
+    }
+  }
+}

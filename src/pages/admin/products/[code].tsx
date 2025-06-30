@@ -7,16 +7,12 @@ import Select from "@/components/common/Select/Select"
 import TextArea from "@/components/common/TextArea/TextArea"
 import { AttributeInterface, CollectionInterface, ProductInterface } from "@/interfaces"
 import { makeRequest } from "@/utils/makeRequest"
-import { numberWithCommas } from "@/utils/numberWithCommas"
 import { GetServerSideProps } from "next"
 import { useRouter } from "next/router"
-import { ReactElement, useContext, useState } from "react"
+import { ReactElement, useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import Chip from "@/components/common/Chip/Chip"
-import { AuthContext } from "@/context/auth/AuthContext"
-import { hasPermission } from "@/utils/hasPermission"
-import { getServerSideToken } from "@/utils/getServerSideToken"
 import Page from "@/components/common/Page/Page"
 import Card from "@/components/common/Card/Card"
 import CardItem from "@/components/common/CardItem/CardItem"
@@ -25,11 +21,17 @@ import { createServerSideFetcher } from "@/utils/serverSideFetcher"
 
 interface Props {
   product: ProductInterface
+  error?: {
+    message: string
+    error: number
+  }
 }
 
-const ProductDetailsAdminPage = ({ product }: Props) => {
+const ProductDetailsAdminPage = ({ product, error }: Props) => {
 
-  const { user } = useContext(AuthContext)
+  if (error) {
+    return <Page>{error.message}</Page>
+  }
 
   const [editing, setEditing] = useState(false)
 
@@ -100,7 +102,7 @@ const ProductDetailsAdminPage = ({ product }: Props) => {
 
   const [images, setImages] = useState(product.images)
 
-  const { replace, back, pathname } = useRouter()
+  const { replace } = useRouter()
 
   const [uploading, setUploading] = useState(false)
 
@@ -157,8 +159,6 @@ const ProductDetailsAdminPage = ({ product }: Props) => {
       setSaving(false)
     }
   }
-
-  const canCreateEdit = user.role === 'admin' ? true : hasPermission(pathname, 'create-edit', user.permissions)
 
   const renderForm = () => {
     return (
@@ -311,12 +311,10 @@ const ProductDetailsAdminPage = ({ product }: Props) => {
               title="Código"
               content={<span>{product.code}</span>}
             />
-            <div style={{
-              whiteSpace: 'pre-line'
-            }} className="cardItem">
-              <h4>Descripcion</h4>
-              <span>{product.description}</span>
-            </div>
+            <CardItem
+              title="Descripción"
+              content={<span style={{ whiteSpace: 'pre-line' }}>{product.description}</span>}
+            />
             <CardItem
               title="Colecciones"
               content={<div>{
