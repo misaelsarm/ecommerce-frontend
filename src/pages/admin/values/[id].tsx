@@ -191,7 +191,7 @@ const ValueDetailsAdminPage = ({ value, error }: Props) => {
 export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return createServerSideFetcher(context, {
-    endpoint: '/api/values/:id',
+    endpoint: '/api/admin/values/:id',
     dataKey: 'value',
     propKey: 'value'
   })
@@ -199,7 +199,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 ValueDetailsAdminPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <Layout title="ValueDetailsAdminPage">
+    <Layout title={`Valores | ${page.props.value?.label}`}>
       {page}
     </Layout>
   );

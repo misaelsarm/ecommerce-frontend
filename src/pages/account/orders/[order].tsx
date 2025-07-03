@@ -3,16 +3,15 @@ import React, { ReactElement } from 'react';
 import { OrderInterface } from "@/interfaces";
 import { Layout } from "@/components/online-store/Layout";
 import { makeRequest } from "@/utils/makeRequest";
-import Chip from "@/components/common/Chip";
+
 import { formatCurrency } from "@/utils/formatCurrency";
-import CartItem from "@/components/common/CartItem";
-import { orderPaymentMethodMap, orderShippingTypeMap, statusColorMap } from "@/utils/mappings";
 import moment from "moment";
 import AccountLayout from "@/components/online-store/AccountLayout";
 import { GetServerSideProps } from "next";
 import { getServerSideToken } from "@/utils/getServerSideToken";
 import styles from '@/styles/online-store/account/OrderDetails.module.scss'
-import ProgressTracker, { steps } from "@/components/ProgressTracker";
+import Chip from "@/components/common/Chip/Chip";
+import { orderPaymentMethodMap, orderStatusColorMap } from "@/utils/mappings";
 
 interface Props {
   order: OrderInterface
@@ -24,7 +23,7 @@ interface Props {
 
 const AccountOrderDetailsPage = ({ order, error }: Props) => {
 
-  const step = order?.status === 'Nuevo' ? 0 : steps.indexOf(order?.status)
+  //const step = order?.status === 'Nuevo' ? 0 : steps.indexOf(order?.status)
 
   return (
 
@@ -39,9 +38,9 @@ const AccountOrderDetailsPage = ({ order, error }: Props) => {
           <div className={styles.number}>
             <h3>  Pedido No. {order.number}</h3>
           </div>
-          <div className={styles.progress}>
+          {/* <div className={styles.progress}>
             <ProgressTracker currentStep={step} />
-          </div>
+          </div> */}
         </div>
         <div className={styles.content}>
           <div className={`${styles.card} ${styles.info}`}>
@@ -56,7 +55,7 @@ const AccountOrderDetailsPage = ({ order, error }: Props) => {
               <div className={styles.cardItem}>
                 <h4>Estado</h4>
                 {/* @ts-ignore */}
-                <Chip color={statusColorMap[order.status]} text={order.status} />
+                <Chip color={orderStatusColorMap[order.status]} text={order.status} />
               </div>
               <div className={styles.cardItem}>
                 <h4>Fecha de entrega</h4>
@@ -103,7 +102,7 @@ const AccountOrderDetailsPage = ({ order, error }: Props) => {
 
               <div className={styles.cardItem}>
                 <h4>Método de pago</h4>
-                <Chip /* color={color}  */ text={orderPaymentMethodMap[order.paymentMethod]} />
+                <Chip text={orderPaymentMethodMap[order.paymentMethod]} />
               </div>
 
               <div className={styles.cardItem}>
@@ -111,10 +110,10 @@ const AccountOrderDetailsPage = ({ order, error }: Props) => {
                 <span>{moment(order.createdAt).format('lll')}</span>
               </div>
 
-              <div className={styles.cardItem}>
+              {/* <div className={styles.cardItem}>
                 <h4>Tipo de envío</h4>
-                <Chip /* color={color} */ text={orderShippingTypeMap[order.shippingType]} />
-              </div>
+                <Chip text={orderShippingTypeMap[order.shippingType]} />
+              </div> */}
 
               <div className={styles.cardItem}>
                 <h4>Mensaje en tarjeta dedicatoria</h4>
@@ -252,7 +251,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req }) =>
 
     const token = getServerSideToken(req)
 
-    const data = await makeRequest('get', `/api/me/orders/${number}`, {}, {
+    const data = await makeRequest('get', `/api/online-store/orders/${number}`, {}, {
       headers: {
         "x-access-token": token,
         "x-location": "admin"

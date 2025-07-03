@@ -66,15 +66,6 @@ const AttributesAdminPage = ({ attributes = [], page, limit, batchSize, totalRec
         }
       </div>
     },
-    // {
-    //   title: 'Detalles',
-    //   dataIndex: 'detalles',
-    //   key: 'detalles',
-    //   render: (text: string, record: AttributeInterface) => (
-    //     <Link href={`/admin/attributes/${record._id}`} className='btn btn-black btn-auto'>Ver</Link>
-    //   )
-    // },
-
   ]
 
   return (
@@ -169,7 +160,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
 
     const token = getServerSideToken(nextReq)
 
-    data = await makeRequest('get', `/api/attributes?page=${page}&limit=${limit}&search=${search}`, {}, {
+    data = await makeRequest('get', `/api/admin/attributes?page=${page}&limit=${limit}&search=${search}`, {}, {
       headers: {
         "x-access-token": token
         //"x-location": "admin"

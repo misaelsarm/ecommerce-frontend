@@ -388,7 +388,7 @@ const ProductDetailsAdminPage = ({ product, error }: Props) => {
             />
           </Card>
         </>
-      </Page >
+      </Page>
       <Modal
         visible={editing}
         loadingState={saving /* || uploading */}
@@ -410,7 +410,7 @@ const ProductDetailsAdminPage = ({ product, error }: Props) => {
 export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return createServerSideFetcher(context, {
-    endpoint: '/api/products/:code',
+    endpoint: '/api/public/products/:code',
     dataKey: 'product',
     propKey: 'product',
     paramKey: 'code',
@@ -420,7 +420,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 ProductDetailsAdminPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <Layout title="ProductDetailsAdminPage">
+    <Layout title={`Productos | ${page.props.product?.name}`}>
       {page}
     </Layout>
   );

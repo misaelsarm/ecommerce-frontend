@@ -14,12 +14,16 @@ import Chip from "@/components/common/Chip/Chip"
 import styles from '@/styles/admin/Users.module.scss'
 import moment from "moment"
 import { views } from "@/utils/views"
-import { pageTitleMap, permissionLabelMap, userRolesMap } from "@/utils/mappings"
+import { pageResourceMap, pageTitleMap, permissionLabelMap, userRolesMap } from "@/utils/mappings"
 import Page from "@/components/common/Page/Page"
 import { createServerSideFetcher } from "@/utils/serverSideFetcher"
 import Card from "@/components/common/Card/Card"
 import useActions from "@/hooks/useActions"
 import CardItem from "@/components/common/CardItem/CardItem"
+import { UserRole } from "@/utils/types"
+import { userRoles } from "@/utils/catalogs"
+import build from "next/dist/build"
+import { buildUserPermissions } from "@/utils/buildUserPermissions"
 
 interface Props {
   user: UserInterface,
@@ -61,29 +65,22 @@ const UserDetailsAdminPage = ({ user, error }: Props) => {
 
   const [saving, setSaving] = useState(false)
 
+  const [role, setRole] = useState<UserRole | undefined>(user.role)
+
   const onSubmit = async (values: any) => {
 
-    const permissions = values.permissions
+    const permissions = buildUserPermissions(values.permissions, values.role.value)
 
-    let mapped: any[] = []
-
-    if (permissions) {
-      mapped = Object.keys(permissions).map(role => ({
-        page: role,
-        permissions: permissions[role] || [],
-      }))
-    }
-
-    const access = [...mapped]
     try {
       const update = {
         name: values.name,
         "role": values.role.value,
         "email": values.email,
         "active": values.active,
-        permissions: access.filter(role => role.permissions.length > 0),
+        permissions
       }
-      await makeRequest('put', `/api/users/${user._id}`, update)
+
+      await makeRequest('put', `/api/admin/users/${user._id}`, update)
       toast.success('Usuario actualizado')
       setSaving(false)
       setEditing(false)
@@ -112,76 +109,70 @@ const UserDetailsAdminPage = ({ user, error }: Props) => {
           errors={errors}
           required
         />
-        {/* <Input
-          type='password'
-          register={register}
-          label='Contraseña'
-          name='password'
-          errors={errors}
-          required
-        /> */}
         <Select
           control={control}
           errors={errors}
           required
-          options={[
-            {
-              label: 'Administrador',
-              value: 'admin'
-            },
-            {
-              label: 'Usuario',
-              value: 'user'
-            },
-            {
-              label: 'Repartidor',
-              value: 'delivery'
-            },
-          ]}
+          options={userRoles}
           name="role"
-          label="Tipo de acceso"
+          label="Tipo de usuario"
+          onChange={(e: any) => {
+            setRole(e.value)
+          }}
         />
-        <div className={styles.rolesWrapper}>
-          <span>Elegir accesos de usuario</span>
-          {
-            views.map(role => (
-              <div key={role.view} className={styles.viewWrapper}>
-                <div className={styles.view}>
-                  <h4>{role.name}</h4>
+        {
+          (role && role !== 'delivery' && role !== 'admin') &&
+          <div className={styles.rolesWrapper}>
+            <span>Elegir permisos de usuario</span>
+            {
+              views.map(role => (
+                <div key={role.view} className={styles.viewWrapper}>
+                  <div className={styles.view}>
+                    <h4>{role.name}</h4>
+                  </div>
+                  <div className={styles.roles}>
+                    <div className={styles.role}>
+                      <Checkbox
+                        register={register}
+                        name={`permissions[${role.view}]`}
+                        label='Ver'
+                        id={`permissions[${role.view}]-view`}
+                        value='view'
+                      />
+                    </div>
+                    <div className={styles.role}>
+                      <Checkbox
+                        register={register}
+                        name={`permissions[${role.view}]`}
+                        label='Crear'
+                        id={`permissions[${role.view}]-create`}
+                        value='create'
+                      />
+                    </div>
+                    <div className={styles.role}>
+                      <Checkbox
+                        register={register}
+                        name={`permissions[${role.view}]`}
+                        label='Editar'
+                        id={`permissions[${role.view}]-edit`}
+                        value='edit'
+                      />
+                    </div>
+                    <div className={styles.role}>
+                      <Checkbox
+                        register={register}
+                        name={`permissions[${role.view}]`}
+                        label='Eliminar'
+                        id={`permissions[${role.view}]-delete`}
+                        value='delete'
+                      />
+                    </div>
+                  </div>
                 </div>
-                <div className={styles.roles}>
-                  <div className={styles.role}>
-                    <Checkbox
-                      register={register}
-                      name={`permissions[${role.view}]`}
-                      label='Ver'
-                      id={`permissions[${role.view}]-view`}
-                      value='view'
-                    />
-                  </div>
-                  <div className={styles.role}>
-                    <Checkbox
-                      register={register}
-                      name={`permissions[${role.view}]`}
-                      label='Crear / Editar'
-                      id={`permissions[${role.view}]-create-edit`}
-                      value='create-edit'
-                    />
-                  </div>
-                  <div className={styles.role}>
-                    <Checkbox
-                      register={register}
-                      name={`permissions[${role.view}]`}
-                      label='Eliminar'
-                      id={`permissions[${role.view}]-delete`}
-                      value='delete'
-                    />
-                  </div>
-                </div>
-              </div>
-            ))
-          }
-        </div>
+              ))
+            }
+          </div>
+        }
         <Checkbox
           register={register}
           label='Activo'
@@ -267,7 +258,6 @@ const UserDetailsAdminPage = ({ user, error }: Props) => {
                     }
                   </div>
                 )
-
                 )
               }
             />
@@ -316,7 +306,7 @@ const UserDetailsAdminPage = ({ user, error }: Props) => {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   return createServerSideFetcher(context, {
-    endpoint: "/api/users/:id",
+    endpoint: "/api/admin/users/:id",
     dataKey: "user",
     propKey: "user",
   });
@@ -324,7 +314,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 UserDetailsAdminPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <Layout title={`Usuarios | ${page.props.user.name}`}>
+    <Layout title={`Usuarios | ${page.props.user?.name}`}>
       {page}
     </Layout>
   );

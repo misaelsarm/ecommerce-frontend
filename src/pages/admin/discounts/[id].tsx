@@ -1,4 +1,6 @@
 import Layout from '@/components/admin/Layout'
+import Card from '@/components/common/Card/Card';
+import CardItem from '@/components/common/CardItem/CardItem';
 import Checkbox from '@/components/common/Checkbox/Checkbox';
 import Chip from '@/components/common/Chip/Chip';
 import DatePicker from '@/components/common/DatePicker/DatePicker';
@@ -152,89 +154,80 @@ const DiscountDetailsPage = ({ discount, error }: Props) => {
     }
   }
 
-  const user = useAuthStore((state) => state.user)
-
-  const canEdit = user.role === 'admin' ? true : hasPermission(pathname, 'edit', user.permissions)
-
   const renderForm = () => {
     return (
       <>
-        <div className="group">
-          <Input
-            register={register}
-            label='Nombre de descuento'
-            name='name'
-            errors={errors}
-            required
-          />
-        </div>
-        <div className="group">
-          <Select
-            required
-            onChange={(e: any) => {
-              console.log({ e })
-              setDiscountType(e.value)
-            }}
-            options={[
-              {
-                label: 'Porcentaje',
-                value: 'percentage'
-              },
-              {
-                label: 'Monto fijo',
-                value: 'fixed'
-              },
-            ]}
-            errors={errors}
-            control={control}
-            name='type'
-            label='Tipo de descuento'
-          />
-        </div>
-        {
-          //@ts-ignore
-          discountType !== '' &&
-          <>
-            <div className="d-flex align-center">
-              <Input
-                type='number'
-                register={register}
-                label='Valor del descuento'
-                placeholder=''
-                name='value'
-                errors={errors}
-                required
-              />
-              <span style={{
-                display: 'block',
-                marginLeft: 10,
-                fontSize: 20
-              }}>{discountType === 'percentage' ? '%' : '$'}</span>
-            </div>
-            <DatePicker
-              label="Fecha de expiración"
-              control={control}
-              required
+        <Input
+          register={register}
+          label='Nombre de descuento'
+          name='name'
+          errors={errors}
+          required
+        />
+
+        <Select
+          required
+          onChange={(e: any) => {
+            setDiscountType(e.value)
+          }}
+          options={[
+            {
+              label: 'Porcentaje',
+              value: 'percentage'
+            },
+            {
+              label: 'Monto fijo',
+              value: 'fixed'
+            },
+          ]}
+          errors={errors}
+          control={control}
+          name='type'
+          label='Tipo de descuento'
+        />
+
+
+        <>
+          <div className="d-flex align-center">
+            <Input
+              type='number'
+              register={register}
+              label='Valor del descuento'
+              placeholder=''
+              name='value'
               errors={errors}
-              name="endDate"
+              required
             />
-            <Checkbox
-              label='Activo'
-              id='active'
-              name='active'
-              register={register}
-            />
-            <Checkbox
-              register={register}
-              label='Limitar a productos o colecciones'
-              id='limited'
-              name='limited'
-              onChange={(e) => {
-                setLimited(e.target.checked)
-              }}
-            />
-          </>
-        }
+            <span style={{
+              display: 'block',
+              marginLeft: 10,
+              fontSize: 20
+            }}>{discountType === 'percentage' ? '%' : '$'}</span>
+          </div>
+          <DatePicker
+            label="Fecha de expiración"
+            control={control}
+            required
+            errors={errors}
+            name="endDate"
+          />
+          <Checkbox
+            label='Activo'
+            id='active'
+            name='active'
+            register={register}
+          />
+          <Checkbox
+            register={register}
+            label='Limitar a productos o colecciones'
+            id='limited'
+            name='limited'
+            onChange={(e) => {
+              setLimited(e.target.checked)
+            }}
+          />
+        </>
+
         {
           limited &&
           <>
@@ -297,66 +290,69 @@ const DiscountDetailsPage = ({ discount, error }: Props) => {
   return (
     <>
       <>
-        <div className='detailPage'>
-          <>
-            <div className="page-actions">
-              <button
-                style={{
-                  cursor: 'pointer'
-                }}
-                onClick={() => {
-                  back()
-                }}
-                className='back'><svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                </svg></button>
-              {
-                !editing && canEdit && <button className='btn btn-black' onClick={() => {
-                  setEditing(true)
-                  fetchProducts()
-                  fetchCollections()
-                }}>Editar</button>
+        <Page
+          title={`Detalle de descuento: ${discount.name}`}
+          primaryAction={{
+            name: 'Editar',
+            onClick: () => {
+              setEditing(true)
+              fetchProducts()
+              fetchCollections()
+            },
+            // visible: hasPermission('discounts', 'edit'),
+            // icon: 'edit'
+          }}
+          fullWidth={false}
+          maxwidth='700px'
+        >
+          <Card>
+            <CardItem
+              title='Nombre'
+              content={<span>{discount.name}</span>}
+            />
+            <CardItem
+              title='Tipo'
+              content={<span>{discountTypesMap[discount.type]}</span>}
+            />
+            <CardItem
+              title='Valor del descuento'
+              content={<span>{discount.type === 'percentage' ? `${discount.value}%` : `$ ${discount.value.toFixed(2)} MXN`}</span>
               }
-            </div>
-            <div className="card">
-              <div className="cardItem">
-                <h4>Nombre</h4>
-                <span>{discount.name}</span>
-              </div>
-              <div className="cardItem">
-                <h4>Tipo</h4>
-                <span>{discountTypesMap[discount.type]}</span>
-              </div>
-              <div className="cardItem">
-                <h4>Valor del descuento</h4>
-                <span>{discount.type === 'percentage' ? `${discount.value}%` : `$ ${discount.value.toFixed(2)} MXN`}</span>
-              </div>
-              <div className="cardItem">
-                <h4>Fecha de expiración</h4>
-                <span>{moment(discount.endDate).format('ll')}</span>
-              </div>
-              <div className="cardItem">
-                <h4>Estado</h4>
-                {
-                  discount.active ? <Chip text='Activo' color='green' /> : <Chip text='No activo' />
+            />
+            <CardItem
+              title='Fecha de expiración'
+              content={<span>{moment(discount.endDate).format('ll')}</span>
+              }
+            />
+            <CardItem
+              title='Fecha de expiración'
+              content={<span>{moment(discount.endDate).format('ll')}</span>
+              }
+            />
+            <CardItem
+              title='Estado'
+              content={discount.active ? <Chip text='Activo' color='green' /> : <Chip text='No activo' />
+              }
+            />
+            {
+              discount.limited &&
+              <CardItem
+                title='Elegibilidad'
+                content={
+                  <>
+                    <span>Este descuento solo aplica para los siguientes productos: </span>
+                    <br />
+                    {
+                      discount?.applicableProducts?.map(product => (
+                        <span key={product.name}>{product.name}</span>
+                      ))
+                    }
+                  </>
                 }
-              </div>
-              {
-                discount.limited && <div className="cardItem">
-                  <h4>Elegibilidad</h4>
-                  <span>Este descuento solo aplica para los siguientes productos: </span>
-                  <br />
-                  {
-                    discount?.applicableProducts?.map(product => (
-                      <span key={product.name}>{product.name}</span>
-                    ))
-                  }
-                </div>
-              }
-            </div>
-          </>
-
-        </div >
+              />
+            }
+          </Card>
+        </Page >
         <Modal
           visible={editing}
           loadingState={saving}
@@ -378,7 +374,7 @@ const DiscountDetailsPage = ({ discount, error }: Props) => {
 
 DiscountDetailsPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <Layout title="Descuentos">
+    <Layout title={`Descuentos | ${page.props.discount?.name}`}>
       {page}
     </Layout>
   );
@@ -387,7 +383,7 @@ DiscountDetailsPage.getLayout = function getLayout(page: ReactElement) {
 export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return createServerSideFetcher(context, {
-    endpoint: '/api/discounts/:id',
+    endpoint: '/api/admin/discounts/:id',
     dataKey: 'discount',
     propKey: 'discount'
   })

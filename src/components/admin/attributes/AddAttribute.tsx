@@ -31,22 +31,9 @@ const AddAttribute = ({ visible, setVisible, onOk }: Props) => {
     setType('')
   }
 
-  useEffect(() => {
-    if (visible) {
-      fetchData();
-    }
-  }, [visible]);
-
-  async function fetchData() {
+  async function fetchValues() {
     try {
-      const data = await makeRequest('get', '/api/values?active=true',
-        {
-          headers: {
-            "x-access-token": Cookies.get('token')
-            //"x-location": "admin"
-          }
-        }
-      )
+      const data = await makeRequest('get', '/api/admin/values?active=true')
       setValues(data.values)
     } catch (error: any) {
       toast.error(error?.response?.data?.message || 'Error')
@@ -113,6 +100,9 @@ const AddAttribute = ({ visible, setVisible, onOk }: Props) => {
           onChange={(e: any) => {
             setType(e.value)
             resetField('values')
+            if ((e.value === 'dropdown' || e.value === 'color') && values.length === 0) {
+              fetchValues()
+            }
           }}
         />
         {

@@ -1,24 +1,18 @@
 import AccountLayout from '@/components/online-store/AccountLayout';
 import { Layout } from '@/components/online-store/Layout';
-import React, { ReactElement, useContext, useState } from 'react'
+import React, { ReactElement, useState } from 'react'
 import styles from '@/styles/online-store/account/Profile.module.scss'
-import Input from '@/components/common/Input';
 import { useForm } from 'react-hook-form';
-import { AuthContext } from '@/context/auth';
-import { GetServerSideProps } from 'next';
-import { getServerSideToken } from '@/utils/getServerSideToken';
 import { makeRequest } from '@/utils/makeRequest';
-import { getServerSideUserId } from '@/utils/getServerSideUserId';
-import { UserInterface } from '@/interfaces';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
+import Input from '@/components/common/Input/Input';
+import { useAuthStore } from '@/store/auth';
 
-interface Props {
-  user: UserInterface
-}
+const AccountProfilePage = () => {
 
-const AccountProfilePage = ({ user }: Props) => {
+  const user = useAuthStore((state) => state.user)
 
   const { register, handleSubmit, formState: { errors } } = useForm<any>({
     defaultValues: {
@@ -37,8 +31,6 @@ const AccountProfilePage = ({ user }: Props) => {
   const { replace } = useRouter()
 
   const [loading, setLoading] = useState(false)
-
-  const { setUser } = useContext(AuthContext)
 
   const handleSavePassword = async (values: any) => {
     try {
@@ -194,10 +186,10 @@ const AccountProfilePage = ({ user }: Props) => {
 
         <button
           onClick={() => {
-            localStorage.removeItem('token')
+            Cookies.remove('token')
             Cookies.remove('token')
             replace('/')
-            setUser({} as UserInterface)
+            //setUser({} as UserInterface)
           }}
           className='btn btn-primary'>Cerrar sesión</button>
 
@@ -206,33 +198,33 @@ const AccountProfilePage = ({ user }: Props) => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ params, req }) => {
+// export const getServerSideProps: GetServerSideProps = async ({ params, req }) => {
 
-  let user
+//   let user
 
-  const token = getServerSideToken(req)
+//   const token = getServerSideToken(req)
 
-  const userId = getServerSideUserId(req)
+//   const userId = getServerSideUserId(req)
 
-  try {
-    const data = await makeRequest('get', `/api/users/${userId}`, {}, {
-      headers:
-      {
-        "x-access-token": token
-      }
-    })
-    user = data.user
-  } catch (error) {
+//   try {
+//     const data = await makeRequest('get', `/api/users/${userId}`, {}, {
+//       headers:
+//       {
+//         "x-access-token": token
+//       }
+//     })
+//     user = data.user
+//   } catch (error) {
 
-  }
+//   }
 
-  return {
-    props: {
+//   return {
+//     props: {
 
-      user
-    }
-  }
-}
+//       user
+//     }
+//   }
+// }
 
 AccountProfilePage.getLayout = function getLayout(page: ReactElement) {
   return (

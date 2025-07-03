@@ -1,0 +1,100 @@
+.images {
+  margin-bottom: 40px;
+
+  .cover {
+    width: 100%;
+    position: relative;
+    height: 450px;
+    border-radius: 10px;
+    margin-bottom: 40px;
+    border: 1px solid gainsboro;
+
+    .nav {
+      position: absolute;
+      display: flex;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1;
+
+      div {
+        cursor: pointer;
+        border-radius: 30px;
+        background-color: gainsboro;
+        z-index: 99;
+        flex-shrink: 0;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        &:first-child {
+          margin-right: 10px;
+
+        }
+
+        svg {
+          width: 24px;
+          height: 24px;
+          flex-shrink: 0;
+
+        }
+      }
+    }
+
+    span {
+      position: absolute;
+      left: 50%;
+      transform: translate(-50%, 0%);
+      color: rgb(200, 200, 200);
+      z-index: 10;
+    }
+
+    img {
+      object-fit: contain;
+
+
+    }
+  }
+
+  .secondary {
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    flex-shrink: 0;
+
+    .image {
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      width: 100px;
+      height: 100px;
+
+      img {
+        object-fit: contain;
+      }
+
+      flex-shrink: 0;
+
+      &:not(:last-child) {
+        margin-right: 20px;
+      }
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .images {
+    .cover {
+      height: 70vh;
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  .images {
+    margin-right: 50px;
+  }
+
+
+}

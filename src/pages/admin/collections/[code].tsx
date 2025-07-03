@@ -229,7 +229,7 @@ const CollectionDetailsPage = ({ collection, error }: Props) => {
 export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return createServerSideFetcher(context, {
-    endpoint: "/api/collections/:code",
+    endpoint: "/api/public/collections/:code",
     dataKey: "collection",
     propKey: "collection",
     paramKey: "code"
@@ -238,7 +238,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 CollectionDetailsPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <Layout title="CollectionDetailsPage">
+    <Layout title={`Colecciones | ${page.props.collection?.name}`}>
       {page}
     </Layout>
   );

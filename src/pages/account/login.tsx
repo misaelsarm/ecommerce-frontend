@@ -26,9 +26,9 @@ const AdminLoginPage = () => {
   const login = async ({ email, password }: any) => {
     setLoading(true)
     try {
-      const data = await makeRequest('post', `/api/admin/auth/login`, { email, password, location: 'admin' })
+      const data = await makeRequest('post', `/api/online-store/auth/login`, { email, password, location: 'admin' })
       Cookies.set('token', data.token);
-      const redirectUrl = returnUrl as string || '/admin/orders?page=1&limit=20'; // Default page after login
+      const redirectUrl = returnUrl as string || '/account/profile'; // Default page after login
       replace(redirectUrl);
       console.log({ data })
       setUser(data)
@@ -77,8 +77,8 @@ const AdminLoginPage = () => {
           </div>
           <div className={styles.actions}>
             <button disabled={loading} className='btn btn-primary btn-block'>Iniciar sesión</button>
-            <Link className='btn btn-ghost btn-block' href='/admin/sign-up'>¿No tienes cuenta? Crea una ahora</Link>
-            <Link className='btn btn-ghost btn-block' href='/admin/forgot-password'>¿Olvidaste tu contraseña?</Link>
+            <Link className='btn btn-ghost btn-block' href='/account/sign-up'>¿No tienes cuenta? Crea una ahora</Link>
+            <Link className='btn btn-ghost btn-block' href='/account/forgot-password'>¿Olvidaste tu contraseña?</Link>
           </div>
         </form>
       </div>

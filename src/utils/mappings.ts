@@ -111,8 +111,24 @@ export const pageTitleMap = {
 }
 
 export const pageResourceMap = {
-  '/admin/orders': "/api/orders",
-  '/admin/attributes': "/api/attributes"
+  '/admin/orders': "/api/admin/orders",
+  '/admin/attributes': "/api/admin/attributes",
+  '/admin/values': "/api/admin/values",
+  '/admin/products': "/api/admin/products",
+  '/admin/collections': "/api/admin/collections",
+  '/admin/customers': "/api/admin/users",
+  '/admin/users': "/api/admin/users",
+  '/admin/discounts': "/api/admin/discounts",
+  '/admin/slides': "/api/admin/slides",
+  '/admin/disabled-days': "/api/admin/disabled-days",
+  '/admin/external-sales': "/api/admin/external-sales",
+  '/admin/reports/rutas': "/api/admin/orders",
+  '/admin/reports/repartidores': "/api/admin/orders",
+  '/admin/reports/ventas-por-usuario': "/api/admin/orders",
+  '/admin/reports/ventas': "/api/admin/orders",
+  '/admin/reports/pedidos': "/api/admin/orders",
+  '/admin/tablero': "/api/admin/orders",
+  '/admin/my-orders': "/api/admin/orders"
 }
 
 export const permissionLabelMap = {

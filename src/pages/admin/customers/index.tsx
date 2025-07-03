@@ -26,10 +26,6 @@ interface Props {
 
 const CustomersAdminPage = ({ customers, page, limit, batchSize, totalRecords, error }: Props) => {
 
-  const [confirmDelete, setConfirmDelete] = useState(false)
-
-  const [deletedUser, setDeletedUser] = useState({} as UserInterface)
-
   const [visible, setVisible] = useState(false)
 
   const columns = [
@@ -67,15 +63,7 @@ const CustomersAdminPage = ({ customers, page, limit, batchSize, totalRecords, e
           record.verified ? <Chip text='Verificado' color='green' /> : <Chip text='No verificado' />
         }
       </div>
-    },
-    // {
-    //   title: 'Detalles',
-    //   dataIndex: 'detalles',
-    //   key: 'detalles',
-    //   render: (_text: string, record: UserInterface) => (
-    //     <Link href={`/admin/customers/${record._id}`} className='btn btn-black btn-auto'>Ver</Link>
-    //   )
-    // },
+    }
   ]
 
   const { searchTerm, setSearchTerm, handleSearch } = useDebouncedSearch({ url: 'customers', limit })
@@ -130,7 +118,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
 
     const token = getServerSideToken(nextReq)
 
-    data = await makeRequest('get', `/api/users?role=customer&page=${page}&limit=${limit}&search=${search}`, {}, {
+    data = await makeRequest('get', `/api/admin/users?role=customer&page=${page}&limit=${limit}&search=${search}`, {}, {
       headers: {
         //@ts-ignore
         "x-access-token": token,

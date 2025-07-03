@@ -4,6 +4,7 @@ import Input from "@/components/common/Input/Input";
 import Modal from "@/components/common/Modal/Modal";
 import Select from "@/components/common/Select/Select";
 import { CollectionInterface, ProductInterface } from "@/interfaces";
+import { discountLimitBy, discountTypes } from "@/utils/catalogs";
 import { makeRequest } from "@/utils/makeRequest";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -17,7 +18,7 @@ interface Props {
 
 const AddDiscount = ({ visible, setVisible, onOk }: Props) => {
 
-  const { register, handleSubmit, control, reset, formState: { errors }, watch } = useForm();
+  const { register, handleSubmit, control, reset, formState: { errors } } = useForm();
 
   const [saving, setSaving] = useState(false)
 
@@ -40,7 +41,7 @@ const AddDiscount = ({ visible, setVisible, onOk }: Props) => {
 
   const fetchProducts = async () => {
     try {
-      const  data  = await makeRequest('get', '/api/products?active=true')
+      const data = await makeRequest('get', '/api/public/products?active=true')
       setProducts(data.products)
     } catch (error: any) {
       toast.error(error.response.data.message)
@@ -50,20 +51,13 @@ const AddDiscount = ({ visible, setVisible, onOk }: Props) => {
 
   const fetchCollections = async () => {
     try {
-      const  data  = await makeRequest('get', '/api/collections?active=true')
+      const data = await makeRequest('get', '/api/public/collections?active=true')
       setCollections(data.collections)
     } catch (error: any) {
       toast.error(error.response.data.message)
       console.log({ error })
     }
   }
-
-  useEffect(() => {
-    if (visible) {
-      fetchProducts()
-      fetchCollections()
-    }
-  }, [visible])
 
   const onSubmit = async (values: any) => {
 
@@ -77,7 +71,7 @@ const AddDiscount = ({ visible, setVisible, onOk }: Props) => {
 
       if (limitBy === 'collection') {
 
-        let selectedCollections: string[] = values.collections.map((cat: any) => cat.value)
+        let selectedCollections: string[] = values.applicableCollections?.map((cat: any) => cat.value)
 
         for (const product of products) {
 
@@ -92,8 +86,7 @@ const AddDiscount = ({ visible, setVisible, onOk }: Props) => {
         validCollections = selectedCollections
 
       } else {
-        validProducts = values.applicableProducts?.map((product: any) => product.value)
-        console.log({ validProducts })
+        validProducts = values.applicableProducts?.map((product: any) => product.value) || []
         validCollections = []
       }
 
@@ -102,11 +95,10 @@ const AddDiscount = ({ visible, setVisible, onOk }: Props) => {
         //@ts-ignore
         applicableProducts: [...new Set(validProducts)],
         applicableCollections: validCollections,
-        type: values.type.value,
-        limitBy: values.limitBy.value
+        type: values.type?.value,
+        limitBy: values.limitBy?.value,
+        limited
       }
-
-      console.log({ discount })
 
       setSaving(true)
 
@@ -117,6 +109,7 @@ const AddDiscount = ({ visible, setVisible, onOk }: Props) => {
       setSaving(false)
       reset()
     } catch (error: any) {
+      console.log({ error })
       if (error) {
         toast.error(error.response.data.message)
         setSaving(false)
@@ -140,37 +133,24 @@ const AddDiscount = ({ visible, setVisible, onOk }: Props) => {
       visible={visible}
     >
       <>
-        <div className="group">
-          <Input
-            register={register}
-            label='Nombre de descuento'
-            name='name'
-            errors={errors}
-            required
-          />
-        </div>
-        <div className="group">
-          <Select
-            required
-            onChange={(e: any) => {
-              setDiscountType(e.value)
-            }}
-            options={[
-              {
-                label: 'Porcentaje',
-                value: 'percentage'
-              },
-              {
-                label: 'Monto fijo',
-                value: 'fixed'
-              },
-            ]}
-            errors={errors}
-            control={control}
-            name='type'
-            label='Tipo de descuento'
-          />
-        </div>
+        <Input
+          register={register}
+          label='Nombre de descuento'
+          name='name'
+          errors={errors}
+          required
+        />
+        <Select
+          required
+          onChange={(e: any) => {
+            setDiscountType(e.value)
+          }}
+          options={discountTypes}
+          errors={errors}
+          control={control}
+          name='type'
+          label='Tipo de descuento'
+        />
         {
           discountType !== '' &&
           <>
@@ -220,18 +200,15 @@ const AddDiscount = ({ visible, setVisible, onOk }: Props) => {
             <Select
               onChange={(e: any) => {
                 setLimitBy(e.value)
+                if (e.value === 'product' && products.length === 0) {
+                  fetchProducts()
+                }
+                if (e.value === 'collection' && collections.length === 0) {
+                  fetchCollections()
+                }
               }}
               required
-              options={[
-                {
-                  label: 'Colección',
-                  value: 'collection'
-                },
-                {
-                  label: 'Producto',
-                  value: 'product'
-                },
-              ]}
+              options={discountLimitBy}
               errors={errors}
               control={control}
               name='limitBy'

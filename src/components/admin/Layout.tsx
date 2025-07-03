@@ -82,6 +82,7 @@ const Layout: FC<Props> = ({ children, title }) => {
                 onClick={() => {
                   setVisible(false)
                   Cookies.remove('token')
+                  Cookies.remove('user_meta')
                   replace('/admin/login')
                 }}
               > Cerrar sesión</span>

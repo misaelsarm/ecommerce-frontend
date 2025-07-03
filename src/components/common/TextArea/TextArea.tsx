@@ -12,9 +12,10 @@ interface Props {
   minLength?: number,
   pattern?: any,
   label?: string
+  max?: number
 }
 
-const TextArea = ({ placeholder, pattern, register, required, minLength, name = '', defaultValue, errors, label }: Props) => {
+const TextArea = ({ placeholder, pattern, register, required, max, minLength, name = '', defaultValue, errors, label }: Props) => {
 
   const registerProps = register
     ? register(name, {
@@ -25,6 +26,10 @@ const TextArea = ({ placeholder, pattern, register, required, minLength, name = 
       minLength: {
         value: minLength || 0,
         message: 'Minimo ' + minLength + ' caracteres',
+      },
+      maxLength: {
+        value: max as number,
+        message: 'Máximo ' + max + ' caracteres',
       },
       pattern: {
         value: pattern,
@@ -41,15 +46,18 @@ const TextArea = ({ placeholder, pattern, register, required, minLength, name = 
         }}
         htmlFor={name}>{label}</label>
       <textarea
+        {...registerProps}
+        placeholder={placeholder}
         className='input text-area'
         defaultValue={defaultValue}
-        {...registerProps}
-        autoComplete='new-password'
-        placeholder={placeholder}
       />
       {
         errors && errors[name] &&
         <span className='error'>{errors[name].message}</span>
+      }
+      {
+        typeof errors === 'string' &&
+        <span className='error'>{errors}</span>
       }
     </div>
   )

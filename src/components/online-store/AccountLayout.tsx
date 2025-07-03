@@ -17,25 +17,9 @@ const accountLinks = [
     name: 'Mis pedidos'
   },
   {
-    path: '/account/rewards',
-    name: 'Mis puntos'
-  },
-  {
-    path: '/account/discounts',
-    name: 'Mis descuentos'
-  },
-  {
     path: '/account/addresses',
     name: 'Direcciones'
   },
-  {
-    path: '/account/reminders',
-    name: 'Recordatorios'
-  },
-  // {
-  //   path: '/account/privacy',
-  //   name: 'Privacidad'
-  // },
 ]
 
 

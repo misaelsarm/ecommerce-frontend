@@ -9,13 +9,13 @@ import { makeRequest } from '@/utils/makeRequest';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/auth';
 
-const AdminLoginPage = () => {
+const SignUpPage = () => {
 
-  const setUser = useAuthStore(state => state.setUser);
+  const setUser = useAuthStore((state) => state.setUser);
 
-  const setContextLoading = useAuthStore(state => state.setLoading);
+  const setContextLoading = useAuthStore((state) => state.setLoading);
 
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { register, handleSubmit, formState: { errors }, control } = useForm();
 
   const { replace, query } = useRouter()
 
@@ -23,23 +23,29 @@ const AdminLoginPage = () => {
 
   const [loading, setLoading] = useState(false)
 
-  const login = async ({ email, password }: any) => {
+  const signUp = async (values: any) => {
+
+    const payload = {
+      ...values,
+    }
+
     setLoading(true)
+
     try {
-      const data = await makeRequest('post', `/api/admin/auth/login`, { email, password, location: 'admin' })
+      const data = await makeRequest('post', `/api/auth/sign-up`, payload)
       Cookies.set('token', data.token);
-      const redirectUrl = returnUrl as string || '/admin/orders?page=1&limit=20'; // Default page after login
+      Cookies.set('userId', data.id);
+      let redirectUrl = returnUrl as string || '/events'; // Default page after login
+
       replace(redirectUrl);
-      console.log({ data })
       setUser(data)
       setLoading(false)
       setContextLoading(false)
 
     } catch (error: any) {
-      toast.error(error.response?.data?.message || error.message)
+      toast.error(error.response.data.message)
       setLoading(false)
     }
-
   }
 
   return (
@@ -51,34 +57,32 @@ const AdminLoginPage = () => {
           }}>Tu logo aquí</h1>
           {/*  <img src="/logo.png" alt="" /> */}
         </div>
-        <form onSubmit={handleSubmit(login)}>
+        <form onSubmit={handleSubmit(signUp)} className={styles.form}>
           <div className={styles.formHeader}>
-            <h2>Inicia sesión en Selli</h2>
+            <h2>Crea una cuenta en Selli</h2>
           </div>
           <div className={styles.fields}>
             <Input
               register={register}
-              placeholder='Correo electrónico'
               name='email'
               type='email'
               errors={errors}
-              label='Correo eléctronico'
+              label='Email'
               required
+              pattern={/^\s*[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\s*$/}
             />
             <Input
               register={register}
-              placeholder='Contraseña'
               name='password'
               type='password'
               errors={errors}
-              label='Contraseña'
+              label='Password'
               required
             />
           </div>
           <div className={styles.actions}>
-            <button disabled={loading} className='btn btn-primary btn-block'>Iniciar sesión</button>
-            <Link className='btn btn-ghost btn-block' href='/admin/sign-up'>¿No tienes cuenta? Crea una ahora</Link>
-            <Link className='btn btn-ghost btn-block' href='/admin/forgot-password'>¿Olvidaste tu contraseña?</Link>
+            <button disabled={loading} className='btn btn-primary btn-block'>Crear cuenta</button>
+            <Link className='btn btn-ghost btn-block' href='/account/login'>¿Ya tienes cuenta? Inicia sesión</Link>
           </div>
         </form>
       </div>
@@ -86,4 +90,4 @@ const AdminLoginPage = () => {
   )
 }
 
-export default AdminLoginPage
+export default SignUpPage

@@ -10,6 +10,7 @@ import Input from "@/components/common/Input/Input";
 import Select from "@/components/common/Select/Select";
 import Checkbox from "@/components/common/Checkbox/Checkbox";
 import { userRoles } from "@/utils/catalogs";
+import { buildUserPermissions } from "@/utils/buildUserPermissions";
 
 interface Props {
   visible: boolean,
@@ -31,39 +32,17 @@ const AddUser = ({ visible, setVisible, onOk }: Props) => {
 
     try {
 
-      const permissions = values.permissions
-
-      let mapped: any[] = []
-
-      if (permissions) {
-        mapped = Object.keys(permissions).map(role => ({
-          page: role,
-          permissions: permissions[role] || [],
-        }))
-      }
-
-      let access = []
-
-      if (role !== 'delivery') {
-        access = [...mapped]
-      } else {
-        access = [
-          {
-            page: '/admin/my-orders',
-            permissions: ['view', 'create-edit']
-          }
-        ]
-      }
+      const permissions = buildUserPermissions(values.permissions, values.role.value)
 
       const postedUser = {
         ...values,
         active,
         role: values.role.value,
-        permissions: access.filter(role => role.permissions.length > 0),
+        permissions
       }
       setSaving(true)
 
-      await makeRequest('post', '/api/users', postedUser)
+      await makeRequest('post', '/api/admin/users', postedUser)
       toast.success('Usuario agregado')
       setSaving(false)
       onOk && onOk()
@@ -117,7 +96,7 @@ const AddUser = ({ visible, setVisible, onOk }: Props) => {
           required
           options={userRoles}
           name="role"
-          label="Tipo de acceso"
+          label="Tipo de usuario"
           onChange={(e: any) => {
             setRole(e.value)
           }}
@@ -134,7 +113,7 @@ const AddUser = ({ visible, setVisible, onOk }: Props) => {
         {
           (role && role !== 'delivery' && role !== 'admin') &&
           <div className={styles.rolesWrapper}>
-            <span>Elegir accesos de usuario</span>
+            <span>Elegir permisos de usuario</span>
             {
               views.map(role => (
                 <div key={role.view} className={styles.viewWrapper}>
@@ -149,17 +128,24 @@ const AddUser = ({ visible, setVisible, onOk }: Props) => {
                         label='Ver'
                         id={`permissions[${role.view}]-view`}
                         value='view'
-
                       />
                     </div>
                     <div className={styles.role}>
                       <Checkbox
                         register={register}
                         name={`permissions[${role.view}]`}
-                        label='Crear / Editar'
-                        id={`permissions[${role.view}]-create-edit`}
-                        value='create-edit'
-
+                        label='Crear'
+                        id={`permissions[${role.view}]-create`}
+                        value='create'
+                      />
+                    </div>
+                    <div className={styles.role}>
+                      <Checkbox
+                        register={register}
+                        name={`permissions[${role.view}]`}
+                        label='Editar'
+                        id={`permissions[${role.view}]-edit`}
+                        value='edit'
                       />
                     </div>
                     <div className={styles.role}>
@@ -169,7 +155,6 @@ const AddUser = ({ visible, setVisible, onOk }: Props) => {
                         label='Eliminar'
                         id={`permissions[${role.view}]-delete`}
                         value='delete'
-
                       />
                     </div>
                   </div>

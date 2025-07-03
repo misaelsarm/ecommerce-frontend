@@ -29,6 +29,14 @@ interface Props {
 
 const OrdersAdminPage = ({ page, limit, batchSize, totalRecords, orders, error }: Props) => {
 
+  if (error) {
+    return (
+      <Page>
+        {error.message}
+      </Page>
+    )
+  }
+
   const { push, query } = useRouter()
 
   const { searchTerm, setSearchTerm, handleSearch } = useDebouncedSearch({ url: 'orders', limit })
@@ -103,39 +111,33 @@ const OrdersAdminPage = ({ page, limit, batchSize, totalRecords, orders, error }
 
   return (
     <>
-      {
-        error ?
-          <Page>
-            {error.message}
-          </Page> :
-          <Page
-            title='Pedidos'
-            primaryAction={{
-              name: "Nuevo pedido",
-              onClick: () => console.log('nuevo pedido'),
-              //className: 'btn btn-primary'
-            }}
-            search={{
-              searchTerm: searchTerm as string,
-              handleSearch,
-              onClearSearch: () => {
-                push(`/admin/orders?page=1&limit=20`);
-                setSearchTerm('')
-              }
-            }}
-          >
-            <Table
-              page={page}
-              limit={limit}
-              columns={columns}
-              data={orders}
-              batchSize={batchSize}
-              totalRecords={totalRecords}
-              navigateTo='admin/orders'
-              paramKey='number'
-            />
-          </Page>
-      }
+      <Page
+        title='Pedidos'
+        primaryAction={{
+          name: "Nuevo pedido",
+          onClick: () => console.log('nuevo pedido'),
+          //className: 'btn btn-primary'
+        }}
+        search={{
+          searchTerm: searchTerm as string,
+          handleSearch,
+          onClearSearch: () => {
+            push(`/admin/orders?page=1&limit=20`);
+            setSearchTerm('')
+          }
+        }}
+      >
+        <Table
+          page={page}
+          limit={limit}
+          columns={columns}
+          data={orders}
+          batchSize={batchSize}
+          totalRecords={totalRecords}
+          navigateTo='admin/orders'
+          paramKey='number'
+        />
+      </Page>
     </>
   )
 }
@@ -156,7 +158,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
 
     const token = getServerSideToken(nextReq)
 
-    data = await makeRequest('get', `/api/orders?page=${page}&limit=${limit}&search=${search}`, {}, {
+    data = await makeRequest('get', `/api/admin/orders?page=${page}&limit=${limit}&search=${search}`, {}, {
       headers: {
         "x-access-token": token,
       }

@@ -6,14 +6,11 @@ import Chip from '@/components/common/Chip/Chip'
 import Modal from '@/components/common/Modal/Modal'
 import Page from '@/components/common/Page/Page'
 import { OrderInterface } from '@/interfaces'
-import { useAuthStore } from '@/store/auth'
 import { formatCurrency } from '@/utils/formatCurrency'
-import { hasPermission } from '@/utils/hasPermission'
 import { orderStatusColorMap } from '@/utils/mappings'
 import { createServerSideFetcher } from '@/utils/serverSideFetcher'
 import moment from 'moment'
 import { GetServerSideProps } from 'next'
-import { useRouter } from 'next/router'
 import React, { ReactElement, useState } from 'react'
 
 interface Props {
@@ -167,7 +164,7 @@ const OrderDetailsPage = ({ order, error }: Props) => {
 export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return createServerSideFetcher(context, {
-    endpoint: '/api/orders/:number',
+    endpoint: '/api/admin/orders/:number',
     dataKey: 'order',
     propKey: 'order',
     paramKey: 'number',
@@ -176,7 +173,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 OrderDetailsPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <Layout title="Orden">
+    <Layout title={`Pedidos | ${page.props.order.number}`}>
       {page}
     </Layout>
   );

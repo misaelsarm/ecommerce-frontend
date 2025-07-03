@@ -181,7 +181,7 @@ const Checkout = () => {
 
 
     try {
-      await makeRequest('post', '/api/orders/createOrder', order)
+      await makeRequest('post', '/api/online-store/orders/createOrder', order)
       setWaiting(false)
       localStorage.removeItem('cartId')
     } catch (error: any) {

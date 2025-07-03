@@ -95,4 +95,26 @@ export const valueTypes = [
   },
 ]
 
+export const discountLimitBy = [
+  {
+    label: 'Producto',
+    value: 'product'
+  },
+  {
+    label: 'Colección',
+    value: 'collection'
+  },
+]
+
+export const discountTypes = [
+  {
+    label: 'Porcentaje',
+    value: 'percentage'
+  },
+  {
+    label: 'Monto fijo',
+    value: 'fixed'
+  },
+]
+
 export const orderStatusCatalog: OrderStatus[] = ['Nuevo', 'En ruta', 'En progreso', 'Cancelado', 'Listo para recoger', 'Entregado']

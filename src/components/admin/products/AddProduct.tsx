@@ -23,29 +23,32 @@ const AddProduct = ({ visible, setVisible, onOk }: Props) => {
 
   const [attributes, setAttributes] = useState<any[]>([])
 
-  async function fetchData() {
+  const fetchCollections = async () => {
     try {
-
-      const data = await makeRequest('get', `/api/collections`)
-      const attributesData = await makeRequest('get', `/api/attributes`)
-      setCollections(data.collections.map((col: CollectionInterface) => ({
-        label: col.name,
-        value: col._id
-      })))
-      setAttributes(attributesData.attributes.map((att: AttributeInterface) => ({
-        label: att.shortName,
-        value: att._id
-      })))
+      const data = await makeRequest('get', '/api/public/collections?active=true')
+      setCollections(data.collections.map((item: CollectionInterface) => ({ value: item._id, label: item.name })))
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || 'Error')
+      toast.error(error.response.data.message)
+      console.log({ error })
     }
   }
 
-  useEffect(() => {
-    if (visible) {
-      fetchData();
+  const fetchAttributes = async () => {
+    try {
+      const data = await makeRequest('get', '/api/admin/attributes?active=true')
+      setAttributes(data.attributes.map((item: AttributeInterface) => ({ value: item._id, label: item.shortName })))
+    } catch (error: any) {
+      toast.error(error.response.data.message)
+      console.log({ error })
     }
-  }, [visible]);
+  }
+
+  // Fetch collections when the modal is opened and prevent fetching if already fetched
+  useEffect(() => {
+    if (visible && collections.length === 0) {
+      fetchCollections()
+    }
+  }, [visible])
 
   const { register, handleSubmit, control, reset, formState: { errors } } = useForm();
 
@@ -196,6 +199,9 @@ const AddProduct = ({ visible, setVisible, onOk }: Props) => {
           name='isCustomizable'
           onChange={(e) => {
             setIsCustomizable(e.target.checked)
+            if (e.target.checked && attributes.length === 0) {
+              fetchAttributes()
+            }
           }}
         />
         {

@@ -31,7 +31,15 @@ interface Props {
   }
 }
 
-const CollectionsAdminPage = ({ collections = [], page, limit, batchSize, totalRecords }: Props) => {
+const CollectionsAdminPage = ({ collections = [], page, limit, batchSize, totalRecords, error }: Props) => {
+
+  if (error) {
+    return (
+      <Page>
+        {error.message}
+      </Page>
+    )
+  }
 
   const [confirmDelete, setConfirmDelete] = useState(false)
 
@@ -82,39 +90,7 @@ const CollectionsAdminPage = ({ collections = [], page, limit, batchSize, totalR
         }
       </div>
     },
-    /*     {
-          title: 'Colección agrupadora',
-          dataIndex: 'parentCollection',
-          key: 'parentCollection',
-          render: (_text: string, record: CollectionInterface) => <div className='d-flex flex-column align-start'>
-            {
-              record.parentCollection && <Chip text={record.parentCollection.name} />
-            }
-          </div>
-        }, */
-    // {
-    //   title: 'Detalles',
-    //   dataIndex: 'detalles',
-    //   key: 'detalles',
-    //   render: (_text: string, record: CollectionInterface) => (
-    //     <Link href={`/admin/collections/${record.code}`} className='btn btn-black btn-auto'>Ver</Link>
-    //   )
-    // }
   ]
-
-  // if (hasPermission(pathname, 'delete', user.permissions) || user.role === 'admin') {
-  //   columns.push({
-  //     title: 'Eliminar',
-  //     dataIndex: 'eliminar',
-  //     key: 'eliminar',
-  //     render: (_text: string, record: CollectionInterface) => (
-  //       <button onClick={() => {
-  //         setConfirmDelete(true)
-  //         setDeletedCollection(record)
-  //       }} className="btn">Eliminar</button>
-  //     )
-  //   })
-  // }
 
   return (
     <>
@@ -199,10 +175,9 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
 
     const token = getServerSideToken(nextReq)
 
-    data = await makeRequest('get', `/api/collections?page=${page}&limit=${limit}&search=${search}`, {}, {
+    data = await makeRequest('get', `/api/public/collections?page=${page}&limit=${limit}&search=${search}`, {}, {
       headers: {
         "x-access-token": token
-        //"x-location": "admin"
       }
     })
     collections = data.collections

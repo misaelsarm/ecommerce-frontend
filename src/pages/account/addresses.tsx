@@ -2,20 +2,19 @@ import AccountLayout from '@/components/online-store/AccountLayout';
 import { Layout } from '@/components/online-store/Layout';
 import React, { ReactElement, useState } from 'react'
 import styles from '@/styles/online-store/account/Addresses.module.scss'
-import Modal from '@/components/common/Modal';
-import Input from '@/components/common/Input';
+import { AddressInterface } from '@/interfaces/Address';
 import { useForm } from 'react-hook-form';
-import Select from '@/components/common/Select';
-import { cityList } from '@/utils/cityList';
-import TextArea from '@/components/common/TextArea';
-import { makeRequest } from '@/utils/makeRequest';
-import Checkbox from '@/components/common/Checkbox';
+import { useRouter } from 'next/router';
 import toast from 'react-hot-toast';
+import { makeRequest } from '@/utils/makeRequest';
+import Empty from '@/components/online-store/Empty';
+import Modal from '@/components/common/Modal/Modal';
+import Input from '@/components/common/Input/Input';
+import Select from '@/components/common/Select/Select';
+import TextArea from '@/components/common/TextArea/TextArea';
+import Checkbox from '@/components/common/Checkbox/Checkbox';
 import { GetServerSideProps } from 'next';
 import { getServerSideToken } from '@/utils/getServerSideToken';
-import { AddressInterface } from '@/interfaces/Address';
-import { useRouter } from 'next/router';
-import Empty from '@/components/Empty';
 
 interface Props {
   addresses: AddressInterface[],
@@ -187,7 +186,7 @@ const AccountaddressesPage = ({ addresses, error }: Props) => {
                 label='Teléfono de quien recibe'
                 errors={errors}
               />
-              <Select
+              {/* <Select
                 required
                 control={control}
                 options={cityList.map(item => ({
@@ -197,7 +196,7 @@ const AccountaddressesPage = ({ addresses, error }: Props) => {
                 name="city"
                 errors={errors}
                 label="Municipio"
-              />
+              /> */}
               <Input
                 label='Calle y número'
                 name='street'
@@ -241,7 +240,6 @@ const AccountaddressesPage = ({ addresses, error }: Props) => {
                 label='Establecer como dirección de entrega principal'
                 id='main'
                 name='main'
-
               />
             </>
           </Modal>

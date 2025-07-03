@@ -140,11 +140,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
   try {
     const token = getServerSideToken(nextReq)
 
-    data = await makeRequest('get', `/api/users?role=admin,user&page=${page}&limit=${limit}&search=${search}`, {}, {
+    data = await makeRequest('get', `/api/admin/users?role=admin,user&page=${page}&limit=${limit}&search=${search}`, {}, {
       headers: {
         //@ts-ignore
-        "x-access-token": token,
-        "x-location": "admin"
+        "x-access-token": token
       }
     })
     users = data.users

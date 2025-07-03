@@ -25,14 +25,10 @@ const AddCollection = ({ visible, setVisible, onOk }: Props) => {
 
   const [collections, setCollections] = useState<any[]>([])
 
-  const [active, setActive] = useState(false)
-
-  const [highlight, setHighlight] = useState(false)
-
   async function fetchData() {
     try {
 
-      const data = await makeRequest('get', `/api/collections?active=true`)
+      const data = await makeRequest('get', `/api/public/collections?active=true`)
 
       setCollections(data.collections.map((col: CollectionInterface) => ({
         label: col.name,
@@ -45,7 +41,7 @@ const AddCollection = ({ visible, setVisible, onOk }: Props) => {
   }
 
   useEffect(() => {
-    if (visible) {
+    if (visible && collections.length === 0) {
       fetchData();
     }
   }, [visible]);
@@ -66,8 +62,8 @@ const AddCollection = ({ visible, setVisible, onOk }: Props) => {
         color: values.color,
         image: values.image,
         banner: values.banner,
-        active,
-        highlight
+        active: values.active,
+        highlight: values.highlight
       }
 
       await makeRequest('post', '/api/collections', collection)

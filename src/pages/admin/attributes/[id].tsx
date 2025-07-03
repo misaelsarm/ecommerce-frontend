@@ -259,7 +259,7 @@ const AttributeDetailsAdminPage = ({ attribute, error }: Props) => {
             />
           </Card>
         </>
-      </Page >
+      </Page>
       <Modal
         visible={editing}
         loadingState={saving /* || uploading */}
@@ -280,7 +280,7 @@ const AttributeDetailsAdminPage = ({ attribute, error }: Props) => {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   return createServerSideFetcher(context, {
-    endpoint: '/api/attributes/:id',
+    endpoint: '/api/admin/attributes/:id',
     dataKey: 'attribute',
     propKey: 'attribute'
   })
@@ -288,7 +288,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 AttributeDetailsAdminPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <Layout title="AttributeDetailsAdminPage">
+    <Layout title={`Atributos | ${page.props.attribute?.shortName}`}>
       {page}
     </Layout>
   );

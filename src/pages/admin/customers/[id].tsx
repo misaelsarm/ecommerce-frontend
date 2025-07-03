@@ -198,7 +198,7 @@ const CustomerDetailsAdminPage = ({ user, error }: Props) => {
 export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return createServerSideFetcher(context, {
-    endpoint: '/api/users/:id',
+    endpoint: '/api/admin/users/:id',
     dataKey: 'user',
     propKey: 'user'
   })
@@ -206,7 +206,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 CustomerDetailsAdminPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <Layout title={`Clientes | ${page.props.user.name}`}>
+    <Layout title={`Clientes | ${page.props.user?.name}`}>
       {page}
     </Layout>
   );

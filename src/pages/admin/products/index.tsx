@@ -19,10 +19,22 @@ interface Props {
   page: number,
   limit: number,
   batchSize: number,
-  totalRecords: number
+  totalRecords: number,
+  error: {
+    error: number,
+    message: string
+  }
 }
 
-const ProductsAdminPage = ({ products = [], page, limit, totalRecords, batchSize }: Props) => {
+const ProductsAdminPage = ({ products = [], page, limit, totalRecords, batchSize, error }: Props) => {
+
+  if (error) {
+    return (
+      <Page>
+        {error.message}
+      </Page>
+    )
+  }
 
   const [confirmDelete, setConfirmDelete] = useState(false)
 
@@ -89,20 +101,6 @@ const ProductsAdminPage = ({ products = [], page, limit, totalRecords, batchSize
   const { searchTerm, setSearchTerm, handleSearch } = useDebouncedSearch({ url: 'products', limit })
 
   const { push, query, replace, pathname } = useRouter()
-
-  // if (hasPermission(pathname, 'delete', user.permissions) || user.role === 'admin') {
-  //   columns.push({
-  //     title: 'Eliminar',
-  //     dataIndex: 'eliminar',
-  //     key: 'eliminar',
-  //     render: (_text: string, record: ProductInterface) => (
-  //       <button onClick={() => {
-  //         setConfirmDelete(true)
-  //         setDeletedProduct(record)
-  //       }} className="btn">Eliminar</button>
-  //     )
-  //   },)
-  // }
 
   return (
     <>
@@ -184,11 +182,15 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
 
   let products = []
 
+  let errorCode = null;
+
+  let errorMessage = null;
+
   try {
 
     const token = getServerSideToken(nextReq)
 
-    data = await makeRequest('get', `/api/products?page=${page}&limit=${limit}&search=${search}`, {}, {
+    data = await makeRequest('get', `/api/public/products?page=${page}&limit=${limit}&search=${search}`, {}, {
       headers: {
         "x-access-token": token
         // "x-location": "admin"
@@ -197,12 +199,19 @@ export const getServerSideProps: GetServerSideProps = async ({ req: nextReq, que
 
     products = data.products
 
-  } catch (error) {
-    console.log({ error })
+  } catch (error: any) {
+    errorCode = error.response?.status
+    errorMessage = error.response?.data.message
+  }
+
+  // Handle redirection or returning error code
+  if (errorCode) {
     return {
-      redirect: {
-        destination: '/',
-        permanent: false,
+      props: {
+        error: {
+          error: errorCode,
+          message: errorMessage
+        }
       },
     };
   }

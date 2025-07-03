@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React, { ReactElement, useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { CartInterface, CartItemInterface } from '@/interfaces'
 import { makeRequest } from '@/utils/makeRequest'
 import styles from '@/styles/Cart.module.scss'
 import CartItem from '@/components/common/CartItem/CartItem'
+import { Layout } from '@/components/online-store/Layout'
 
-const CartComponent = () => {
+const CartPage = () => {
 
 	const [cart, setCart] = useState({} as CartInterface)
 
@@ -110,4 +111,12 @@ const CartComponent = () => {
 	)
 }
 
-export default CartComponent
+CartPage.getLayout = function getLayout(page: ReactElement) {
+	return (
+		<Layout title="Carrito">
+			{page}
+		</Layout>
+	);
+};
+
+export default CartPage

@@ -21,14 +21,27 @@ const getValidBasePath = (pathname: string) => {
 
 export default async function Middleware(req: NextRequest) {
 
+    console.log('initial middleware')
+
     const { pathname } = req.nextUrl;
 
     const token = req.cookies.get('token')?.value;
 
     let user: UserInterface;
 
-    if (pathname === '/admin/login') {
-        // Allow access to the login page
+    const routesToSkip = [
+        '/admin/login',
+        '/admin/sign-up',
+        '/admin/forgot-password',
+        '/account/login',
+        '/account/sign-up',
+        '/account/forgot-password',
+        '/account/reset',
+        '/account/verify-email',
+    ];
+
+    if (routesToSkip.includes(pathname)) {
+        // Skip middleware for these routes
         return NextResponse.next();
     }
 
@@ -46,9 +59,15 @@ export default async function Middleware(req: NextRequest) {
 
         // Check if the path matches `/account` or starts with `/account/orders/`
         if ((pathname.startsWith('/account'))) {
-            // Redirect to home page when accessing protected paths without a token
-            return NextResponse.redirect(new URL('/', req.url));
+            // If accessing /admin/*, redirect to login with a returnUrl parameter
+            const loginUrl = req.nextUrl.clone();
+            const returnUrl = encodeURIComponent(pathname + req.nextUrl.search); // Encode full path and query string
+            loginUrl.pathname = '/account/login';
+            loginUrl.search = `?returnUrl=${returnUrl}`;
+            return NextResponse.redirect(loginUrl);
         }
+
+        console.log('entre aqui pero no hago nada')
     }
 
     // Case 1: User has a token (already logged in)
@@ -58,7 +77,7 @@ export default async function Middleware(req: NextRequest) {
 
             try {
 
-                const data = await makeRequest('get', '/api/auth/renew', {}, {
+                const data = await makeRequest('get', '/api/admin/auth/renew', {}, {
                     headers: {
                         "x-access-token": token,
                     }
@@ -69,8 +88,6 @@ export default async function Middleware(req: NextRequest) {
                 const userRole = user.role;
 
                 const validUser = user.active && user.verified
-
-                console.log({ validUser })
 
                 if (!validUser) {
                     // If accessing /admin/*, redirect to login with a returnUrl parameter
@@ -87,8 +104,6 @@ export default async function Middleware(req: NextRequest) {
                 // Fallback to '/admin' if the base path doesn't exist
                 const requiredPermissions = pagePermissionsMap[basePath];
 
-                console.log({ basePath, requiredPermissions })
-
                 try {
                     const userPermissions: {
                         "page": string,
@@ -97,7 +112,12 @@ export default async function Middleware(req: NextRequest) {
 
                     // If the user has an 'admin' role, skip the permission checks
                     if (userRole === 'admin') {
-                        return NextResponse.next();
+                        const response = NextResponse.next();
+
+                        response.cookies.set('user_meta', JSON.stringify({ ...user }), {
+                            path: '/',
+                        });
+                        return response;
                     }
 
                     if (requiredPermissions) {
@@ -112,6 +132,13 @@ export default async function Middleware(req: NextRequest) {
                             url.pathname = '/404';
                             return NextResponse.redirect(url);
                         }
+
+                        const response = NextResponse.next();
+
+                        response.cookies.set('user_meta', JSON.stringify({ ...user }), {
+                            path: '/',
+                        });
+                        return response;
                     }
                 } catch (error) {
                     const loginUrl = req.nextUrl.clone();
@@ -134,7 +161,7 @@ export default async function Middleware(req: NextRequest) {
         if (pathname.startsWith('/account')) {
 
             try {
-                const data = await makeRequest('get', '/api/auth/renew', {}, {
+                const data = await makeRequest('get', '/api/online-store/auth/renew', {}, {
                     headers: {
                         "x-access-token": token,
                     }
@@ -166,5 +193,5 @@ export default async function Middleware(req: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/:path*'],
+    matcher: ['/admin/:path*', '/account/:path*'],
 };
