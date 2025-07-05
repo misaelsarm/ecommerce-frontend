@@ -2,16 +2,20 @@ import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import { makeRequest } from "@/utils/makeRequest"
 import { useForm } from "react-hook-form"
-import { AttributeInterface, CollectionInterface } from "@/interfaces"
+import { AttributeInterface, CollectionInterface, ProductInterface } from "@/interfaces"
 import { Checkbox, Input, Modal, Select, Sortable, TextArea } from "@/components/common"
 
 interface Props {
   visible: boolean,
   setVisible: (visible: boolean) => void,
   onOk?: () => void
+  title: string
+
+  //only pass product if editing
+  product?: ProductInterface
 }
 
-const AddProduct = ({ visible, setVisible, onOk }: Props) => {
+export const ProductModal = ({ visible, setVisible, onOk, title, product }: Props) => {
 
   const [collections, setCollections] = useState<any[]>([])
 
@@ -48,15 +52,49 @@ const AddProduct = ({ visible, setVisible, onOk }: Props) => {
 
   const [saving, setSaving] = useState(false)
 
-  const [hasDiscount, setHasDiscount] = useState(false)
-
-  const [isCustomizable, setIsCustomizable] = useState(false)
-
-  const [isTracked, setIsTracked] = useState(false)
-
-  const [images, setImages] = useState([])
-
   const [uploading, setUploading] = useState(false)
+
+  // Initialize UI state based on the product's existing values when editing, 
+  //to conditionally render sections like discount, customization, inventory, and images
+  const [hasDiscount, setHasDiscount] = useState(product?.discount?.hasDiscount || false)
+
+  const [isCustomizable, setIsCustomizable] = useState(product?.isCustomizable || false)
+
+  const [isTracked, setIsTracked] = useState(product?.inventory?.isTracked || false)
+
+  const [images, setImages] = useState(product?.images || [])
+
+  useEffect(() => {
+    if (product && visible) {
+      reset({
+        name: product.name,
+        description: product.description,
+        keywords: product.keywords,
+        price: product.price,
+        isCustomizable: product.isCustomizable,
+        attributes: product.attributes.map(att => (
+          {
+            label: att.shortName,
+            value: att._id
+          }
+        )),
+        collections: product.collections.map(col => (
+          {
+            label: col.name,
+            value: col._id
+          }
+        )),
+        active: product.active,
+        soldOut: product.soldOut,
+        hasDiscount: product.discount?.hasDiscount,
+        discountType: product.discount?.discountType,
+        discountValue: product.discount?.discountValue,
+        isTracked: product.inventory?.isTracked,
+        availableQuantity: product.inventory?.availableQuantity
+      })
+    }
+    //reset product
+  }, [product, visible])
 
   const resetForm = () => {
     reset()
@@ -113,7 +151,7 @@ const AddProduct = ({ visible, setVisible, onOk }: Props) => {
         setVisible(false)
         resetForm()
       }}
-      title='Nuevo producto'
+      title={title}
       onClose={() => {
         setVisible(false)
         resetForm()
@@ -135,7 +173,6 @@ const AddProduct = ({ visible, setVisible, onOk }: Props) => {
           label='Descripción del producto'
           required
         />
-        {/* <MyEditorComponent /> */}
         <Input
           register={register}
           label='Palabras clave'
@@ -241,5 +278,3 @@ const AddProduct = ({ visible, setVisible, onOk }: Props) => {
     </Modal>
   )
 }
-
-export default AddProduct

@@ -1,6 +1,7 @@
 import React, { CSSProperties, ReactNode, useEffect } from 'react'
 import styles from './Modal.module.scss'
 import { motion, AnimatePresence } from 'framer-motion';
+import { Button } from '../Button/Button';
 
 interface Props {
   visible: boolean,
@@ -8,7 +9,7 @@ interface Props {
   onClose?: () => void,
   onOk?: () => void,
   onCancel?: () => void,
-  children: ReactNode,
+  children?: ReactNode,
   header?: ReactNode,
   bodyStyle?: CSSProperties,
   loadingState?: boolean,
@@ -143,12 +144,20 @@ export const Modal = ({
               {
                 showButtons &&
                 <div className={styles.modalFooter}>
-                  <button disabled={loadingState} onClick={onCancel} className='btn'>{cancelText}</button>
-                  <button disabled={loadingState} onClick={onOk} className='btn btn-primary'>{okText}</button>
+                  <Button
+                    variant='secondary'
+                    disabled={loadingState}
+                    onClick={onCancel}>
+                    {cancelText}
+                  </Button>
+                  <Button
+                    disabled={loadingState}
+                    onClick={onOk}>
+                    {okText}
+                  </Button>
                 </div>
               }
             </motion.div>
-
           </div> :
           null
       }

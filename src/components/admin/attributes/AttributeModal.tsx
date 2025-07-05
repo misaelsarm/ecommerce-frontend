@@ -1,24 +1,29 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
-import { ValueInterface } from "@/interfaces"
+import { AttributeInterface, ValueInterface } from "@/interfaces"
 import { attributeTypes } from "@/utils/attributeTypes"
 import { makeRequest } from "@/utils/makeRequest"
 import { Modal, Input, Select, Checkbox } from '@/components/common'
+import { AttributeType } from "@/utils/types"
+import { attributeTypesMap } from "@/utils/mappings"
 
 interface Props {
   visible: boolean,
   setVisible: (visible: boolean) => void,
-  onOk?: () => void
+  onOk: () => void
+  title: string,
+
+  attribute: AttributeInterface
 }
 
-const AddAttribute = ({ visible, setVisible, onOk }: Props) => {
+export const AttributeModal = ({ visible, setVisible, onOk, title, attribute }: Props) => {
 
   const { register, handleSubmit, control, reset, resetField, formState: { errors } } = useForm();
 
   const [values, setValues] = useState([] as ValueInterface[])
 
-  const [type, setType] = useState<'dropdown' | 'color' | 'long-text' | 'short-text' | ''>('')
+  const [type, setType] = useState<AttributeType | ''>(attribute?.type || '')
 
   const [saving, setSaving] = useState(false)
 
@@ -40,13 +45,22 @@ const AddAttribute = ({ visible, setVisible, onOk }: Props) => {
 
     setSaving(true)
     try {
-      const attribute = {
+      const payload = {
         ...values,
         values: values.values?.map((value: any) => value.value),
         type: values.type.value
       }
-      await makeRequest('post', '/api/attributes?active=true', attribute)
-      toast.success('Atributo agregado')
+
+
+      if (attribute) {
+        await makeRequest('put', `/api/admin/attributes/${attribute._id}`, payload)
+        toast.success('Atributo actualizado')
+      } else {
+        await makeRequest('post', '/api/admin/attributes', payload)
+        toast.success('Atributo agregado')
+      }
+
+
       setSaving(false)
       onOk && onOk()
       resetForm()
@@ -56,6 +70,26 @@ const AddAttribute = ({ visible, setVisible, onOk }: Props) => {
     }
   }
 
+  useEffect(() => {
+    if (visible && attribute) {
+      reset({
+        longName: attribute.longName,
+        shortName: attribute.shortName,
+        max: attribute.max,
+        values: attribute.values.map(val => ({
+          label: val.label,
+          value: val._id
+        })),
+        active: attribute.active,
+        type: {
+          label: attributeTypesMap[attribute.type],
+          value: attribute.type
+        }
+      })
+    }
+
+  }, [visible, attribute])
+
   return (
     <Modal
       loadingState={saving}
@@ -64,7 +98,7 @@ const AddAttribute = ({ visible, setVisible, onOk }: Props) => {
         setVisible(false)
         resetForm()
       }}
-      title='Nuevo atributo'
+      title={title}
       onClose={() => {
         setVisible(false)
         resetForm()
@@ -156,7 +190,6 @@ const AddAttribute = ({ visible, setVisible, onOk }: Props) => {
             name='max'
             errors={errors}
           />
-
         }
         <Checkbox
           register={register}
@@ -168,5 +201,3 @@ const AddAttribute = ({ visible, setVisible, onOk }: Props) => {
     </Modal >
   )
 }
-
-export default AddAttribute

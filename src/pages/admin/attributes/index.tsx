@@ -1,4 +1,4 @@
-import AddAttribute from "@/components/admin/attributes/AddAttribute"
+import {AttributeModal} from "@/components/admin/attributes/AttributeModal"
 import Layout from "@/components/admin/Layout"
 import { useDebouncedSearch } from "@/hooks/useDebouncedSearch"
 import { AttributeInterface } from "@/interfaces"
@@ -101,13 +101,14 @@ const AttributesAdminPage = ({ attributes = [], page, limit, batchSize, totalRec
                 totalRecords={totalRecords}
               />
             </Page>
-            <AddAttribute
+            <AttributeModal
               visible={visible}
               setVisible={setVisible}
               onOk={() => {
                 setVisible(false)
                 replace('/admin/attributes?page=1&limit=20')
               }}
+              title="Nuevo atributo"
             />
             <Modal
               title="Eliminar atributo"

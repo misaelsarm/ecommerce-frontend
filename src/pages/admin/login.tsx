@@ -4,7 +4,7 @@ import styles from '@/styles/admin/Auth.module.scss'
 import Cookies from 'js-cookie';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import {Input} from '@/components/common';
+import {Button, Input} from '@/components/common';
 import { makeRequest } from '@/utils/makeRequest';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/auth';
@@ -76,9 +76,11 @@ const AdminLoginPage = () => {
             />
           </div>
           <div className={styles.actions}>
-            <button disabled={loading} className='btn btn-primary btn-block'>Iniciar sesión</button>
-            <Link className='btn btn-ghost btn-block' href='/admin/sign-up'>¿No tienes cuenta? Crea una ahora</Link>
-            <Link className='btn btn-ghost btn-block' href='/admin/forgot-password'>¿Olvidaste tu contraseña?</Link>
+            <Button disabled={loading} block>Iniciar sesión</Button>
+            <Button disabled={loading} block variant='link'>Iniciar sesión</Button>
+
+            {/* <Link className='btn btn-ghost btn-block' href='/admin/sign-up'>¿No tienes cuenta? Crea una ahora</Link>
+            <Link className='btn btn-ghost btn-block' href='/admin/forgot-password'>¿Olvidaste tu contraseña?</Link> */}
           </div>
         </form>
       </div>

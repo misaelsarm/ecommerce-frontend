@@ -6,7 +6,7 @@ import { UserInterface } from '@/interfaces'
 import moment from 'moment'
 import { getServerSideToken } from '@/utils/getServerSideToken'
 import { useDebouncedSearch } from '@/hooks/useDebouncedSearch'
-import AddUser from '@/components/admin/users/AddUser'
+import AddUser from '@/components/admin/users/UserModal'
 import { makeRequest } from '@/utils/makeRequest'
 import { userRolesMap } from '@/utils/mappings';
 import { Chip, Page, Table } from '@/components/common'

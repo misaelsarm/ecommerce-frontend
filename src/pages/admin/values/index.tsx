@@ -1,5 +1,5 @@
 import Layout from "@/components/admin/Layout"
-import AddValue from "@/components/admin/values/AddValue"
+import AddValue from "@/components/admin/values/ValueModal"
 import { useDebouncedSearch } from "@/hooks/useDebouncedSearch"
 import { ValueInterface } from "@/interfaces"
 import { GetServerSideProps } from "next"

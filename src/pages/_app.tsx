@@ -6,6 +6,7 @@ import NextNProgress from 'nextjs-progressbar'
 import { useEffect } from "react";
 import Cookies from 'js-cookie'
 import { useAuthStore } from "@/store/auth";
+import { useThemeStore } from "@/store/theme";
 
 export default function App({ Component, pageProps }: AppProps) {
 
@@ -17,6 +18,8 @@ export default function App({ Component, pageProps }: AppProps) {
   const setUser = useAuthStore((state) => state.setUser);
 
   const setLoading = useAuthStore((state) => state.setLoading);
+
+  const theme = useThemeStore((state) => state.theme)
 
   useEffect(() => {
     try {
@@ -37,6 +40,8 @@ export default function App({ Component, pageProps }: AppProps) {
   return <>
     <NextNProgress color={router.pathname.startsWith('/admin') ? '#000' : '#fff'} height={4} />
     <Toaster />
-    {getLayout(<Component {...pageProps} />)}
+    <main style={theme.vars}>
+      {getLayout(<Component {...pageProps} />)}
+    </main>
   </>
 }

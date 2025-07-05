@@ -2,6 +2,7 @@ import { CSSProperties, useState } from 'react'
 import styles from './Table.module.scss'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
+import { Button } from '../Button/Button'
 
 interface Props {
   columns: any[]
@@ -141,24 +142,22 @@ export const Table = ({ data, columns, style, page = 0, limit = 0, navigateTo, b
             Página {currentPage}/{totalPages}
           </span>
           <div className={styles.buttons}>
-            <button
+            <Button
               onClick={() => {
                 push(`/${navigateTo}?page=${currentPage - 1}&limit=${limit}`);
               }}
               disabled={currentPage <= 1} // Disable when on the first page
-              className="btn btn-black"
             >
               Anterior
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => {
                 push(`/${navigateTo}?page=${currentPage + 1}&limit=${limit}`);
               }}
               disabled={currentPage >= totalPages} // Disable when on the last page
-              className="btn btn-black"
             >
               Siguiente
-            </button>
+            </Button>
           </div>
         </div>
       }

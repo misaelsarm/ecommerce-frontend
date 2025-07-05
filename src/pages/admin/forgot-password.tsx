@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import styles from '@/styles/admin/Auth.module.scss'
 import { useState } from 'react';
-import Input from '@/components/common/Input/Input';
+import { Input } from '@/components/common';
 import { makeRequest } from '@/utils/makeRequest';
 import Link from 'next/link';
 

@@ -1,4 +1,4 @@
-import AddCollection from '@/components/admin/collections/AddCollection'
+import AddCollection from '@/components/admin/collections/CollectionModal'
 import Layout from '@/components/admin/Layout'
 import { useDebouncedSearch } from '@/hooks/useDebouncedSearch'
 import { CollectionInterface } from '@/interfaces'

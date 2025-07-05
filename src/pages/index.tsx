@@ -1,5 +1,6 @@
-import {Card, CardItem, Chip, Input, Modal, Select, TextArea} from '@/components/common'
+import {Button, Card, CardItem, Chip, Input, Modal, Select, TextArea} from '@/components/common'
 import { useAuthStore } from '@/store/auth'
+import { useThemeStore } from '@/store/theme'
 import React, { useState } from 'react'
 
 const Index = () => {
@@ -11,6 +12,9 @@ const Index = () => {
   const user = useAuthStore((state) => state.user)
 
   const loading = useAuthStore((state) => state.loading)
+
+  const setTheme = useThemeStore((state) => state.setTheme)
+
 
   const options = [
     {
@@ -42,10 +46,16 @@ const Index = () => {
       <div className='mb-30'>
         <h3>Boton</h3>
         <div className='d-flex'>
-          <button className='btn mr-10'>Hello world!</button>
-          <button className='btn btn-black mr-10'>Hello world!</button>
+          
+          <Button>Hello primary!</Button>
+          <Button variant='primary'>Hello primary!</Button>
+          <Button variant='secondary'>Hello secondary!</Button>
+
+
+          {/* <button className='btn mr-10'>Hello world!</button>
+
           <button className='btn btn-gradient mr-10'>Hello world!</button>
-          <button className='btn btn-ghost'>Hello world!</button>
+          <button className='btn btn-ghost'>Hello world!</button> */}
         </div>
       </div>
       <div className='mb-30'>

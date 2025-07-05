@@ -1,8 +1,8 @@
-import { CSSProperties } from 'react';
 import styles from './Sidebar.module.scss';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { LinkInterface } from '@/utils/links';
+import { classNames } from '@/utils/css';
 
 interface Props {
   links: LinkInterface[]
@@ -12,11 +12,16 @@ export const Sidebar = ({ links }: Props) => {
 
   const { pathname } = useRouter()
 
-  // Styling for active links
-  const style: CSSProperties = {
-    color: 'white',
-    background: 'black',
-  };
+  const isActive = (currentPath: string) => {
+    if (pathname.includes(currentPath)) {
+      return styles.active
+    }
+    return ''
+  }
+
+  const className = classNames(
+    styles.link
+  )
 
   return (
     <div className={styles.sidebar}>
@@ -27,16 +32,13 @@ export const Sidebar = ({ links }: Props) => {
         <div className={styles.links}>
           {
             links.map(link => (
-              <div key={link.name}>
-                <Link
-                  style={pathname.includes(link.path) ? style : undefined}
-                  href={`${link.path}?page=1&limit=20`}
-                  className={styles.link}
-                >
-                  {link.icon}
-                  <span>{link.name}</span>
-                </Link>
-              </div>
+              <Link
+                href={`${link.path}?page=1&limit=20`}
+                className={`${className} ${isActive(link.path)}`}
+              >
+                {link.icon}
+                <span>{link.name}</span>
+              </Link>
             ))
           }
         </div>

@@ -37,7 +37,7 @@ export interface ProductInterface {
 
   keywords?: string
 
-  inventory: InventoryInterface,
+  inventory?: InventoryInterface,
 
   collections: CollectionInterface[],
 

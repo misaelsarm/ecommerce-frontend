@@ -1,4 +1,4 @@
-import AddDiscount from '@/components/admin/discounts/AddDiscount'
+import AddDiscount from '@/components/admin/discounts/DiscountModal'
 import Layout from '@/components/admin/Layout'
 import { Chip, Page, Table } from '@/components/common'
 import { useDebouncedSearch } from '@/hooks/useDebouncedSearch'

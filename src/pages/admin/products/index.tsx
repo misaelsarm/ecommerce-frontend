@@ -10,6 +10,7 @@ import toast from "react-hot-toast"
 import { getServerSideToken } from "@/utils/getServerSideToken"
 import { makeRequest } from "@/utils/makeRequest"
 import { Chip, Modal, Page, Table } from "@/components/common"
+import { ProductModal } from "@/components/admin/products/ProductModal"
 
 interface Props {
   products: ProductInterface[],
@@ -113,7 +114,8 @@ const ProductsAdminPage = ({ products = [], page, limit, totalRecords, batchSize
           limit={limit}
         />
       </Page>
-      <AddProduct
+      <ProductModal
+        title="Nuevo producto"
         visible={visible}
         setVisible={setVisible}
         onOk={() => {

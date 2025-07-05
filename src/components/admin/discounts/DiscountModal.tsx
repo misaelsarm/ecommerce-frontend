@@ -1,8 +1,4 @@
-import Checkbox from "@/components/common/Checkbox/Checkbox";
-import DatePicker from "@/components/common/DatePicker/DatePicker";
-import Input from "@/components/common/Input/Input";
-import Modal from "@/components/common/Modal/Modal";
-import Select from "@/components/common/Select/Select";
+import { Checkbox, DatePicker, Input, Modal, Select } from "@/components/common";
 import { CollectionInterface, ProductInterface } from "@/interfaces";
 import { discountLimitBy, discountTypes } from "@/utils/catalogs";
 import { makeRequest } from "@/utils/makeRequest";
