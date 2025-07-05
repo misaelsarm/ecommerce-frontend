@@ -1,22 +1,15 @@
 import Layout from "@/components/admin/Layout"
-import Input from "@/components/common/Input/Input"
-import Modal from "@/components/common/Modal/Modal"
-import Select from "@/components/common/Select/Select"
 import { ValueInterface } from "@/interfaces"
 import { GetServerSideProps } from "next"
 import { useRouter } from "next/router"
 import { ReactElement, useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
-import Chip from "@/components/common/Chip/Chip"
-import Checkbox from "@/components/common/Checkbox/Checkbox"
 import { makeRequest } from "@/utils/makeRequest"
 import { valueTypesMap } from "@/utils/mappings"
 import { createServerSideFetcher } from "@/utils/serverSideFetcher"
-import Page from "@/components/common/Page/Page"
 import { valueTypes } from "@/utils/catalogs"
-import Card from "@/components/common/Card/Card"
-import CardItem from "@/components/common/CardItem/CardItem"
+import { Card, CardItem, Checkbox, Chip, Input, Modal, Page, Select } from "@/components/common"
 
 interface Props {
   value: ValueInterface

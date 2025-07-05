@@ -1,5 +1,4 @@
 import Layout from "@/components/admin/Layout"
-import { Sortable } from "@/components/admin/Sortable"
 import { AttributeInterface, CollectionInterface, ProductInterface } from "@/interfaces"
 import { makeRequest } from "@/utils/makeRequest"
 import { GetServerSideProps } from "next"
@@ -9,7 +8,7 @@ import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import { formatCurrency } from "@/utils/formatCurrency"
 import { createServerSideFetcher } from "@/utils/serverSideFetcher"
-import { Checkbox, Input, Select, TextArea } from "@/components/common"
+import { Card, CardItem, Checkbox, Chip, Input, Modal, Page, Select, Sortable, TextArea } from "@/components/common"
 
 interface Props {
   product: ProductInterface

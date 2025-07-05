@@ -1,8 +1,4 @@
 import Layout from "@/components/admin/Layout"
-import Checkbox from "@/components/common/Checkbox/Checkbox"
-import Input from "@/components/common/Input/Input"
-import Modal from "@/components/common/Modal/Modal"
-import Select from "@/components/common/Select/Select"
 import { UserInterface } from "@/interfaces"
 import { makeRequest } from "@/utils/makeRequest"
 import { GetServerSideProps } from "next"
@@ -10,20 +6,16 @@ import { useRouter } from "next/router"
 import { ReactElement, useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
-import Chip from "@/components/common/Chip/Chip"
 import styles from '@/styles/admin/Users.module.scss'
 import moment from "moment"
 import { views } from "@/utils/views"
-import { pageResourceMap, pageTitleMap, permissionLabelMap, userRolesMap } from "@/utils/mappings"
-import Page from "@/components/common/Page/Page"
+import { pageTitleMap, permissionLabelMap, userRolesMap } from "@/utils/mappings"
 import { createServerSideFetcher } from "@/utils/serverSideFetcher"
-import Card from "@/components/common/Card/Card"
 import useActions from "@/hooks/useActions"
-import CardItem from "@/components/common/CardItem/CardItem"
 import { UserRole } from "@/utils/types"
 import { userRoles } from "@/utils/catalogs"
-import build from "next/dist/build"
 import { buildUserPermissions } from "@/utils/buildUserPermissions"
+import { Card, CardItem, Checkbox, Chip, Input, Modal, Page, Select } from "@/components/common"
 
 interface Props {
   user: UserInterface,
@@ -282,7 +274,7 @@ const UserDetailsAdminPage = ({ user, error }: Props) => {
             </>}
           />
         </Card>
-      </Page >
+      </Page>
       <Modal
         visible={editing}
         loadingState={saving /* || uploading */}

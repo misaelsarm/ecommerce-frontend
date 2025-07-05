@@ -1,16 +1,6 @@
 import Layout from '@/components/admin/Layout'
-import Card from '@/components/common/Card/Card';
-import CardItem from '@/components/common/CardItem/CardItem';
-import Checkbox from '@/components/common/Checkbox/Checkbox';
-import Chip from '@/components/common/Chip/Chip';
-import DatePicker from '@/components/common/DatePicker/DatePicker';
-import Input from '@/components/common/Input/Input';
-import Modal from '@/components/common/Modal/Modal';
-import Page from '@/components/common/Page/Page';
-import Select from '@/components/common/Select/Select';
+import { Card, CardItem, Checkbox, Chip, DatePicker, Input, Modal, Page, Select } from '@/components/common';
 import { CollectionInterface, DiscountInterface, ProductInterface } from '@/interfaces';
-import { useAuthStore } from '@/store/auth';
-import { hasPermission } from '@/utils/hasPermission';
 import { makeRequest } from '@/utils/makeRequest';
 import { discountLimitByMap, discountTypesMap } from '@/utils/mappings';
 import { createServerSideFetcher } from '@/utils/serverSideFetcher';
@@ -160,7 +150,6 @@ const DiscountDetailsPage = ({ discount, error }: Props) => {
           errors={errors}
           required
         />
-
         <Select
           required
           onChange={(e: any) => {
@@ -181,8 +170,6 @@ const DiscountDetailsPage = ({ discount, error }: Props) => {
           name='type'
           label='Tipo de descuento'
         />
-
-
         <>
           <div className="d-flex align-center">
             <Input

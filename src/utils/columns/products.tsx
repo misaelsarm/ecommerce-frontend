@@ -46,13 +46,5 @@ export const columns = [
                 record.active ? <Chip text='Activo' color='green' /> : <Chip text='No activo' />
             }
         </div>
-    },
-    {
-        title: 'Detalles',
-        dataIndex: 'detalles',
-        key: 'detalles',
-        render: (_text: string, record: ProductInterface) => (
-            <Link href={`/admin/products/${record.code}`} className='btn btn-black btn-auto'>Ver</Link>
-        )
     }
 ]

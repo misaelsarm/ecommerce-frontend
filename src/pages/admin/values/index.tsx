@@ -1,7 +1,5 @@
 import Layout from "@/components/admin/Layout"
-import Table from "@/components/common/Table/Table"
 import AddValue from "@/components/admin/values/AddValue"
-import Modal from "@/components/common/Modal/Modal"
 import { useDebouncedSearch } from "@/hooks/useDebouncedSearch"
 import { ValueInterface } from "@/interfaces"
 import { GetServerSideProps } from "next"
@@ -9,11 +7,9 @@ import { useRouter } from "next/router"
 import { ReactElement, useState } from "react"
 import toast from "react-hot-toast"
 import { getServerSideToken } from "@/utils/getServerSideToken"
-import Chip from "@/components/common/Chip/Chip"
 import { makeRequest } from "@/utils/makeRequest"
 import { valueTypesMap } from "@/utils/mappings"
-import Page from "@/components/common/Page/Page"
-import { useAuthStore } from "@/store/auth"
+import { Chip, Modal, Page, Table } from "@/components/common"
 
 interface Props {
   values: ValueInterface[],

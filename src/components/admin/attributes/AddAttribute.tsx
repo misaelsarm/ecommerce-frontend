@@ -1,13 +1,10 @@
-import { ValueInterface } from "@/interfaces"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
+import { ValueInterface } from "@/interfaces"
 import { attributeTypes } from "@/utils/attributeTypes"
 import { makeRequest } from "@/utils/makeRequest"
-import Modal from "@/components/common/Modal/Modal"
-import Input from "@/components/common/Input/Input"
-import Select from "@/components/common/Select/Select"
-import Checkbox from "@/components/common/Checkbox/Checkbox"
+import { Modal, Input, Select, Checkbox } from '@/components/common'
 
 interface Props {
   visible: boolean,

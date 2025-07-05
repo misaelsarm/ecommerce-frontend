@@ -1,15 +1,9 @@
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
-import Modal from "../../common/Modal/Modal"
 import { makeRequest } from "@/utils/makeRequest"
 import { useForm } from "react-hook-form"
-import Input from "@/components/common/Input/Input"
-import TextArea from "@/components/common/TextArea/TextArea"
-import Checkbox from "@/components/common/Checkbox/Checkbox"
-import Select from "@/components/common/Select/Select"
-import { Sortable } from "../Sortable"
 import { AttributeInterface, CollectionInterface } from "@/interfaces"
-
+import { Checkbox, Input, Modal, Select, Sortable, TextArea } from "@/components/common"
 
 interface Props {
   visible: boolean,

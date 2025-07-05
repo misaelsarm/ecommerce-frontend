@@ -1,7 +1,6 @@
 import AddDiscount from '@/components/admin/discounts/AddDiscount'
 import Layout from '@/components/admin/Layout'
-import Table from '@/components/common/Table/Table'
-import Chip from '@/components/common/Chip/Chip'
+import { Chip, Page, Table } from '@/components/common'
 import { useDebouncedSearch } from '@/hooks/useDebouncedSearch'
 import { DiscountInterface } from '@/interfaces'
 import { getServerSideToken } from '@/utils/getServerSideToken'
@@ -11,7 +10,6 @@ import moment from 'moment'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { ReactElement, useState } from 'react'
-import Page from '@/components/common/Page/Page'
 
 interface Props {
   discounts: DiscountInterface[],
@@ -66,11 +64,7 @@ const DiscountsAdminPage = ({ discounts = [], page, limit, batchSize, totalRecor
           record.active ? <Chip text='Activo' color='green' /> : <Chip text='No activo' />
         }
       </div>
-    },
-    // {
-    //   title: 'Detalles',
-    //   render: (_text: string, record: DiscountInterface) => <Link className="btn btn-black btn-auto" href={`/admin/discounts/${record._id}`}>Ver</Link>
-    // }
+    }
   ]
 
   return (

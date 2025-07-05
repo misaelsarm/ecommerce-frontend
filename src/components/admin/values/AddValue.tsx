@@ -1,11 +1,8 @@
-import Checkbox from "@/components/common/Checkbox/Checkbox";
-import Input from "@/components/common/Input/Input";
-import Modal from "@/components/common/Modal/Modal";
-import Select from "@/components/common/Select/Select";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { makeRequest } from "@/utils/makeRequest";
+import { Checkbox, Input, Modal, Select } from "@/components/common";
 
 interface Props {
   visible: boolean,

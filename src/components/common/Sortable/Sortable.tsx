@@ -14,7 +14,7 @@ import {
   sortableKeyboardCoordinates
 } from '@dnd-kit/sortable';
 
-import { SortableItem } from './SortableItem';
+import { SortableItem } from '../SortableItem/SortableItem';
 import imageCompression from 'browser-image-compression';
 import { makeRequest } from '@/utils/makeRequest';
 import toast, { LoaderIcon } from 'react-hot-toast';

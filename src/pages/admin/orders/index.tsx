@@ -88,13 +88,7 @@ const OrdersAdminPage = ({ page, limit, batchSize, totalRecords, orders, error }
       dataIndex: 'total',
       key: 'total',
       render: (_text: string, record: OrderInterface) => `$ ${numberWithCommas(record.total?.toFixed(2))}`
-    },
-    // {
-    //   title: 'Detalles',
-    //   dataIndex: 'detalles',
-    //   key: 'detalles',
-    //   render: (_text: string, record: OrderInterface) => <Link href={`/admin/orders/${record.number}`} className='btn btn-auto btn-black'>Ver pedido</Link>
-    // }
+    }
   ]
 
   return (

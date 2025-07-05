@@ -2,16 +2,14 @@ import Layout from '@/components/admin/Layout'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { ReactElement, useState } from 'react'
-import Table from '@/components/common/Table/Table'
 import { UserInterface } from '@/interfaces'
 import moment from 'moment'
 import { getServerSideToken } from '@/utils/getServerSideToken'
-import Chip from '@/components/common/Chip/Chip'
 import { useDebouncedSearch } from '@/hooks/useDebouncedSearch'
 import AddUser from '@/components/admin/users/AddUser'
 import { makeRequest } from '@/utils/makeRequest'
 import { userRolesMap } from '@/utils/mappings';
-import Page from '@/components/common/Page/Page';
+import { Chip, Page, Table } from '@/components/common'
 
 interface Props {
   users: UserInterface[],
@@ -63,14 +61,6 @@ const UsersAdminPage = ({ users, page, limit, batchSize, totalRecords, error }: 
         }
       </div>
     },
-    // {
-    //   title: 'Detalles',
-    //   dataIndex: 'detalles',
-    //   key: 'detalles',
-    //   render: (_text: string, record: UserInterface) => (
-    //     <Link href={`/admin/users/${record._id}`} className='btn btn-black btn-auto'>Ver</Link>
-    //   )
-    // },
   ]
 
   const { searchTerm, setSearchTerm, handleSearch } = useDebouncedSearch({ url: 'users', limit })

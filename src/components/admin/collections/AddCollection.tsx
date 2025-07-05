@@ -3,13 +3,7 @@ import { useForm } from 'react-hook-form';
 import { makeRequest } from '@/utils/makeRequest';
 import toast from 'react-hot-toast';
 import { CollectionInterface } from '@/interfaces';
-import Modal from '@/components/common/Modal/Modal';
-import Input from '@/components/common/Input/Input';
-import TextArea from '@/components/common/TextArea/TextArea';
-import Select from '@/components/common/Select/Select';
-import Checkbox from '@/components/common/Checkbox/Checkbox';
-import DropZone from '@/components/common/DropZone/DropZone';
-
+import { Checkbox, DropZone, Input, Modal, Select, TextArea } from '@/components/common';
 
 interface Props {
   visible: boolean,

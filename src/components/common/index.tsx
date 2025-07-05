@@ -17,6 +17,8 @@ export * from './Page/Page';
 export * from './Sidebar/Sidebar';
 export * from './Skeleton/Skeleton';
 export * from './TabBar/TabBar';
+export * from './Sortable/Sortable';
+export * from './SortableItem/SortableItem';
 
 
 

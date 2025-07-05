@@ -3,14 +3,12 @@ import Layout from '@/components/admin/Layout'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { ReactElement, useState } from 'react'
-import Table from '@/components/common/Table/Table'
 import { UserInterface } from '@/interfaces'
 import moment from 'moment'
 import { getServerSideToken } from '@/utils/getServerSideToken'
-import Chip from '@/components/common/Chip/Chip'
 import { useDebouncedSearch } from '@/hooks/useDebouncedSearch'
 import { makeRequest } from '@/utils/makeRequest'
-import Page from '@/components/common/Page/Page';
+import { Chip, Page, Table } from '@/components/common'
 
 interface Props {
   customers: UserInterface[],

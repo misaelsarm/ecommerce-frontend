@@ -5,12 +5,9 @@ import toast from "react-hot-toast";
 import styles from '@/styles/admin/Users.module.scss'
 import { UserRole } from "@/utils/types";
 import { views } from "@/utils/views";
-import Modal from "@/components/common/Modal/Modal";
-import Input from "@/components/common/Input/Input";
-import Select from "@/components/common/Select/Select";
-import Checkbox from "@/components/common/Checkbox/Checkbox";
 import { userRoles } from "@/utils/catalogs";
 import { buildUserPermissions } from "@/utils/buildUserPermissions";
+import { Checkbox, Input, Modal, Select } from "@/components/common";
 
 interface Props {
   visible: boolean,

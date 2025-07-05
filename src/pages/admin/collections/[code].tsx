@@ -1,22 +1,13 @@
-import Layout from "@/components/admin/Layout"
-import Card from "@/components/common/Card/Card"
-import CardItem from "@/components/common/CardItem/CardItem"
-import Checkbox from "@/components/common/Checkbox/Checkbox"
-import Chip from "@/components/common/Chip/Chip"
-import DropZone from "@/components/common/DropZone/DropZone"
-import Input from "@/components/common/Input/Input"
-import Modal from "@/components/common/Modal/Modal"
-import Page from "@/components/common/Page/Page"
-import Select from "@/components/common/Select/Select"
-import TextArea from "@/components/common/TextArea/TextArea"
+import { ReactElement, useState } from "react"
+import { useRouter } from "next/router"
+import { useForm } from "react-hook-form"
+import { GetServerSideProps } from "next"
+import toast from "react-hot-toast"
 import { CollectionInterface } from "@/interfaces"
 import { makeRequest } from "@/utils/makeRequest"
 import { createServerSideFetcher } from "@/utils/serverSideFetcher"
-import { GetServerSideProps } from "next"
-import { useRouter } from "next/router"
-import { ReactElement, useState } from "react"
-import { useForm } from "react-hook-form"
-import toast from "react-hot-toast"
+import Layout from "@/components/admin/Layout"
+import { Card, CardItem, Checkbox, Chip, DropZone, Input, Modal, Page, Select, TextArea } from "@/components/common"
 
 interface Props {
   collection: CollectionInterface,
@@ -24,7 +15,6 @@ interface Props {
     error: number,
     message: string
   }
-
 }
 
 const CollectionDetailsPage = ({ collection, error }: Props) => {
