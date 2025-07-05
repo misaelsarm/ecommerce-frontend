@@ -34,14 +34,9 @@ export default function App({ Component, pageProps }: AppProps) {
     }
   }, []);
 
-
   return <>
     <NextNProgress color={router.pathname.startsWith('/admin') ? '#000' : '#fff'} height={4} />
     <Toaster />
-    {/* <AuthProvider>
-      <UIProvider> */}
     {getLayout(<Component {...pageProps} />)}
-    {/* </UIProvider>
-    </AuthProvider> */}
   </>
 }

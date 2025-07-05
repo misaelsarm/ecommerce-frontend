@@ -42,10 +42,6 @@ function transformResponseToDefaultValues(dbResponse: any[]) {
 
 const UserDetailsAdminPage = ({ user, error }: Props) => {
 
-  if (error) {
-    return <Page>{error.message}</Page>
-  }
-
   const [editing, setEditing] = useState(false)
 
   const { replace, back, pathname } = useRouter()
@@ -197,6 +193,7 @@ const UserDetailsAdminPage = ({ user, error }: Props) => {
             setEditing(true)
           }
         }}
+        backAction
       >
         <Card>
           <CardItem

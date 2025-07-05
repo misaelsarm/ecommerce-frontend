@@ -11,11 +11,9 @@ import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import Chip from "@/components/common/Chip/Chip"
 import { attributeTypes } from "@/utils/attributeTypes"
-import { hasPermission } from "@/utils/hasPermission"
 import { makeRequest } from "@/utils/makeRequest"
 import { attributeTypesMap } from "@/utils/mappings"
 import { createServerSideFetcher } from "@/utils/serverSideFetcher"
-import { useAuthStore } from "@/store/auth"
 import Page from "@/components/common/Page/Page"
 import Card from "@/components/common/Card/Card"
 import CardItem from "@/components/common/CardItem/CardItem"
@@ -30,10 +28,6 @@ interface Props {
 }
 
 const AttributeDetailsAdminPage = ({ attribute, error }: Props) => {
-
-  if (error) {
-    return <Page>{error.message}</Page>
-  }
 
   async function fetchData() {
     try {
@@ -192,6 +186,7 @@ const AttributeDetailsAdminPage = ({ attribute, error }: Props) => {
           },
           //visible: !editing && hasPermission('attributes', 'update')
         }}
+        backAction
       >
         <>
           {/* <div className="page-actions">

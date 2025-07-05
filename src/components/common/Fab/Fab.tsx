@@ -7,7 +7,7 @@ interface Props {
   actionName?: string;
 }
 
-const Fab = ({ onClick, icon, actionName }: Props) => {
+export const Fab = ({ onClick, icon, actionName }: Props) => {
   return (
     <div className={styles.fabWrapper}>
       {
@@ -22,5 +22,3 @@ const Fab = ({ onClick, icon, actionName }: Props) => {
     </div>
   )
 }
-
-export default Fab

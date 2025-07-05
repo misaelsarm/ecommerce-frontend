@@ -58,7 +58,7 @@ const backdropVariants = {
   },
 };
 
-const Modal = ({
+export const Modal = ({
   visible,
   title,
   showButtons = true,
@@ -155,5 +155,3 @@ const Modal = ({
     </AnimatePresence>
   )
 }
-
-export default Modal

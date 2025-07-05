@@ -8,11 +8,8 @@ import { useRouter } from 'next/router';
 import toast from 'react-hot-toast';
 import { makeRequest } from '@/utils/makeRequest';
 import Empty from '@/components/online-store/Empty';
-import Modal from '@/components/common/Modal/Modal';
-import Input from '@/components/common/Input/Input';
-import Select from '@/components/common/Select/Select';
-import TextArea from '@/components/common/TextArea/TextArea';
-import Checkbox from '@/components/common/Checkbox/Checkbox';
+import { Checkbox, TextArea, Input, Modal } from '@/components/common';
+
 import { GetServerSideProps } from 'next';
 import { getServerSideToken } from '@/utils/getServerSideToken';
 
@@ -26,7 +23,7 @@ interface Props {
 
 const AccountaddressesPage = ({ addresses, error }: Props) => {
 
-  const { register, control, formState: { errors }, handleSubmit, reset } = useForm();
+  const { register, formState: { errors }, handleSubmit, reset } = useForm();
 
   const [visible, setVisible] = useState(false)
 

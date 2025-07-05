@@ -15,7 +15,7 @@ interface Props {
   max?: number
 }
 
-const TextArea = ({ placeholder, pattern, register, required, max, minLength, name = '', defaultValue, errors, label }: Props) => {
+export const TextArea = ({ placeholder, pattern, register, required, max, minLength, name = '', defaultValue, errors, label }: Props) => {
 
   const registerProps = register
     ? register(name, {
@@ -62,5 +62,3 @@ const TextArea = ({ placeholder, pattern, register, required, max, minLength, na
     </div>
   )
 }
-
-export default TextArea

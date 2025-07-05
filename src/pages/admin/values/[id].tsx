@@ -28,10 +28,6 @@ interface Props {
 
 const ValueDetailsAdminPage = ({ value, error }: Props) => {
 
-  if (error) {
-    return <Page>{error.message}</Page>
-  }
-
   const [editing, setEditing] = useState(false)
 
   const [type, setType] = useState(value.type)
@@ -132,6 +128,7 @@ const ValueDetailsAdminPage = ({ value, error }: Props) => {
           },
           //disabled: !canEdit
         }}
+        backAction
       >
         <Card>
           <CardItem

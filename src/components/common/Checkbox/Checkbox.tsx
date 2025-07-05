@@ -14,7 +14,7 @@ interface Props {
   id: string
 }
 
-const Checkbox = ({ register, name = 'name', label, onChange, required, id, value }: Props) => {
+export const Checkbox = ({ register, name = 'name', label, onChange, required, id, value }: Props) => {
   return (
     <div className='checkbox-group'>
       <div className="checkbox">
@@ -38,5 +38,3 @@ const Checkbox = ({ register, name = 'name', label, onChange, required, id, valu
     </div>
   )
 }
-
-export default Checkbox

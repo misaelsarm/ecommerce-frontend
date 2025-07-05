@@ -5,7 +5,7 @@ interface Props {
   children: React.ReactNode;
 }
 
-const FabGroup = ({ children }: Props) => {
+export const FabGroup = ({ children }: Props) => {
   return (
     <div
       className={styles.fabGroup}
@@ -14,5 +14,3 @@ const FabGroup = ({ children }: Props) => {
     </div>
   )
 }
-
-export default FabGroup

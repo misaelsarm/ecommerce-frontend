@@ -20,7 +20,7 @@ interface Props {
   onChange?: ChangeEventHandler<HTMLInputElement>
 }
 
-const Input = ({ placeholder, type = 'text', pattern, register, required, max, minLength, name = 'name', defaultValue, errors, disabled, inputMode, label, validate, value, onChange }: Props) => {
+export const Input = ({ placeholder, type = 'text', pattern, register, required, max, minLength, name = 'name', defaultValue, errors, disabled, inputMode, label, validate, value, onChange }: Props) => {
 
   const [showPassword, setShowPassword] = useState(false)
 
@@ -114,5 +114,3 @@ const Input = ({ placeholder, type = 'text', pattern, register, required, max, m
     </div>
   )
 }
-
-export default Input

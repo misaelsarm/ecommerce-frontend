@@ -18,7 +18,7 @@ interface Props {
   formatCreateLabel?: any
 }
 
-const Select: React.FC<Props> = ({
+export const Select: React.FC<Props> = ({
   control,
   options,
   label,
@@ -116,5 +116,3 @@ const Select: React.FC<Props> = ({
     </div>
   );
 };
-
-export default Select;

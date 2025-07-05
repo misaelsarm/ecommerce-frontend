@@ -1,29 +1,18 @@
-import { UIContext } from '@/context/ui/UIContext'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import styles from '@/styles/Nav.module.scss'
-import { useAuthStore } from '@/store/auth'
+import { useUIStore } from '@/store/ui'
 
 const Nav = () => {
 
   const [visible, setVisible] = useState(false)
 
-  const { setVisible: setModalVisible, setModalType, setSearchVisible, collections } = useContext(UIContext)
-
-  const router = useRouter()
-
-  const user = useAuthStore(state => state.user)
-
-  console.log({ user })
+  const collections = useUIStore(state => state.collections)
 
   return (
     <>
       <div className={styles.wrapper}>
-        {/* <div className={styles.top}>
-          <span>entregas de lunes a domingo</span>
-        </div> */}
         <nav className={styles.nav}>
           <Link className={styles.logo} href='/'>
             <Image
@@ -47,7 +36,6 @@ const Nav = () => {
                 </Link>
               ))
             }
-
           </div>
           <div className={styles.icons}>
             <Link
@@ -81,6 +69,9 @@ const Nav = () => {
           </div>
         </nav>
       </div>
+      {
+        visible && 'Drawer'
+      }
 
       {/* <Drawer
         visible={visible}

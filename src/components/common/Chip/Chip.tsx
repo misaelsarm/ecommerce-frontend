@@ -7,7 +7,7 @@ interface ChipProps {
   onClose?: () => void;
 }
 
-const Chip: React.FC<ChipProps> = ({ text, color = 'grey', onClose }) => {
+export const Chip: React.FC<ChipProps> = ({ text, color = 'grey', onClose }) => {
   return (
     <div className={`${styles.chip} ${styles[color]}`}>
       {text}
@@ -19,5 +19,3 @@ const Chip: React.FC<ChipProps> = ({ text, color = 'grey', onClose }) => {
     </div>
   );
 };
-
-export default Chip;

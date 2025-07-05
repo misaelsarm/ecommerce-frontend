@@ -1,19 +1,15 @@
 import AddAttribute from "@/components/admin/attributes/AddAttribute"
 import Layout from "@/components/admin/Layout"
-import Table from "@/components/common/Table/Table"
-import Modal from "@/components/common/Modal/Modal"
 import { useDebouncedSearch } from "@/hooks/useDebouncedSearch"
 import { AttributeInterface } from "@/interfaces"
 import { GetServerSideProps } from "next"
-import Link from "next/link"
 import { useRouter } from "next/router"
 import { ReactElement, useState } from "react"
 import toast from "react-hot-toast"
 import { getServerSideToken } from "@/utils/getServerSideToken"
-import Chip from "@/components/common/Chip/Chip"
 import { makeRequest } from "@/utils/makeRequest"
 import { attributeTypesMap } from "@/utils/mappings"
-import Page from "@/components/common/Page/Page"
+import { Chip, Modal, Page, Table } from "@/components/common"
 
 interface Props {
   attributes: AttributeInterface[],

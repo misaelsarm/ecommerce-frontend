@@ -3,15 +3,14 @@ import React, { ReactElement } from 'react';
 import { OrderInterface } from "@/interfaces";
 import { Layout } from "@/components/online-store/Layout";
 import { makeRequest } from "@/utils/makeRequest";
-
 import { formatCurrency } from "@/utils/formatCurrency";
 import moment from "moment";
 import AccountLayout from "@/components/online-store/AccountLayout";
 import { GetServerSideProps } from "next";
 import { getServerSideToken } from "@/utils/getServerSideToken";
 import styles from '@/styles/online-store/account/OrderDetails.module.scss'
-import Chip from "@/components/common/Chip/Chip";
 import { orderPaymentMethodMap, orderStatusColorMap } from "@/utils/mappings";
+import { CartItem, Chip } from "@/components/common";
 
 interface Props {
   order: OrderInterface

@@ -8,7 +8,7 @@ interface ButtonProps {
   children?: React.ReactNode;
 }
 
-const Button = ({ onClick, label, className, disabled, children }: ButtonProps) => {
+export const Button = ({ onClick, label, className, disabled, children }: ButtonProps) => {
   return (
     <button
       disabled={disabled}
@@ -19,5 +19,3 @@ const Button = ({ onClick, label, className, disabled, children }: ButtonProps) 
     </button>
   )
 }
-
-export default Button

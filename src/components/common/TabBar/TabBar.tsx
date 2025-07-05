@@ -8,7 +8,7 @@ interface Props {
   links: LinkInterface[]
 }
 
-const TabBar = ({ links }: Props) => {
+export const TabBar = ({ links }: Props) => {
 
   const firstFive = links.slice(0, 4)
 
@@ -74,5 +74,3 @@ const TabBar = ({ links }: Props) => {
     </div>
   )
 }
-
-export default TabBar

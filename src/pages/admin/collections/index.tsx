@@ -33,14 +33,6 @@ interface Props {
 
 const CollectionsAdminPage = ({ collections = [], page, limit, batchSize, totalRecords, error }: Props) => {
 
-  if (error) {
-    return (
-      <Page>
-        {error.message}
-      </Page>
-    )
-  }
-
   const [confirmDelete, setConfirmDelete] = useState(false)
 
   const [deletedCollection, setDeletedCollection] = useState({} as CollectionInterface)

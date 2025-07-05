@@ -19,7 +19,7 @@ interface Props {
   folder: string
 }
 
-const DropZone = ({ width = '100%', height = '300px', label, register, name, setValue, required, defaultValue, folder, errors }: Props) => {
+export const DropZone = ({ width = '100%', height = '300px', label, register, name, setValue, required, defaultValue, folder, errors }: Props) => {
 
   useEffect(() => {
     if (defaultValue) {
@@ -123,5 +123,3 @@ const DropZone = ({ width = '100%', height = '300px', label, register, name, set
     </div>
   );
 }
-
-export default DropZone

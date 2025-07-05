@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Control, Controller, FieldErrors, FieldValues } from 'react-hook-form';
-import ReactSelect from 'react-select';
 import ReactDatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -14,7 +13,7 @@ interface Props {
   onChange?: any;
 }
 
-const DatePicker: React.FC<Props> = ({
+export const DatePicker: React.FC<Props> = ({
   control,
   label,
   name = 'name',
@@ -70,5 +69,3 @@ const DatePicker: React.FC<Props> = ({
     </div>
   );
 };
-
-export default DatePicker;

@@ -1,19 +1,15 @@
 import { GetServerSideProps } from 'next'
-import Link from 'next/link'
 import React, { ReactElement } from 'react'
 import { useRouter } from 'next/router'
 import Layout from '@/components/admin/Layout';
-import Table from '@/components/common/Table/Table';
-import PageHeader from '@/components/common/PageHeader/PageHeader';
 import { OrderInterface } from '@/interfaces';
 import { useDebouncedSearch } from '@/hooks/useDebouncedSearch';
 import { numberWithCommas } from '@/utils/numberWithCommas';
-import Chip from '@/components/common/Chip/Chip';
 import { getServerSideToken } from '@/utils/getServerSideToken';
 import { makeRequest } from '@/utils/makeRequest';
 import moment from 'moment';
-import Page from '@/components/common/Page/Page';
 import { orderStatusColorMap } from '@/utils/mappings';
+import { Chip, Page, Table } from '@/components/common';
 
 interface Props {
   orders: OrderInterface[],
@@ -28,14 +24,6 @@ interface Props {
 }
 
 const OrdersAdminPage = ({ page, limit, batchSize, totalRecords, orders, error }: Props) => {
-
-  if (error) {
-    return (
-      <Page>
-        {error.message}
-      </Page>
-    )
-  }
 
   const { push, query } = useRouter()
 

@@ -6,7 +6,7 @@ import Select from "@/components/common/Select/Select";
 import { CollectionInterface, ProductInterface } from "@/interfaces";
 import { discountLimitBy, discountTypes } from "@/utils/catalogs";
 import { makeRequest } from "@/utils/makeRequest";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 

@@ -4,7 +4,7 @@ import styles from '@/styles/admin/Auth.module.scss'
 import Cookies from 'js-cookie';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import Input from '@/components/common/Input/Input';
+import {Input} from '@/components/common';
 import { makeRequest } from '@/utils/makeRequest';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/auth';

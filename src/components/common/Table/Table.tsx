@@ -17,7 +17,7 @@ interface Props {
   paramKey: string
 }
 
-const Table = ({ data, columns, style, page = 0, limit = 0, navigateTo, batchSize, totalRecords, showButtons = true, paramKey }: Props) => {
+export const Table = ({ data, columns, style, page = 0, limit = 0, navigateTo, batchSize, totalRecords, showButtons = true, paramKey }: Props) => {
 
   const [sortConfig, setSortConfig] = useState<any>(null);
 
@@ -165,5 +165,3 @@ const Table = ({ data, columns, style, page = 0, limit = 0, navigateTo, batchSiz
     </div>
   )
 }
-
-export default Table

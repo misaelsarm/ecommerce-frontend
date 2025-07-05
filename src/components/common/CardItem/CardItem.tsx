@@ -6,7 +6,7 @@ interface Props {
   content?: React.ReactNode
 }
 
-const CardItem = ({ title, content }: Props) => {
+export const CardItem = ({ title, content }: Props) => {
   return (
     <div className={styles.cardItem}>
       <h4>{title}</h4>
@@ -14,5 +14,3 @@ const CardItem = ({ title, content }: Props) => {
     </div>
   )
 }
-
-export default CardItem

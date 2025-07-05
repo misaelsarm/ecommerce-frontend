@@ -29,10 +29,6 @@ interface Props {
 
 const CollectionDetailsPage = ({ collection, error }: Props) => {
 
-  if (error) {
-    return <Page>{error.message}</Page>
-  }
-
   const [editing, setEditing] = useState(false)
 
   const { register, handleSubmit, control, formState: { errors }, setValue } = useForm<any>({
@@ -171,6 +167,7 @@ const CollectionDetailsPage = ({ collection, error }: Props) => {
         }}
         fullWidth={false}
         maxwidth="700px"
+        backAction
       >
         <Card>
           <CardItem

@@ -1,9 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
 import styles from './CartItem.module.scss'
-import { AttributeInterface, CartItemInterface } from '@/interfaces'
-
+import { CartItemInterface } from '@/interfaces'
 
 interface Props extends CartItemInterface {
   onRemove?: (e?: any) => void,
@@ -14,7 +12,7 @@ interface Props extends CartItemInterface {
   showPrice?: boolean
 }
 
-const CartItem = ({ name, description, isCustomizable, price, images, code, onRemove, discount, showAttributes = true, attributes, original, showImage = true, showPrice = true }: Props) => {
+export const CartItem = ({ name, description, isCustomizable, price, images, code, onRemove, discount, showAttributes = true, attributes, original, showImage = true, showPrice = true }: Props) => {
 
   const discountStyles = {
     textDecoration: 'line-through',
@@ -109,5 +107,3 @@ const CartItem = ({ name, description, isCustomizable, price, images, code, onRe
     </Link>
   )
 }
-
-export default CartItem

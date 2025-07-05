@@ -1,7 +1,5 @@
-import { UIContext } from "@/context/ui/UIContext"
 import Head from "next/head"
 import { useRouter } from "next/router"
-import { useContext } from "react"
 import Nav from "./Navbar"
 import Image from "next/image"
 
@@ -23,8 +21,6 @@ export const Layout = ({
   description = 'En Globemily® nos dedicamos a la creación de eventos, arreglos de globos y  arreglos florales estilo bouquet. Utilizamos flores frescas elegidas especialmente para cada uno de nuestros clientes en cajas, bases, ramos y demás productos, siempre con los mejores acabados.'
 }: Props) => {
   const { asPath } = useRouter()
-
-  const { visible, setVisible, modalType, searchVisible, setSearchVisible } = useContext(UIContext)
 
   return (
     <>

@@ -1,8 +1,7 @@
 import React, { MouseEventHandler } from 'react'
 import styles from './Page.module.scss'
-import Button from '../Button/Button'
-import Link from 'next/link';
-import Input from '../Input/Input';
+import { useRouter } from 'next/router';
+import { Button, Input } from '../';
 
 interface Action {
   name: string,
@@ -10,16 +9,12 @@ interface Action {
   className?: string
   public?: boolean;
 }
-
-
 interface Props {
   children?: React.ReactNode
   title?: string
   primaryAction?: Action
   seconDaryActions?: Action[]
-  backAction?: {
-    url: string,
-  }
+  backAction?: boolean,
   fullWidth?: boolean
   maxwidth?: string
   search?: {
@@ -29,7 +24,7 @@ interface Props {
   }
 }
 
-const Page = ({
+export const Page = ({
   children,
   title,
   primaryAction,
@@ -40,6 +35,9 @@ const Page = ({
   search
 
 }: Props) => {
+
+  const { back } = useRouter()
+
   return (
     <div className={styles.pageWrapper}>
       <div
@@ -52,13 +50,13 @@ const Page = ({
             <div className={styles.pageHeaderLeft}>
               {
                 backAction &&
-                <Link
-                  href={backAction.url}
+                <button
+                  onClick={back}
                   className={styles.backAction}>
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                   </svg>
-                </Link>
+                </button>
               }
               <div className={styles.pageHeaderTitle}>
                 <h2>{title}</h2>
@@ -106,7 +104,7 @@ const Page = ({
                 <Input
                   placeholder='Buscar...'
                   onChange={search.handleSearch}
-                  value={search.searchTerm}
+                  value={search.searchTerm as string}
                 />
                 {
                   search.searchTerm &&
@@ -156,5 +154,3 @@ const Page = ({
     </div>
   )
 }
-
-export default Page

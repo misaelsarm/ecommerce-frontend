@@ -1,10 +1,5 @@
 import Layout from "@/components/admin/Layout"
 import { Sortable } from "@/components/admin/Sortable"
-import Checkbox from "@/components/common/Checkbox/Checkbox"
-import Input from "@/components/common/Input/Input"
-import Modal from "@/components/common/Modal/Modal"
-import Select from "@/components/common/Select/Select"
-import TextArea from "@/components/common/TextArea/TextArea"
 import { AttributeInterface, CollectionInterface, ProductInterface } from "@/interfaces"
 import { makeRequest } from "@/utils/makeRequest"
 import { GetServerSideProps } from "next"
@@ -12,12 +7,9 @@ import { useRouter } from "next/router"
 import { ReactElement, useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
-import Chip from "@/components/common/Chip/Chip"
-import Page from "@/components/common/Page/Page"
-import Card from "@/components/common/Card/Card"
-import CardItem from "@/components/common/CardItem/CardItem"
 import { formatCurrency } from "@/utils/formatCurrency"
 import { createServerSideFetcher } from "@/utils/serverSideFetcher"
+import { Checkbox, Input, Select, TextArea } from "@/components/common"
 
 interface Props {
   product: ProductInterface
@@ -28,10 +20,6 @@ interface Props {
 }
 
 const ProductDetailsAdminPage = ({ product, error }: Props) => {
-
-  if (error) {
-    return <Page>{error.message}</Page>
-  }
 
   const [editing, setEditing] = useState(false)
 
@@ -105,16 +93,6 @@ const ProductDetailsAdminPage = ({ product, error }: Props) => {
   const { replace } = useRouter()
 
   const [uploading, setUploading] = useState(false)
-
-  //const { handleFileUpload, uploading } = useFileUpload();
-
-  const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    // const file = e.target.files?.[0];
-    // if (file) {
-    //   const data = await handleFileUpload(file);
-    //   setImage(data as string)
-    // }
-  };
 
   const onSubmit = async (values: any) => {
 
@@ -295,9 +273,7 @@ const ProductDetailsAdminPage = ({ product, error }: Props) => {
           }
           //className: 'btn btn-primary'
         }}
-        backAction={{
-          url: '/admin/products'
-        }}
+        backAction
         fullWidth={false}
         maxwidth="700px"
       >

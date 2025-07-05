@@ -1,16 +1,5 @@
-
-import { Sortable } from '@/components/admin/Sortable'
-import Button from '@/components/common/Button/Button'
-import Card from '@/components/common/Card/Card'
-import CardItem from '@/components/common/CardItem/CardItem'
-//import Auth from '@/components/Auth'
-import Chip from '@/components/common/Chip/Chip'
-import Input from '@/components/common/Input/Input'
-import Modal from '@/components/common/Modal/Modal'
-import Select from '@/components/common/Select/Select'
-import TextArea from '@/components/common/TextArea/TextArea'
+import {Card, CardItem, Chip, Input, Modal, Select, TextArea} from '@/components/common'
 import { useAuthStore } from '@/store/auth'
-import { useCounterStore } from '@/store/counter'
 import React, { useState } from 'react'
 
 const Index = () => {

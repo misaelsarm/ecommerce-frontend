@@ -1,6 +1,3 @@
-import Layout from '@/components/admin/Layout'
-import React from 'react'
-
 const NotFound = () => {
   return (
 

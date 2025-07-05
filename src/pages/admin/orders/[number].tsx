@@ -23,10 +23,6 @@ interface Props {
 
 const OrderDetailsPage = ({ order, error }: Props) => {
 
-  if (error) {
-    return <Page>{error.message}</Page>
-  }
-
   const [editing, setEditing] = useState(false)
 
   //@ts-ignore
@@ -38,9 +34,7 @@ const OrderDetailsPage = ({ order, error }: Props) => {
         maxwidth='700px'
         fullWidth={false}
         title={`Pedido #${order.number}`}
-        backAction={{
-          url: '/admin/orders',
-        }}
+        backAction
         primaryAction={{
           name: 'Editar',
           onClick: () => {
@@ -48,6 +42,7 @@ const OrderDetailsPage = ({ order, error }: Props) => {
           },
           //disabled: !canCreateEdit,
         }}
+        
       >
         <Card>
           <>

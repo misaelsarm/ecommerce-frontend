@@ -31,10 +31,6 @@ interface Props {
 
 const DiscountDetailsPage = ({ discount, error }: Props) => {
 
-  if (error) {
-    return <Page>{error.message}</Page>
-  }
-
   const [editing, setEditing] = useState(false)
 
   const [saving, setSaving] = useState(false)
@@ -289,85 +285,84 @@ const DiscountDetailsPage = ({ discount, error }: Props) => {
 
   return (
     <>
-      <>
-        <Page
-          title={`Detalle de descuento: ${discount.name}`}
-          primaryAction={{
-            name: 'Editar',
-            onClick: () => {
-              setEditing(true)
-              fetchProducts()
-              fetchCollections()
-            },
-            // visible: hasPermission('discounts', 'edit'),
-            // icon: 'edit'
-          }}
-          fullWidth={false}
-          maxwidth='700px'
-        >
-          <Card>
-            <CardItem
-              title='Nombre'
-              content={<span>{discount.name}</span>}
-            />
-            <CardItem
-              title='Tipo'
-              content={<span>{discountTypesMap[discount.type]}</span>}
-            />
-            <CardItem
-              title='Valor del descuento'
-              content={<span>{discount.type === 'percentage' ? `${discount.value}%` : `$ ${discount.value.toFixed(2)} MXN`}</span>
-              }
-            />
-            <CardItem
-              title='Fecha de expiración'
-              content={<span>{moment(discount.endDate).format('ll')}</span>
-              }
-            />
-            <CardItem
-              title='Fecha de expiración'
-              content={<span>{moment(discount.endDate).format('ll')}</span>
-              }
-            />
-            <CardItem
-              title='Estado'
-              content={discount.active ? <Chip text='Activo' color='green' /> : <Chip text='No activo' />
-              }
-            />
-            {
-              discount.limited &&
-              <CardItem
-                title='Elegibilidad'
-                content={
-                  <>
-                    <span>Este descuento solo aplica para los siguientes productos: </span>
-                    <br />
-                    {
-                      discount?.applicableProducts?.map(product => (
-                        <span key={product.name}>{product.name}</span>
-                      ))
-                    }
-                  </>
-                }
-              />
+      <Page
+        title={`Detalle de descuento: ${discount.name}`}
+        primaryAction={{
+          name: 'Editar',
+          onClick: () => {
+            setEditing(true)
+            fetchProducts()
+            fetchCollections()
+          },
+          // visible: hasPermission('discounts', 'edit'),
+          // icon: 'edit'
+        }}
+        fullWidth={false}
+        maxwidth='700px'
+        backAction
+      >
+        <Card>
+          <CardItem
+            title='Nombre'
+            content={<span>{discount.name}</span>}
+          />
+          <CardItem
+            title='Tipo'
+            content={<span>{discountTypesMap[discount.type]}</span>}
+          />
+          <CardItem
+            title='Valor del descuento'
+            content={<span>{discount.type === 'percentage' ? `${discount.value}%` : `$ ${discount.value.toFixed(2)} MXN`}</span>
             }
-          </Card>
-        </Page >
-        <Modal
-          visible={editing}
-          loadingState={saving}
-          onOk={handleSubmit(onSubmit)}
-          onCancel={() => {
-            setEditing(false)
-          }}
-          title='Editar descuento'
-          onClose={() => {
-            setEditing(false)
-          }}
-        >
-          {renderForm()}
-        </Modal>
-      </>
+          />
+          <CardItem
+            title='Fecha de expiración'
+            content={<span>{moment(discount.endDate).format('ll')}</span>
+            }
+          />
+          <CardItem
+            title='Fecha de expiración'
+            content={<span>{moment(discount.endDate).format('ll')}</span>
+            }
+          />
+          <CardItem
+            title='Estado'
+            content={discount.active ? <Chip text='Activo' color='green' /> : <Chip text='No activo' />
+            }
+          />
+          {
+            discount.limited &&
+            <CardItem
+              title='Elegibilidad'
+              content={
+                <>
+                  <span>Este descuento solo aplica para los siguientes productos: </span>
+                  <br />
+                  {
+                    discount?.applicableProducts?.map(product => (
+                      <span key={product.name}>{product.name}</span>
+                    ))
+                  }
+                </>
+              }
+            />
+          }
+        </Card>
+      </Page >
+      <Modal
+        visible={editing}
+        loadingState={saving}
+        onOk={handleSubmit(onSubmit)}
+        onCancel={() => {
+          setEditing(false)
+        }}
+        title='Editar descuento'
+        onClose={() => {
+          setEditing(false)
+        }}
+      >
+        {renderForm()}
+      </Modal>
     </>
   )
 }

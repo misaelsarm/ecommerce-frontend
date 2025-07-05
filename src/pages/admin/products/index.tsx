@@ -1,7 +1,5 @@
 import Layout from "@/components/admin/Layout"
 import AddProduct from "@/components/admin/products/AddProduct"
-import Table from "@/components/common/Table/Table"
-import Modal from "@/components/common/Modal/Modal"
 import { useDebouncedSearch } from "@/hooks/useDebouncedSearch"
 import { ProductInterface } from "@/interfaces"
 import { GetServerSideProps } from "next"
@@ -10,9 +8,8 @@ import { useRouter } from "next/router"
 import { ReactElement, useState } from "react"
 import toast from "react-hot-toast"
 import { getServerSideToken } from "@/utils/getServerSideToken"
-import Chip from "@/components/common/Chip/Chip"
 import { makeRequest } from "@/utils/makeRequest"
-import Page from "@/components/common/Page/Page"
+import { Chip, Modal, Page, Table } from "@/components/common"
 
 interface Props {
   products: ProductInterface[],
@@ -27,14 +24,6 @@ interface Props {
 }
 
 const ProductsAdminPage = ({ products = [], page, limit, totalRecords, batchSize, error }: Props) => {
-
-  if (error) {
-    return (
-      <Page>
-        {error.message}
-      </Page>
-    )
-  }
 
   const [confirmDelete, setConfirmDelete] = useState(false)
 
@@ -86,14 +75,6 @@ const ProductsAdminPage = ({ products = [], page, limit, totalRecords, batchSize
         }
       </div>
     },
-    // {
-    //   title: 'Detalles',
-    //   dataIndex: 'detalles',
-    //   key: 'detalles',
-    //   render: (_text: string, record: ProductInterface) => (
-    //     <Link href={`/admin/products/${record.code}`} className='btn btn-black btn-auto'>Ver</Link>
-    //   )
-    // }
   ]
 
   const [visible, setVisible] = useState(false)

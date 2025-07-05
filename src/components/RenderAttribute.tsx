@@ -38,15 +38,13 @@ export const RenderAttribute = ({ attribute, register, errors, control, index, n
 	productIndex
 }: Props) => {
 
-	console.log({ productIndex })
+	// const formatOptionLabel1 = ({ label, name }: any) => (
+	// 	<span className={name}> {label}</span>
+	// );
 
-	const formatOptionLabel1 = ({ label, name }: any) => (
-		<span className={name}> {label}</span>
-	);
-
-	const formatOptionLabel2 = ({ label, name }: any) => (
-		<span className={name} >{label}</span>
-	);
+	// const formatOptionLabel2 = ({ label, name }: any) => (
+	// 	<span className={name} >{label}</span>
+	// );
 
 	// Custom validation function to limit the number of selected checkboxes
 	const validateCheckboxLimit = (selectedCheckboxes: any, limit: number) => {
