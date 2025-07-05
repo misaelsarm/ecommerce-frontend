@@ -1,10 +1,5 @@
 import Layout from '@/components/admin/Layout'
-import Card from '@/components/common/Card/Card'
-import CardItem from '@/components/common/CardItem/CardItem'
-import CartItem from '@/components/common/CartItem/CartItem'
-import Chip from '@/components/common/Chip/Chip'
-import Modal from '@/components/common/Modal/Modal'
-import Page from '@/components/common/Page/Page'
+import { Card, CardItem, CartItem, Chip, Modal, Page } from '@/components/common'
 import { OrderInterface } from '@/interfaces'
 import { formatCurrency } from '@/utils/formatCurrency'
 import { orderStatusColorMap } from '@/utils/mappings'
@@ -24,8 +19,7 @@ interface Props {
 const OrderDetailsPage = ({ order, error }: Props) => {
 
   const [editing, setEditing] = useState(false)
-
-  //@ts-ignore
+  
   const color = orderStatusColorMap[order.status];
 
   return (

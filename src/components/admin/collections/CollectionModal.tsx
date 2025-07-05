@@ -4,31 +4,29 @@ import { makeRequest } from '@/utils/makeRequest';
 import toast from 'react-hot-toast';
 import { CollectionInterface } from '@/interfaces';
 import { Checkbox, DropZone, Input, Modal, Select, TextArea } from '@/components/common';
+import { ModalBaseProps } from '@/interfaces/ModalBaseProps';
+import { useRouter } from 'next/router';
+import { generateSlug } from '@/utils/generateSlug';
 
-interface Props {
-  visible: boolean,
-  setVisible: (visible: boolean) => void,
-  onOk?: () => void
+interface Props extends ModalBaseProps {
+  collection: CollectionInterface
 }
 
-const AddCollection = ({ visible, setVisible, onOk }: Props) => {
-
-  const [saving, setSaving] = useState(false)
+export const CollectionModal = ({ visible, setVisible, title, collection }: Props) => {
 
   const { register, handleSubmit, reset, control, formState: { errors }, setValue } = useForm();
-
+  const [saving, setSaving] = useState(false)
   const [collections, setCollections] = useState<any[]>([])
+
+  const { replace } = useRouter()
 
   async function fetchData() {
     try {
-
       const data = await makeRequest('get', `/api/public/collections?active=true`)
-
       setCollections(data.collections.map((col: CollectionInterface) => ({
         label: col.name,
         value: col._id
       })))
-
     } catch (error: any) {
       toast.error(error?.response?.data?.message || 'Error')
     }
@@ -47,25 +45,31 @@ const AddCollection = ({ visible, setVisible, onOk }: Props) => {
   const onSubmit = async (values: any) => {
     try {
       setSaving(true)
-      const collection = {
+      const code = generateSlug(values.name)
 
+      const payload = {
         name: values.name,
         description: values.description,
         parents: values.parents?.map((item: any) => item.value),
         keywords: values.keywords,
         color: values.color,
         image: values.image,
-        banner: values.banner,
         active: values.active,
-        highlight: values.highlight
+        highlight: values.highlight,
+        code
       }
 
-      await makeRequest('post', '/api/collections', collection)
-
+      if (collection) {
+        await makeRequest('put', `/api/admin/collections/${collection._id}`, payload)
+        toast.success('Colección actualizada')
+      } else {
+        await makeRequest('post', '/api/admin/collections', payload)
+        toast.success('Colección creada')
+      }
+      replace(`/admin/collections/${code}`)
       resetForm()
       setSaving(false)
       setVisible(false)
-      onOk && onOk()
     } catch (error: any) {
       console.log({ error })
       toast.error(error?.response?.data?.message || 'Error al añadir la colección.' + error)
@@ -73,15 +77,35 @@ const AddCollection = ({ visible, setVisible, onOk }: Props) => {
     }
   }
 
+  useEffect(() => {
+    if (visible && collection) {
+      reset({
+        ...collection,
+        name: collection.name,
+        description: collection.description,
+        keywords: collection.keywords,
+        parentCollection: {
+          label: collection.parentCollection?.name,
+          value: collection.parentCollection?._id
+        },
+        products: collection.products?.map(prod => ({
+          label: prod?.name,
+          value: prod?._id
+        })),
+        active: collection.active,
+      })
+    }
+  }, [visible, collection])
+
   return (
     <Modal
-      loadingState={saving/*  || uploading */}
+      loadingState={saving}
       onOk={handleSubmit(onSubmit)}
       onCancel={() => {
         setVisible(false)
         resetForm()
       }}
-      title='Nueva colección'
+      title={title}
       onClose={() => {
         setVisible(false)
         resetForm()
@@ -140,10 +164,9 @@ const AddCollection = ({ visible, setVisible, onOk }: Props) => {
           errors={errors}
           width='100%'
           height='300px'
+          defaultValue={collection?.image || undefined}
         />
       </>
     </Modal >
   )
 }
-
-export default AddCollection

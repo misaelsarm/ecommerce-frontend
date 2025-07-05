@@ -7,17 +7,14 @@ import { makeRequest } from "@/utils/makeRequest"
 import { Modal, Input, Select, Checkbox } from '@/components/common'
 import { AttributeType } from "@/utils/types"
 import { attributeTypesMap } from "@/utils/mappings"
+import { ModalBaseProps } from "@/interfaces/ModalBaseProps"
+import { useRouter } from "next/router"
 
-interface Props {
-  visible: boolean,
-  setVisible: (visible: boolean) => void,
-  onOk: () => void
-  title: string,
-
-  attribute: AttributeInterface
+interface Props extends ModalBaseProps {
+  attribute?: AttributeInterface
 }
 
-export const AttributeModal = ({ visible, setVisible, onOk, title, attribute }: Props) => {
+export const AttributeModal = ({ visible, setVisible, title, attribute }: Props) => {
 
   const { register, handleSubmit, control, reset, resetField, formState: { errors } } = useForm();
 
@@ -26,6 +23,8 @@ export const AttributeModal = ({ visible, setVisible, onOk, title, attribute }: 
   const [type, setType] = useState<AttributeType | ''>(attribute?.type || '')
 
   const [saving, setSaving] = useState(false)
+
+  const { replace } = useRouter()
 
   const resetForm = () => {
     reset()
@@ -51,18 +50,19 @@ export const AttributeModal = ({ visible, setVisible, onOk, title, attribute }: 
         type: values.type.value
       }
 
-
+      let id = ''
       if (attribute) {
         await makeRequest('put', `/api/admin/attributes/${attribute._id}`, payload)
         toast.success('Atributo actualizado')
+        id = attribute._id
       } else {
-        await makeRequest('post', '/api/admin/attributes', payload)
+        const response = await makeRequest('post', '/api/admin/attributes', payload)
         toast.success('Atributo agregado')
+        id = response.attribute._id
       }
-
-
       setSaving(false)
-      onOk && onOk()
+      setVisible(false)
+      replace(`/admin/attributes/${id}`)
       resetForm()
     } catch (error: any) {
       setSaving(false)

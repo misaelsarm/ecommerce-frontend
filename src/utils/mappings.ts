@@ -1,4 +1,4 @@
-import { AttributeType, OrderChannel, OrderPaymentStatus, OrderStatus, OrderType } from "./types"
+import { AttributeType, OrderChannel, OrderPaymentStatus, OrderStatus, OrderType, ValueType } from "./types"
 
 export const attributeTypesMap: Record<AttributeType, string> = {
   "dropdown": 'Lista desplegable',
@@ -30,7 +30,7 @@ export const userRolesMap = {
   "delivery": "Repartidor"
 }
 
-export const valueTypesMap = {
+export const valueTypesMap: Record<ValueType, string> = {
   "option": "Opción",
   "color": "Color"
 }

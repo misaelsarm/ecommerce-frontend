@@ -1,4 +1,4 @@
-import AddCollection from '@/components/admin/collections/CollectionModal'
+import { CollectionModal } from '@/components/admin/collections/CollectionModal'
 import Layout from '@/components/admin/Layout'
 import { useDebouncedSearch } from '@/hooks/useDebouncedSearch'
 import { CollectionInterface } from '@/interfaces'
@@ -106,13 +106,10 @@ const CollectionsAdminPage = ({ collections = [], page, limit, batchSize, totalR
           paramKey='code'
         />
       </Page>
-      <AddCollection
+      <CollectionModal
+        title='Nueva colección'
         visible={visible}
         setVisible={setVisible}
-        onOk={() => {
-          setVisible(false)
-          replace('/admin/collections?page=1&limit=20')
-        }}
       />
       <Modal
         title="Eliminar colección"

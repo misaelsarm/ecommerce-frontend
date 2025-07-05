@@ -1,5 +1,4 @@
 import Layout from "@/components/admin/Layout"
-import AddProduct from "@/components/admin/products/AddProduct"
 import { useDebouncedSearch } from "@/hooks/useDebouncedSearch"
 import { ProductInterface } from "@/interfaces"
 import { GetServerSideProps } from "next"
@@ -118,10 +117,6 @@ const ProductsAdminPage = ({ products = [], page, limit, totalRecords, batchSize
         title="Nuevo producto"
         visible={visible}
         setVisible={setVisible}
-        onOk={() => {
-          setVisible(false)
-          replace('/admin/products?page=1&limit=20')
-        }}
       />
       <Modal
         loadingState={loading}

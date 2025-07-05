@@ -4,22 +4,22 @@ import { makeRequest } from "@/utils/makeRequest"
 import { useForm } from "react-hook-form"
 import { AttributeInterface, CollectionInterface, ProductInterface } from "@/interfaces"
 import { Checkbox, Input, Modal, Select, Sortable, TextArea } from "@/components/common"
+import { useRouter } from "next/router"
+import { ModalBaseProps } from "@/interfaces/ModalBaseProps"
+import { generateSlug } from "@/utils/generateSlug"
 
-interface Props {
-  visible: boolean,
-  setVisible: (visible: boolean) => void,
-  onOk?: () => void
-  title: string
-
+interface Props extends ModalBaseProps {
   //only pass product if editing
   product?: ProductInterface
 }
 
-export const ProductModal = ({ visible, setVisible, onOk, title, product }: Props) => {
+export const ProductModal = ({ visible, setVisible, title, product }: Props) => {
 
   const [collections, setCollections] = useState<any[]>([])
 
   const [attributes, setAttributes] = useState<any[]>([])
+
+  const { replace } = useRouter()
 
   const fetchCollections = async () => {
     try {
@@ -106,13 +106,15 @@ export const ProductModal = ({ visible, setVisible, onOk, title, product }: Prop
 
   const onSubmit = async (values: any) => {
 
-    //if (images.length === 0) return toast.error('Elige al menos 1 imagen')
+   // if (images.length === 0) return toast.error('Elige al menos 1 imagen')
     try {
       setSaving(true)
-      const product = {
+      const code = generateSlug(values.name)
+      const payload = {
         attributes: values.attributes?.map((attribute: any) => attribute?.value),
         collections: values.collections?.map((col: any) => col.value),
         name: values.name,
+        code,
         description: values.description,
         price: values.price,
         images,
@@ -130,12 +132,18 @@ export const ProductModal = ({ visible, setVisible, onOk, title, product }: Prop
           availableQuantity: values.availableQuantity
         },
       }
-
-      await makeRequest('post', '/api/products', product)
-      toast.success('Producto agregado')
+      if (product) {
+        await makeRequest('put', `/api/admin/products/${product._id}`, payload)
+        toast.success('Producto actualizado')
+      } else {
+        await makeRequest('post', '/api/admin/products', payload)
+        toast.success('Producto agregado')
+      }
+      
       setSaving(false)
-      onOk && onOk()
+      replace(`/admin/products/${code}`)
       resetForm()
+      setVisible(false)
     } catch (error: any) {
       console.log(error);
       toast.error(error?.response?.data?.message || 'Error al añadir producto. ' + error)

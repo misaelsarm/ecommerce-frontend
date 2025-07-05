@@ -1,5 +1,5 @@
 import { makeRequest } from "@/utils/makeRequest";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import styles from '@/styles/admin/Users.module.scss'
@@ -8,46 +8,67 @@ import { views } from "@/utils/views";
 import { userRoles } from "@/utils/catalogs";
 import { buildUserPermissions } from "@/utils/buildUserPermissions";
 import { Checkbox, Input, Modal, Select } from "@/components/common";
+import { ModalBaseProps } from "@/interfaces/ModalBaseProps";
+import { UserInterface } from "@/interfaces";
+import { userRolesMap } from "@/utils/mappings";
 
-interface Props {
-  visible: boolean,
-  setVisible: (visible: boolean) => void,
-  onOk?: () => void
+interface Props extends ModalBaseProps {
+  user?: UserInterface
 }
 
-const AddUser = ({ visible, setVisible, onOk }: Props) => {
+export const UserModal = ({ visible, setVisible, user, title }: Props) => {
 
-  const { register, handleSubmit, control, formState: { errors } } = useForm();
+  function transformResponseToDefaultValues(dbResponse: any[]) {
+    return dbResponse.reduce((acc, item) => {
+      acc[item.page] = item.permissions;
+      return acc;
+    }, {});
+  }
 
-  const [active, setActive] = useState(false)
+  const { register, handleSubmit, control, formState: { errors }, reset } = useForm();
 
   const [saving, setSaving] = useState(false)
 
-  const [role, setRole] = useState<UserRole | undefined>()
+  const [role, setRole] = useState<UserRole | undefined>(user?.role || undefined)
 
   const onSubmit = async (values: any) => {
 
     try {
-
       const permissions = buildUserPermissions(values.permissions, values.role.value)
-
       const postedUser = {
         ...values,
-        active,
+        permissions,
         role: values.role.value,
-        permissions
       }
       setSaving(true)
-
-      await makeRequest('post', '/api/admin/users', postedUser)
-      toast.success('Usuario agregado')
+      if (user) {
+        await makeRequest('put', `/api/admin/users/${user._id}`, postedUser)
+        toast.success('Usuario actualizado')
+      } else {
+        await makeRequest('post', '/api/admin/users', postedUser)
+        toast.success('Usuario agregado')
+      }
       setSaving(false)
-      onOk && onOk()
     } catch (error: any) {
       toast.error(error?.response?.data?.message || 'Error al añadir usuario. ' + error)
       setSaving(false)
     }
   }
+
+  useEffect(() => {
+    if (user && visible) {
+      reset({
+        "role": {
+          label: userRolesMap[user.role],
+          value: user.role
+        },
+        "name": user.name,
+        "email": user.email,
+        "active": user.active,
+        permissions: transformResponseToDefaultValues(user.permissions)
+      })
+    }
+  }, [user, visible])
 
   return (
     <Modal
@@ -56,7 +77,7 @@ const AddUser = ({ visible, setVisible, onOk }: Props) => {
       onCancel={() => {
         setVisible(false)
       }}
-      title='Nuevo usuario'
+      title={title}
       onClose={() => {
         setVisible(false)
       }}
@@ -79,14 +100,17 @@ const AddUser = ({ visible, setVisible, onOk }: Props) => {
           required
           pattern={/^\s*[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\s*$/}
         />
-        <Input
-          type='password'
-          register={register}
-          label='Contraseña'
-          name='password'
-          errors={errors}
-          required
-        />
+        {
+          !user &&
+          <Input
+            type='password'
+            register={register}
+            label='Contraseña'
+            name='password'
+            errors={errors}
+            required
+          />
+        }
         <Select
           control={control}
           errors={errors}
@@ -103,9 +127,6 @@ const AddUser = ({ visible, setVisible, onOk }: Props) => {
           label='Activo'
           id='active'
           name='active'
-          onChange={(e) => {
-            setActive(e.target.checked)
-          }}
         />
         {
           (role && role !== 'delivery' && role !== 'admin') &&
@@ -164,5 +185,3 @@ const AddUser = ({ visible, setVisible, onOk }: Props) => {
     </Modal >
   )
 }
-
-export default AddUser

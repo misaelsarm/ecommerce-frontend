@@ -51,7 +51,7 @@ const useFileUpload = ({ folder }: { folder: string }): FileUploadHook => {
     try {
       formData.append('file', fileData);
       formData.append('folder', folder);
-      const data = await makeRequest('post', '/api/files/single', formData);
+      const data = await makeRequest('post', '/api/admin/files/single', formData);
       toast.success('Archivo cargado');
       setUploading(false)
       return data.Location;

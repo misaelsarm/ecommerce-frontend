@@ -1,62 +1,95 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { makeRequest } from "@/utils/makeRequest";
 import { Checkbox, Input, Modal, Select } from "@/components/common";
+import { ModalBaseProps } from "@/interfaces/ModalBaseProps";
+import { ValueInterface } from "@/interfaces";
+import { ValueType } from "@/utils/types";
+import { valueTypesMap } from "@/utils/mappings";
+import { useRouter } from "next/router";
 
-interface Props {
-  visible: boolean,
-  setVisible: (visible: boolean) => void,
-  onOk?: () => void
+interface Props extends ModalBaseProps {
+  value?: ValueInterface
 }
 
-const AddValue = ({ visible, setVisible, onOk }: Props) => {
+export const ValueModal = ({ visible, setVisible, title, value }: Props) => {
 
   const { register, handleSubmit, control, reset, formState: { errors } } = useForm();
 
   const [saving, setSaving] = useState(false)
 
-  const [type, setType] = useState('')
+  const [type, setType] = useState<ValueType | ''>(value?.type || '')
+
+  const { replace } = useRouter()
 
   const resetForm = () => {
-    reset()
-    setType('')
+    if (!value) {
+      reset()
+      setType('')
+    }
   }
 
   const onSubmit = async (values: any) => {
-    const post = {
+    const payload = {
       ...values,
       value: type === 'color' ? values.value : values.label.trim().toLowerCase().split(' ').join('-'),
       type: values.type.value
     }
     setSaving(true)
     try {
-      await makeRequest('post', '/api/values', post)
-      toast.success('Valor creado.')
+      let id = ''
+      if (value) {
+        await makeRequest('put', `/api/admin/values/${value._id}`, payload)
+        toast.success('Valor actualizado')
+        id = value._id
+
+      } else {
+        const response = await makeRequest('post', '/api/admin/values', payload)
+        toast.success('Valor creado')
+        id = response.value._id
+
+      }
+
       setSaving(false)
       setVisible(false)
-      onOk && onOk()
-      reset()
+      replace(`/admin/attributes/${id}`)
+
     } catch (error: any) {
       toast.error(error.response.data.message)
       setSaving(false)
     }
   }
 
+  useEffect(() => {
+    if (value && visible) {
+      console.log('first')
+      reset({
+        type: {
+          label: valueTypesMap[value.type],
+          value: value.type
+        },
+        label: value.label,
+        value: value.value,
+        active: value.active,
+      })
+    }
+  }, [visible, value])
+
   return (
     <Modal
+      title={title}
+      visible={visible}
       loadingState={saving}
       onOk={handleSubmit(onSubmit)}
       onCancel={() => {
         setVisible(false)
         resetForm()
       }}
-      title='Nuevo valor'
       onClose={() => {
         setVisible(false)
         resetForm()
       }}
-      visible={visible}
     >
       <>
         <Select
@@ -111,5 +144,3 @@ const AddValue = ({ visible, setVisible, onOk }: Props) => {
     </Modal>
   )
 }
-
-export default AddValue

@@ -53,7 +53,6 @@ const AccountOrderDetailsPage = ({ order, error }: Props) => {
               </div>
               <div className={styles.cardItem}>
                 <h4>Estado</h4>
-                {/* @ts-ignore */}
                 <Chip color={orderStatusColorMap[order.status]} text={order.status} />
               </div>
               <div className={styles.cardItem}>

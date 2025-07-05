@@ -90,7 +90,7 @@ const ProductDetailsAdminPage = ({ product, error }: Props) => {
             />
             <CardItem
               title="Estado"
-              content={<span>{product.active ? 'Activo' : 'No activo'}</span>}
+              content={product.active ? <Chip text='Activo' color='green' /> : <Chip text='No activo' />}
             />
             <CardItem
               title="Tiene descuento"

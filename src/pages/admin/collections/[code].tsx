@@ -1,13 +1,10 @@
 import { ReactElement, useState } from "react"
-import { useRouter } from "next/router"
-import { useForm } from "react-hook-form"
 import { GetServerSideProps } from "next"
-import toast from "react-hot-toast"
 import { CollectionInterface } from "@/interfaces"
-import { makeRequest } from "@/utils/makeRequest"
 import { createServerSideFetcher } from "@/utils/serverSideFetcher"
 import Layout from "@/components/admin/Layout"
-import { Card, CardItem, Checkbox, Chip, DropZone, Input, Modal, Page, Select, TextArea } from "@/components/common"
+import { Card, CardItem, Chip, Page } from "@/components/common"
+import { CollectionModal } from "@/components/admin/collections/CollectionModal"
 
 interface Props {
   collection: CollectionInterface,
@@ -21,126 +18,8 @@ const CollectionDetailsPage = ({ collection, error }: Props) => {
 
   const [editing, setEditing] = useState(false)
 
-  const { register, handleSubmit, control, formState: { errors }, setValue } = useForm<any>({
-    defaultValues: {
-      name: collection.name,
-      description: collection.description,
-      keywords: collection.keywords,
-      parentCollection: {
-        label: collection.parentCollection?.name,
-        value: collection.parentCollection?._id
-      },
-      products: collection.products?.map(prod => ({
-        label: prod?.name,
-        value: prod?._id
-      })),
-      active: collection.active,
-    }
-  });
-
-  const [collections, setCollections] = useState<any[]>([])
-
-  async function fetchData() {
-    try {
-
-      const data = await makeRequest('get', `/api/collections?active=true`)
-
-      setCollections(data.collections.map((col: CollectionInterface) => ({
-        label: col.name,
-        value: col._id
-      })))
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message || 'Error')
-    }
-  }
-
-  const [saving, setSaving] = useState(false)
-
-  const { replace, back, pathname } = useRouter()
-
-  const onSubmit = async (values: any) => {
-
-    try {
-      setSaving(true)
-      const update = {
-        name: values.name,
-        description: values.description,
-        parents: values.parents?.map((item: any) => item.value),
-        keywords: values.keywords,
-        color: values.color,
-        active: values.active,
-        highlight: values.highlight,
-        image: values.image,
-        banner: values.banner,
-      }
-      await makeRequest('put', `/api/collections/${collection._id}`, update)
-      toast.success('Colección actualizada')
-      setSaving(false)
-      setEditing(false)
-      replace(`/admin/collections/${values.name.trim().toLowerCase().split(' ').join('-')}`)
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message || 'Error al actualizar la colección. ' + error)
-      setSaving(false)
-    }
-  }
-
-  const renderForm = () => {
-    return (
-      <>
-        <Input
-          register={register}
-          label='Nombre'
-          placeholder=''
-          name='name'
-          errors={errors}
-          required
-        />
-        <TextArea
-          register={register}
-          label='Descripción'
-          placeholder=''
-          name='description'
-          errors={errors}
-          required
-        />
-        <Select
-          control={control}
-          options={collections}
-          name="parents"
-          label="Colecciones agrupadoras"
-          isMulti
-        />
-        <Input
-          register={register}
-          label='Palabras clave'
-          placeholder=''
-          name='keywords'
-        />
-        <Checkbox
-          register={register}
-          label='Destacar'
-          id='highlight'
-          name='highlight'
-        />
-        <Checkbox
-          label='Activa'
-          id='active'
-          name='active'
-          register={register}
-        />
-        <DropZone
-          folder='collections/images'
-          label='Subir imagen principal'
-          name='image'
-          register={register}
-          setValue={setValue}
-          required
-          errors={errors}
-          width='100%'
-          height='300px'
-        />
-      </>
-    )
+  if (error) {
+    return <Page>{error.message}</Page>
   }
 
   return (
@@ -151,9 +30,7 @@ const CollectionDetailsPage = ({ collection, error }: Props) => {
           name: 'Editar',
           onClick: () => {
             setEditing(true)
-            fetchData()
-          },
-          // visible: !editing && hasPermission('collections', 'edit')
+          }
         }}
         fullWidth={false}
         maxwidth="700px"
@@ -190,25 +67,17 @@ const CollectionDetailsPage = ({ collection, error }: Props) => {
           <CardItem
             title="Imagen principal"
             content={<div className="image">
-              {/* <Image alt={collection.name} fill src={collection.image} /> */}
+              <img alt={collection.name} fill src={collection.image} />
             </div>}
           />
         </Card>
-      </Page>
-      <Modal
+      </Page >
+      <CollectionModal
         visible={editing}
-        loadingState={saving /* || uploading */}
-        onOk={handleSubmit(onSubmit)}
-        onCancel={() => {
-          setEditing(false)
-        }}
-        title='Editar colección'
-        onClose={() => {
-          setEditing(false)
-        }}
-      >
-        {renderForm()}
-      </Modal>
+        setVisible={setEditing}
+        collection={collection}
+        title="Editar colección"
+      />
     </>
   )
 }

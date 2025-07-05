@@ -1,5 +1,5 @@
 import Layout from "@/components/admin/Layout"
-import AddValue from "@/components/admin/values/ValueModal"
+import AddValue, { ValueModal } from "@/components/admin/values/ValueModal"
 import { useDebouncedSearch } from "@/hooks/useDebouncedSearch"
 import { ValueInterface } from "@/interfaces"
 import { GetServerSideProps } from "next"
@@ -103,13 +103,10 @@ const ValuesAdminPage = ({ values = [], page, limit, batchSize, totalRecords, er
               paramKey="_id"
             />
           </Page>
-          <AddValue
+          <ValueModal
             visible={visible}
             setVisible={setVisible}
-            onOk={() => {
-              setVisible(false)
-              replace('/admin/values?page=1&limit=20')
-            }}
+            title="Nuevo valor"
           />
           <Modal
             title="Eliminar valor de atributo"

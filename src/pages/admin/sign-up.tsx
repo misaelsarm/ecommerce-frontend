@@ -6,7 +6,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { Button, Input } from '@/components/common';
 import { makeRequest } from '@/utils/makeRequest';
-import Link from 'next/link';
 import { useAuthStore } from '@/store/auth';
 
 const SignUpPage = () => {

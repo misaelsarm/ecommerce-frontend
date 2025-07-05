@@ -2,20 +2,14 @@ import Layout from "@/components/admin/Layout"
 import { UserInterface } from "@/interfaces"
 import { makeRequest } from "@/utils/makeRequest"
 import { GetServerSideProps } from "next"
-import { useRouter } from "next/router"
 import { ReactElement, useState } from "react"
-import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
-import styles from '@/styles/admin/Users.module.scss'
 import moment from "moment"
-import { views } from "@/utils/views"
 import { pageTitleMap, permissionLabelMap, userRolesMap } from "@/utils/mappings"
 import { createServerSideFetcher } from "@/utils/serverSideFetcher"
 import useActions from "@/hooks/useActions"
-import { UserRole } from "@/utils/types"
-import { userRoles } from "@/utils/catalogs"
-import { buildUserPermissions } from "@/utils/buildUserPermissions"
-import { Card, CardItem, Checkbox, Chip, Input, Modal, Page, Select } from "@/components/common"
+import { Button, Card, CardItem, Chip, Page } from "@/components/common"
+import { UserModal } from "@/components/admin/users/UserModal"
 
 interface Props {
   user: UserInterface,
@@ -25,153 +19,35 @@ interface Props {
   }
 }
 
-function transformResponseToDefaultValues(dbResponse: any[]) {
-  return dbResponse.reduce((acc, item) => {
-    acc[item.page] = item.permissions;
-    return acc;
-  }, {});
-}
-
 const UserDetailsAdminPage = ({ user, error }: Props) => {
 
   const [editing, setEditing] = useState(false)
 
-  const { replace, back, pathname } = useRouter()
-
-  const { register, handleSubmit, control, formState: { errors } } = useForm<any>({
-    defaultValues: {
-      "role": {
-        label: userRolesMap[user.role],
-        value: user.role
-      },
-      "name": user.name,
-      "email": user.email,
-      "active": user.active,
-      permissions: transformResponseToDefaultValues(user.permissions)
-    }
-  });
-
   const [saving, setSaving] = useState(false)
 
-  const [role, setRole] = useState<UserRole | undefined>(user.role)
+  const { canEdit } = useActions()
 
-  const onSubmit = async (values: any) => {
-
-    const permissions = buildUserPermissions(values.permissions, values.role.value)
-
+  const requestPasswordReset = async () => {
     try {
-      const update = {
-        name: values.name,
-        "role": values.role.value,
-        "email": values.email,
-        "active": values.active,
-        permissions
-      }
-
-      await makeRequest('put', `/api/admin/users/${user._id}`, update)
-      toast.success('Usuario actualizado')
+      setSaving(true)
+      await makeRequest('post', '/api/auth/recover', {
+        email: user.email
+      })
+      toast.success('Se envió un correo con las instrucciones para restablecer la contraseña', {
+        duration: 6000
+      })
       setSaving(false)
-      setEditing(false)
-      replace(`/admin/users/${user._id}`)
     } catch (error: any) {
-      toast.error(error.response.data.message)
+      toast.error(error.response.data.message, {
+        duration: 6000
+      })
       setSaving(false)
     }
   }
 
-  const renderForm = () => {
-    return (
-      <>
-        <Input
-          register={register}
-          label='Nombre'
-          name='name'
-          errors={errors}
-          required
-        />
-        <Input
-          type='email'
-          register={register}
-          label='Correo electrónico'
-          name='email'
-          errors={errors}
-          required
-        />
-        <Select
-          control={control}
-          errors={errors}
-          required
-          options={userRoles}
-          name="role"
-          label="Tipo de usuario"
-          onChange={(e: any) => {
-            setRole(e.value)
-          }}
-        />
-        {
-          (role && role !== 'delivery' && role !== 'admin') &&
-          <div className={styles.rolesWrapper}>
-            <span>Elegir permisos de usuario</span>
-            {
-              views.map(role => (
-                <div key={role.view} className={styles.viewWrapper}>
-                  <div className={styles.view}>
-                    <h4>{role.name}</h4>
-                  </div>
-                  <div className={styles.roles}>
-                    <div className={styles.role}>
-                      <Checkbox
-                        register={register}
-                        name={`permissions[${role.view}]`}
-                        label='Ver'
-                        id={`permissions[${role.view}]-view`}
-                        value='view'
-                      />
-                    </div>
-                    <div className={styles.role}>
-                      <Checkbox
-                        register={register}
-                        name={`permissions[${role.view}]`}
-                        label='Crear'
-                        id={`permissions[${role.view}]-create`}
-                        value='create'
-                      />
-                    </div>
-                    <div className={styles.role}>
-                      <Checkbox
-                        register={register}
-                        name={`permissions[${role.view}]`}
-                        label='Editar'
-                        id={`permissions[${role.view}]-edit`}
-                        value='edit'
-                      />
-                    </div>
-                    <div className={styles.role}>
-                      <Checkbox
-                        register={register}
-                        name={`permissions[${role.view}]`}
-                        label='Eliminar'
-                        id={`permissions[${role.view}]-delete`}
-                        value='delete'
-                      />
-                    </div>
-                  </div>
-                </div>
-              ))
-            }
-          </div>
-        }
-        <Checkbox
-          register={register}
-          label='Activo'
-          id='active'
-          name='active'
-        />
-      </>
-    )
+  if (error) {
+    return <Page>{error.message}</Page>
   }
-
-  const { canEdit } = useActions()
 
   return (
     <>
@@ -205,26 +81,12 @@ const UserDetailsAdminPage = ({ user, error }: Props) => {
             <CardItem
               title="Contraseña"
               content={
-                <button
+                <Button
                   disabled={saving}
-                  onClick={async () => {
-                    try {
-                      setSaving(true)
-                      await makeRequest('post', '/api/auth/recover', {
-                        email: user.email
-                      })
-                      toast.success('Se envió un correo con las instrucciones para restablecer la contraseña', {
-                        duration: 6000
-                      })
-                      setSaving(false)
-                    } catch (error: any) {
-                      toast.error(error.response.data.message, {
-                        duration: 6000
-                      })
-                      setSaving(false)
-                    }
-                  }}
-                  className="btn btn-black mt-10">Restablecer contraseña</button>
+                  onClick={requestPasswordReset}
+                >
+                  Restablecer contraseña
+                </Button>
               }
             />
           }
@@ -275,20 +137,12 @@ const UserDetailsAdminPage = ({ user, error }: Props) => {
           />
         </Card>
       </Page>
-      <Modal
+      <UserModal
+        title="Editar usuario"
+        user={user}
+        setVisible={setEditing}
         visible={editing}
-        loadingState={saving /* || uploading */}
-        onOk={handleSubmit(onSubmit)}
-        onCancel={() => {
-          setEditing(false)
-        }}
-        title='Editar usuario'
-        onClose={() => {
-          setEditing(false)
-        }}
-      >
-        {renderForm()}
-      </Modal>
+      />
     </>
   )
 }
