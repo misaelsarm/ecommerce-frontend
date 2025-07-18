@@ -1,5 +1,4 @@
 import Layout from '@/components/admin/Layout'
-//import moment from 'moment'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { ReactElement, useState } from 'react'
@@ -9,6 +8,7 @@ import { getServerSideToken } from '@/utils/getServerSideToken'
 import { useDebouncedSearch } from '@/hooks/useDebouncedSearch'
 import { makeRequest } from '@/utils/makeRequest'
 import { Chip, Page, Table } from '@/components/common'
+import { usePermissions } from '@/hooks/usePermissions'
 
 interface Props {
   customers: UserInterface[],
@@ -25,6 +25,8 @@ interface Props {
 const CustomersAdminPage = ({ customers, page, limit, batchSize, totalRecords, error }: Props) => {
 
   const [visible, setVisible] = useState(false)
+
+  const { canCreate } = usePermissions();
 
   const columns = [
     {
@@ -69,34 +71,36 @@ const CustomersAdminPage = ({ customers, page, limit, batchSize, totalRecords, e
   const { push, query, replace } = useRouter()
 
   return (
-    error ? <Page>{error.message}</Page> : <Page
-      title='Clientes'
-      primaryAction={{
-        name: "Nuevo cliente",
-        onClick: () => {
-          setVisible(true)
-        }
-      }}
-      search={{
-        handleSearch,
-        searchTerm,
-        onClearSearch: () => {
-          push(`/admin/customers?page=1&limit=20`);
-          setSearchTerm('')
-        }
-      }}
-    >
-      <Table
-        columns={columns}
-        data={customers}
-        page={page}
-        limit={limit}
-        batchSize={batchSize}
-        totalRecords={totalRecords}
-        navigateTo='admin/customers'
-        paramKey='_id'
-      />
-    </Page>
+    error ? <Page>{error.message}</Page> :
+      <Page
+        title='Clientes'
+        primaryAction={{
+          name: "Nuevo cliente",
+          onClick: () => {
+            setVisible(true)
+          },
+          visible: canCreate
+        }}
+        search={{
+          handleSearch,
+          searchTerm,
+          onClearSearch: () => {
+            push(`/admin/customers?page=1&limit=20`);
+            setSearchTerm('')
+          }
+        }}
+      >
+        <Table
+          columns={columns}
+          data={customers}
+          page={page}
+          limit={limit}
+          batchSize={batchSize}
+          totalRecords={totalRecords}
+          navigateTo='admin/customers'
+          paramKey='_id'
+        />
+      </Page>
   )
 }
 

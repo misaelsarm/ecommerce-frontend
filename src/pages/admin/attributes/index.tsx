@@ -1,4 +1,4 @@
-import {AttributeModal} from "@/components/admin/attributes/AttributeModal"
+import { AttributeModal } from "@/components/admin/attributes/AttributeModal"
 import Layout from "@/components/admin/Layout"
 import { useDebouncedSearch } from "@/hooks/useDebouncedSearch"
 import { AttributeInterface } from "@/interfaces"
@@ -10,6 +10,7 @@ import { getServerSideToken } from "@/utils/getServerSideToken"
 import { makeRequest } from "@/utils/makeRequest"
 import { attributeTypesMap } from "@/utils/mappings"
 import { Chip, Modal, Page, Table } from "@/components/common"
+import { usePermissions } from "@/hooks/usePermissions"
 
 interface Props {
   attributes: AttributeInterface[],
@@ -34,6 +35,8 @@ const AttributesAdminPage = ({ attributes = [], page, limit, batchSize, totalRec
   const { searchTerm, setSearchTerm, handleSearch } = useDebouncedSearch({ url: 'attributes', limit })
 
   const { push, replace } = useRouter()
+
+  const { canCreate } = usePermissions()
 
   const columns = [
     {
@@ -79,7 +82,7 @@ const AttributesAdminPage = ({ attributes = [], page, limit, batchSize, totalRec
                 onClick: () => {
                   setVisible(true)
                 },
-                //disabled: !hasPermission(pathname, 'create', user.permissions) && user.role !== 'admin'
+                visible: canCreate
               }}
               search={{
                 handleSearch,

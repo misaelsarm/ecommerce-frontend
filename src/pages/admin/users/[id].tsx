@@ -7,7 +7,7 @@ import toast from "react-hot-toast"
 import moment from "moment"
 import { pageTitleMap, permissionLabelMap, userRolesMap } from "@/utils/mappings"
 import { createServerSideFetcher } from "@/utils/serverSideFetcher"
-import useActions from "@/hooks/useActions"
+import { usePermissions } from "@/hooks/usePermissions"
 import { Button, Card, CardItem, Chip, Page } from "@/components/common"
 import { UserModal } from "@/components/admin/users/UserModal"
 
@@ -25,7 +25,7 @@ const UserDetailsAdminPage = ({ user, error }: Props) => {
 
   const [saving, setSaving] = useState(false)
 
-  const { canEdit } = useActions()
+  const { canEdit } = usePermissions()
 
   const requestPasswordReset = async () => {
     try {
@@ -52,14 +52,15 @@ const UserDetailsAdminPage = ({ user, error }: Props) => {
   return (
     <>
       <Page
-        title={`Detalle de usuario: ${user.name}`}
+        title={`Usuario: ${user.name}`}
         fullWidth={false}
         maxwidth="700px"
         primaryAction={{
           name: "Editar",
           onClick: () => {
             setEditing(true)
-          }
+          },
+          visible: canEdit
         }}
         backAction
       >

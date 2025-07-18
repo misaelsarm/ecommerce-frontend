@@ -5,6 +5,7 @@ import { createServerSideFetcher } from "@/utils/serverSideFetcher"
 import Layout from "@/components/admin/Layout"
 import { Card, CardItem, Chip, Page } from "@/components/common"
 import { CollectionModal } from "@/components/admin/collections/CollectionModal"
+import { usePermissions } from "@/hooks/usePermissions"
 
 interface Props {
   collection: CollectionInterface,
@@ -18,6 +19,8 @@ const CollectionDetailsPage = ({ collection, error }: Props) => {
 
   const [editing, setEditing] = useState(false)
 
+  const { canEdit } = usePermissions();
+
   if (error) {
     return <Page>{error.message}</Page>
   }
@@ -30,7 +33,8 @@ const CollectionDetailsPage = ({ collection, error }: Props) => {
           name: 'Editar',
           onClick: () => {
             setEditing(true)
-          }
+          },
+          visible: canEdit
         }}
         fullWidth={false}
         maxwidth="700px"

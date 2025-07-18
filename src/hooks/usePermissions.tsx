@@ -2,7 +2,7 @@ import { useAuthStore } from '@/store/auth'
 import { hasPermission } from '@/utils/hasPermission'
 import { useRouter } from 'next/router'
 
-const useActions = () => {
+export const usePermissions = () => {
 
   const user = useAuthStore((state) => state.user)
 
@@ -22,5 +22,3 @@ const useActions = () => {
     canCreate
   }
 }
-
-export default useActions

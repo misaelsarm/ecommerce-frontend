@@ -11,12 +11,15 @@ import { Checkbox, Input, Modal, Select } from "@/components/common";
 import { ModalBaseProps } from "@/interfaces/ModalBaseProps";
 import { UserInterface } from "@/interfaces";
 import { userRolesMap } from "@/utils/mappings";
+import { useRouter } from "next/router";
 
 interface Props extends ModalBaseProps {
   user?: UserInterface
 }
 
 export const UserModal = ({ visible, setVisible, user, title }: Props) => {
+
+  const { replace } = useRouter()
 
   function transformResponseToDefaultValues(dbResponse: any[]) {
     return dbResponse.reduce((acc, item) => {
@@ -34,6 +37,7 @@ export const UserModal = ({ visible, setVisible, user, title }: Props) => {
   const onSubmit = async (values: any) => {
 
     try {
+      let id = ''
       const permissions = buildUserPermissions(values.permissions, values.role.value)
       const postedUser = {
         ...values,
@@ -44,11 +48,16 @@ export const UserModal = ({ visible, setVisible, user, title }: Props) => {
       if (user) {
         await makeRequest('put', `/api/admin/users/${user._id}`, postedUser)
         toast.success('Usuario actualizado')
+        id = user._id
       } else {
-        await makeRequest('post', '/api/admin/users', postedUser)
+        const data = await makeRequest('post', '/api/admin/users', postedUser)
+        id = data.user._id
         toast.success('Usuario agregado')
       }
       setSaving(false)
+      setVisible(false)
+
+      replace(`/admin/users/${user?._id}`)
     } catch (error: any) {
       toast.error(error?.response?.data?.message || 'Error al añadir usuario. ' + error)
       setSaving(false)

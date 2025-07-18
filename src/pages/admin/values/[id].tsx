@@ -6,6 +6,7 @@ import { valueTypesMap } from "@/utils/mappings"
 import { createServerSideFetcher } from "@/utils/serverSideFetcher"
 import { Card, CardItem, Chip, Page } from "@/components/common"
 import { ValueModal } from "@/components/admin/values/ValueModal"
+import { usePermissions } from "@/hooks/usePermissions"
 
 interface Props {
   value: ValueInterface
@@ -19,6 +20,12 @@ const ValueDetailsAdminPage = ({ value, error }: Props) => {
 
   const [editing, setEditing] = useState(false)
 
+  const { canEdit } = usePermissions();
+
+  if (error) {
+    return <Page>{error.message}</Page>
+  }
+
   return (
     <>
       <Page
@@ -30,7 +37,7 @@ const ValueDetailsAdminPage = ({ value, error }: Props) => {
           onClick: () => {
             setEditing(true)
           },
-          //disabled: !canEdit
+          visible: canEdit
         }}
         backAction
       >

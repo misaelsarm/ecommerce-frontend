@@ -84,7 +84,7 @@ const SignUpPage = () => {
               disabled={loading}
               block
             >Crear cuenta</Button>
-            {/* <Link className='btn btn-ghost btn-block' href='/admin/login'>¿Ya tienes cuenta? Inicia sesión</Link> */}
+            <Button url='/admin/login' variant='link'>¿Ya tienes cuenta? Inicia sesión</Button>
           </div>
         </form>
       </div>

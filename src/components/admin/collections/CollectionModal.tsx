@@ -9,7 +9,7 @@ import { useRouter } from 'next/router';
 import { generateSlug } from '@/utils/generateSlug';
 
 interface Props extends ModalBaseProps {
-  collection: CollectionInterface
+  collection?: CollectionInterface
 }
 
 export const CollectionModal = ({ visible, setVisible, title, collection }: Props) => {

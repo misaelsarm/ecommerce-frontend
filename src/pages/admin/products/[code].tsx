@@ -2,10 +2,12 @@ import Layout from "@/components/admin/Layout"
 import { ProductInterface } from "@/interfaces"
 import { GetServerSideProps } from "next"
 import { ReactElement, useState } from "react"
-import { formatCurrency } from "@/utils/formatCurrency"
 import { createServerSideFetcher } from "@/utils/serverSideFetcher"
 import { Card, CardItem, Chip, Page } from "@/components/common"
 import { ProductModal } from "@/components/admin/products/ProductModal"
+import { productFieldMap } from "@/utils/mappings"
+import moment from "moment"
+import { usePermissions } from "@/hooks/usePermissions"
 
 interface Props {
   product: ProductInterface
@@ -19,8 +21,88 @@ const ProductDetailsAdminPage = ({ product, error }: Props) => {
 
   const [editing, setEditing] = useState(false)
 
+  const { canEdit } = usePermissions();
+
   if (error) {
     return <Page>{error.message}</Page>
+  }
+
+  const propertiesToFilter = ['_id', 'deleted', '__v', 'favorite', 'collectionItem', 'whatsapp', 'hasDiscount', 'discountValue']
+
+  const properties = Object.entries(product).filter(([key, value]) => !propertiesToFilter.includes(key))
+
+  const renderComponent = (key: string, value: any) => {
+
+    const property = productFieldMap[key]
+
+    const { type, label, render } = property
+
+    if (type === 'text') {
+      return (
+        <CardItem
+          title={label}
+          content={
+            <span
+              style={{ whiteSpace: 'pre-line' }}
+            >
+              {value}
+            </span>
+          }
+        />
+      )
+    }
+    if (type === 'date') {
+      return (
+        <CardItem
+          title={label}
+          content={moment(value).format('lll')}
+        />
+      )
+    }
+    if (type === 'boolean') {
+      return (
+        <CardItem
+          title={label}
+          content={value ? <Chip text={property.true} color='green' /> : <Chip text={property.false} />}
+        />
+      )
+    }
+    if (type === 'list' && render === 'grid') {
+      return (
+        <CardItem
+          title={label}
+          content={
+            <div className='d-flex flex-wrap'>
+              {
+                product.images.map(image => (
+                  <div key={image} className='mr-20 mb-20'>
+                    <img style={{ width: 150, flexShrink: 0 }} src={image} alt="" />
+                  </div>
+                ))
+              }
+            </div>
+          }
+        />
+      )
+    }
+    if (type === 'list') {
+      return (
+        <CardItem
+          title={label}
+          content={
+            value.map((item: any) => (
+              <Chip text={item[property.fields[1]]} />
+            ))
+          }
+        />
+      )
+    }
+    return (
+      <CardItem
+        title={label || key}
+        content={<span>{JSON.stringify(value)}</span>}
+      />
+    )
   }
 
   return (
@@ -31,9 +113,8 @@ const ProductDetailsAdminPage = ({ product, error }: Props) => {
           name: "Editar",
           onClick: () => {
             setEditing(true)
-            //fetchData()
-          }
-          //className: 'btn btn-primary'
+          },
+          visible: canEdit
         }}
         backAction
         fullWidth={false}
@@ -41,7 +122,7 @@ const ProductDetailsAdminPage = ({ product, error }: Props) => {
       >
         <>
           <Card>
-            <CardItem
+            {/* <CardItem
               title='Nombre'
               content={<span>{product.name}</span>}
             />
@@ -123,7 +204,10 @@ const ProductDetailsAdminPage = ({ product, error }: Props) => {
                   }
                 </div>
               }
-            />
+            /> */}
+            {
+              properties.map(([key, value]) => renderComponent(key, value))
+            }
           </Card>
         </>
       </Page>

@@ -10,17 +10,13 @@ export interface Theme {
   vars: Record<string, string>;
 }
 
+//Theme should come from config file or user settings (TODO: store theme in DB)
 const lightTheme: Theme = {
   name: 'light',
   vars: {
     '--primary-bg': '#0070f3',
     '--primary-color': '#fff',
-
     '--primary-bg-hover': 'black',
-
-    // '--button-link-bg': 'transparent',
-    // '--button-link-color': '#0070f3',
-
     '--secondary-bg': '#eaeaea',
     '--secondary-color': '#111',
   },

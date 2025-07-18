@@ -22,29 +22,37 @@ export const ProductModal = ({ visible, setVisible, title, product }: Props) => 
   const { replace } = useRouter()
 
   const fetchCollections = async () => {
-    try {
-      const data = await makeRequest('get', '/api/public/collections?active=true')
-      setCollections(data.collections.map((item: CollectionInterface) => ({ value: item._id, label: item.name })))
-    } catch (error: any) {
-      toast.error(error.response.data.message)
-      console.log({ error })
+    if (collections.length === 0) {
+      try {
+        const data = await makeRequest('get', '/api/public/collections?active=true')
+        setCollections(data.collections.map((item: CollectionInterface) => ({ value: item._id, label: item.name })))
+      } catch (error: any) {
+        toast.error(error.response.data.message)
+        console.log({ error })
+      }
     }
   }
 
   const fetchAttributes = async () => {
-    try {
-      const data = await makeRequest('get', '/api/admin/attributes?active=true')
-      setAttributes(data.attributes.map((item: AttributeInterface) => ({ value: item._id, label: item.shortName })))
-    } catch (error: any) {
-      toast.error(error.response.data.message)
-      console.log({ error })
+    if (attributes.length === 0) {
+      try {
+        const data = await makeRequest('get', '/api/admin/attributes?active=true')
+        setAttributes(data.attributes.map((item: AttributeInterface) => ({ value: item._id, label: item.shortName })))
+      } catch (error: any) {
+        toast.error(error.response.data.message)
+        console.log({ error })
+      }
     }
+
   }
 
   // Fetch collections when the modal is opened and prevent fetching if already fetched
   useEffect(() => {
-    if (visible && collections.length === 0) {
+    if (visible) {
       fetchCollections()
+      if(product?.isCustomizable) {
+        fetchAttributes()
+      }
     }
   }, [visible])
 
@@ -97,16 +105,18 @@ export const ProductModal = ({ visible, setVisible, title, product }: Props) => 
   }, [product, visible])
 
   const resetForm = () => {
-    reset()
-    setHasDiscount(false)
-    setIsCustomizable(false)
-    setIsTracked(false)
-    setImages([])
+    if (!product) {
+      reset()
+      setHasDiscount(false)
+      setIsCustomizable(false)
+      setIsTracked(false)
+      setImages([])
+    }
   }
 
   const onSubmit = async (values: any) => {
 
-   // if (images.length === 0) return toast.error('Elige al menos 1 imagen')
+    if (images.length === 0) return toast.error('Elige al menos 1 imagen')
     try {
       setSaving(true)
       const code = generateSlug(values.name)
@@ -139,7 +149,7 @@ export const ProductModal = ({ visible, setVisible, title, product }: Props) => 
         await makeRequest('post', '/api/admin/products', payload)
         toast.success('Producto agregado')
       }
-      
+
       setSaving(false)
       replace(`/admin/products/${code}`)
       resetForm()
@@ -150,6 +160,93 @@ export const ProductModal = ({ visible, setVisible, title, product }: Props) => 
       setSaving(false)
     }
   }
+
+  // const fields = [
+  //   {
+  //     component: 'input',
+  //     name: 'name',
+  //     label: 'Nombre del producto',
+  //     required: true,
+  //     register,
+  //     errors,
+  //     visible: true
+  //   },
+  //   {
+  //     component: 'text-area',
+  //     register,
+  //     name: 'description',
+  //     errors,
+  //     label: 'Descripción del producto',
+  //     required: true,
+  //     visible: true
+  //   },
+  //   {
+  //     component: 'input',
+  //     register,
+  //     name: 'keywords',
+  //     label: 'Palabras clave',
+  //     visible: true
+  //   },
+  //   {
+  //     component: 'input',
+  //     type: 'number',
+  //     register,
+  //     errors,
+  //     required: true,
+  //     name: 'price',
+  //     label: 'Precio',
+  //     visible: true
+  //   },
+  //   {
+  //     component: 'select',
+  //     control,
+  //     errors,
+  //     required: true,
+  //     name: 'collections',
+  //     label: 'Colecciones',
+  //     options: collections,
+  //     visible: true,
+  //     isMulti: true
+  //   },
+  //   {
+  //     component: 'checkbox',
+  //     register,
+  //     name: 'hasDiscount',
+  //     id: 'hasDiscount',
+  //     label: 'Tiene descuento',
+  //     onChange: (e: any) => {
+  //       setHasDiscount(e.target.checked)
+  //     },
+  //     visible: true
+  //   },
+  //   {
+  //     component: 'input',
+  //     type: 'number',
+  //     register,
+  //     name: 'discountValue',
+  //     label: 'Valor del descuento',
+  //     visible: hasDiscount
+  //   },
+  //   {
+  //     component: 'checkbox',
+  //     register,
+  //     name: 'isCustomizable',
+  //     id: 'isCustomizable',
+  //     label: 'Es personalizable',
+  //     onChange: (e: any) => {
+  //       setIsCustomizable(e.target.checked)
+  //     },
+  //     visible: true
+  //   },
+  //   {
+  //     component: 'select',
+  //     register,
+  //     name: 'attributes',
+  //     label: 'Atributos y características del producto',
+  //     visible: isCustomizable,
+  //     isMulti: true
+  //   },
+  // ]
 
   return (
     <Modal
@@ -166,6 +263,24 @@ export const ProductModal = ({ visible, setVisible, title, product }: Props) => 
       }}
       visible={visible}
     >
+      {
+        // fields.map(field => {
+        //   if (field.visible) {
+        //     if (field.component === 'input') {
+        //       return <Input {...field} />
+        //     }
+        //     if (field.component === 'text-area') {
+        //       return <TextArea {...field} />
+        //     }
+        //     if (field.component === 'select') {
+        //       return <Select {...field} />
+        //     }
+        //     if (field.component === 'checkbox') {
+        //       return <Checkbox {...field} />
+        //     }
+        //   }
+        // })
+      }
       <>
         <Input
           register={register}
@@ -218,7 +333,6 @@ export const ProductModal = ({ visible, setVisible, title, product }: Props) => 
             <Input
               required
               register={register}
-              placeholder='Valor del descuento'
               name='discountValue'
               errors={errors}
               label='Valor del descuento'
@@ -238,7 +352,7 @@ export const ProductModal = ({ visible, setVisible, title, product }: Props) => 
           name='isCustomizable'
           onChange={(e) => {
             setIsCustomizable(e.target.checked)
-            if (e.target.checked && attributes.length === 0) {
+            if (e.target.checked) {
               fetchAttributes()
             }
           }}

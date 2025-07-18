@@ -1,38 +1,46 @@
 import { Checkbox, DatePicker, Input, Modal, Select } from "@/components/common";
-import { CollectionInterface, ProductInterface } from "@/interfaces";
+import { CollectionInterface, DiscountInterface, ProductInterface } from "@/interfaces";
+import { ModalBaseProps } from "@/interfaces/ModalBaseProps";
 import { discountLimitBy, discountTypes } from "@/utils/catalogs";
 import { makeRequest } from "@/utils/makeRequest";
-import { useState } from "react";
+import { discountLimitByMap, discountTypesMap } from "@/utils/mappings";
+import { DiscountType, LimitBy } from "@/utils/types";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
-interface Props {
-  visible: boolean,
-  setVisible: (visible: boolean) => void,
-  onOk?: () => void
+interface Props extends ModalBaseProps {
+  discount?: DiscountInterface
 }
 
-const AddDiscount = ({ visible, setVisible, onOk }: Props) => {
+export const DiscountModal = ({ visible, setVisible, title, discount }: Props) => {
 
   const { register, handleSubmit, control, reset, formState: { errors } } = useForm();
 
   const [saving, setSaving] = useState(false)
 
-  const [limitBy, setLimitBy] = useState('')
-
-  const [discountType, setDiscountType] = useState('')
-
   const [products, setProducts] = useState<ProductInterface[]>([])
 
-  const [limited, setLimited] = useState(false)
+  console.log({ products })
 
   const [collections, setCollections] = useState<CollectionInterface[]>([])
 
+  const [limitBy, setLimitBy] = useState<LimitBy | ''>(discount?.limitBy || '')
+
+  const [discountType, setDiscountType] = useState<DiscountType | ''>(discount?.type || '')
+
+  const [limited, setLimited] = useState(discount?.limited || false)
+
+  const { replace } = useRouter()
+
   const resetForm = () => {
-    reset()
-    setLimitBy('')
-    setDiscountType('')
-    setLimited(false)
+    if (!discount) {
+      reset()
+      setLimitBy('')
+      setDiscountType('')
+      setLimited(false)
+    }
   }
 
   const fetchProducts = async () => {
@@ -86,24 +94,35 @@ const AddDiscount = ({ visible, setVisible, onOk }: Props) => {
         validCollections = []
       }
 
-      const discount = {
+      const payload = {
         ...values,
         //@ts-ignore
         applicableProducts: [...new Set(validProducts)],
         applicableCollections: validCollections,
         type: values.type?.value,
-        limitBy: values.limitBy?.value,
-        limited
+        limitBy: values.limitBy?.value
       }
+
+
 
       setSaving(true)
 
-      await makeRequest('post', `/api/discounts`, discount);
+      let id = ''
 
-      toast.success('Descuento creado')
-      onOk && onOk()
+      if (discount) {
+
+        await makeRequest('put', `/api/admin/discounts/${discount._id}`, payload);
+        toast.success('Descuento actualizado')
+        id = discount._id
+      } else {
+        const response = await makeRequest('post', `/api/admin/discounts`, payload);
+        toast.success('Descuento creado')
+        id = response.discount._id
+      }
+
       setSaving(false)
       reset()
+      replace(`/admin/discounts/${id}`)
     } catch (error: any) {
       console.log({ error })
       if (error) {
@@ -113,6 +132,37 @@ const AddDiscount = ({ visible, setVisible, onOk }: Props) => {
     }
   }
 
+  useEffect(() => {
+
+    if (visible && discount) {
+      reset({
+        "name": discount.name,
+        "value": discount.value,
+        "active": discount.active,
+        "endDate": discount.endDate,
+        "applicableProducts": discount.applicableProducts?.map(item => ({
+          label: item.name,
+          value: item._id
+        })),
+        "applicableCollections": discount.applicableCollections?.map(item => ({
+          label: item.name,
+          value: item._id
+        })),
+        limitBy: {
+          label: discountLimitByMap[discount.limitBy],
+          value: discount.limitBy
+        },
+        type: {
+          label: discountTypesMap[discount.type],
+          value: discount.type
+        },
+        limited: discount.limited
+      })
+      fetchProducts()
+      fetchCollections()
+    }
+  }, [visible, discount])
+
   return (
     <Modal
       loadingState={saving}
@@ -121,7 +171,7 @@ const AddDiscount = ({ visible, setVisible, onOk }: Props) => {
         setVisible(false)
         resetForm()
       }}
-      title='Nuevo descuento'
+      title={title}
       onClose={() => {
         setVisible(false)
         resetForm()
@@ -196,12 +246,6 @@ const AddDiscount = ({ visible, setVisible, onOk }: Props) => {
             <Select
               onChange={(e: any) => {
                 setLimitBy(e.value)
-                if (e.value === 'product' && products.length === 0) {
-                  fetchProducts()
-                }
-                if (e.value === 'collection' && collections.length === 0) {
-                  fetchCollections()
-                }
               }}
               required
               options={discountLimitBy}
@@ -246,5 +290,3 @@ const AddDiscount = ({ visible, setVisible, onOk }: Props) => {
     </Modal>
   )
 }
-
-export default AddDiscount

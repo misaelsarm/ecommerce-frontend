@@ -10,6 +10,7 @@ import { UserModal } from '@/components/admin/users/UserModal'
 import { makeRequest } from '@/utils/makeRequest'
 import { userRolesMap } from '@/utils/mappings';
 import { Chip, Page, Table } from '@/components/common'
+import { usePermissions } from '@/hooks/usePermissions'
 
 interface Props {
   users: UserInterface[],
@@ -69,6 +70,8 @@ const UsersAdminPage = ({ users, page, limit, batchSize, totalRecords, error }: 
 
   const [visible, setVisible] = useState(false)
 
+  const { canCreate } = usePermissions();
+
   return (
     <>
       {
@@ -79,7 +82,8 @@ const UsersAdminPage = ({ users, page, limit, batchSize, totalRecords, error }: 
               name: "Nuevo usuario",
               onClick: () => {
                 setVisible(true)
-              }
+              },
+              visible: canCreate
             }}
             search={{
               handleSearch: handleSearch,

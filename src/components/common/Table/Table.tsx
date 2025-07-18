@@ -143,17 +143,13 @@ export const Table = ({ data, columns, style, page = 0, limit = 0, navigateTo, b
           </span>
           <div className={styles.buttons}>
             <Button
-              onClick={() => {
-                push(`/${navigateTo}?page=${currentPage - 1}&limit=${limit}`);
-              }}
+              url={`/${navigateTo}?page=${currentPage - 1}&limit=${limit}`}
               disabled={currentPage <= 1} // Disable when on the first page
             >
               Anterior
             </Button>
             <Button
-              onClick={() => {
-                push(`/${navigateTo}?page=${currentPage + 1}&limit=${limit}`);
-              }}
+              url={`/${navigateTo}?page=${currentPage + 1}&limit=${limit}`}
               disabled={currentPage >= totalPages} // Disable when on the last page
             >
               Siguiente

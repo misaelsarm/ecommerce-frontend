@@ -16,18 +16,19 @@
     align-items: center;
     color: black;
     flex: 1;
-    font-size: 14px;
+    font-size: 12px;
     text-decoration: none;
 
     &.active {
-      color: green;
       font-weight: bold;
+      color: var(--primary-bg);
     }
 
     svg {
       width: 25px;
       height: 25px;
       flex-shrink: 0;
+      margin-bottom: 5px;
     }
   }
 }

@@ -18,6 +18,7 @@ import { SortableItem } from '../SortableItem/SortableItem';
 import imageCompression from 'browser-image-compression';
 import { makeRequest } from '@/utils/makeRequest';
 import toast, { LoaderIcon } from 'react-hot-toast';
+import { Button } from '..';
 
 interface Props {
   items: string[],
@@ -119,7 +120,7 @@ export const Sortable = ({ items, setItems, label, uploading, setUploading, fold
         {
           (items.length === 0 && !uploading) &&
           <div className='sortable-dropzone'>
-            <button onClick={handleClick} className='btn btn-black'>Agregar fotos</button>
+            <Button onClick={handleClick}>Agregar fotos</Button>
           </div>
         }
         {

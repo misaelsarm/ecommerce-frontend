@@ -53,7 +53,7 @@ export const ValueModal = ({ visible, setVisible, title, value }: Props) => {
 
       setSaving(false)
       setVisible(false)
-      replace(`/admin/attributes/${id}`)
+      replace(`/admin/values/${id}`)
 
     } catch (error: any) {
       toast.error(error.response.data.message)

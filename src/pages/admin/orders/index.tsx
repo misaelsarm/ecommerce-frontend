@@ -10,6 +10,7 @@ import { makeRequest } from '@/utils/makeRequest';
 import moment from 'moment';
 import { orderStatusColorMap } from '@/utils/mappings';
 import { Chip, Page, Table } from '@/components/common';
+import { usePermissions } from '@/hooks/usePermissions';
 
 interface Props {
   orders: OrderInterface[],
@@ -28,6 +29,8 @@ const OrdersAdminPage = ({ page, limit, batchSize, totalRecords, orders, error }
   const { push, query } = useRouter()
 
   const { searchTerm, setSearchTerm, handleSearch } = useDebouncedSearch({ url: 'orders', limit })
+
+  const { canCreate } = usePermissions()
 
   const columns = [
     {
@@ -98,7 +101,7 @@ const OrdersAdminPage = ({ page, limit, batchSize, totalRecords, orders, error }
         primaryAction={{
           name: "Nuevo pedido",
           onClick: () => console.log('nuevo pedido'),
-          //className: 'btn btn-primary'
+          visible: canCreate
         }}
         search={{
           searchTerm: searchTerm as string,

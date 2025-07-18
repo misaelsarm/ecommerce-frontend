@@ -7,6 +7,7 @@ import { useWindowWidth } from '@/hooks/useWindowWidth'
 import { LinkInterface, links } from '@/utils/links'
 import { useAuthStore } from '@/store/auth'
 import { Sidebar, TabBar } from '../common'
+import { companyData } from '@/utils/companyData'
 
 
 interface Props {
@@ -44,7 +45,7 @@ const Layout = ({ children, title }: Props) => {
   return (
     <>
       <Head>
-        <title>{`Norday | ${title}`}</title>
+        <title>{`${companyData.company} | ${title}`}</title>
       </Head>
       {
         windowWidth && windowWidth >= 768 ?

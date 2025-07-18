@@ -7,13 +7,13 @@ interface Action {
   name: string,
   onClick: MouseEventHandler,
   className?: string
-  public?: boolean;
+  visible: boolean;
 }
 interface Props {
   children?: React.ReactNode
   title?: string
   primaryAction?: Action
-  seconDaryActions?: Action[]
+  secondaryActions?: Action[]
   backAction?: boolean,
   fullWidth?: boolean
   maxwidth?: string
@@ -28,7 +28,7 @@ export const Page = ({
   children,
   title,
   primaryAction,
-  seconDaryActions,
+  secondaryActions,
   backAction,
   fullWidth = true,
   maxwidth,
@@ -65,28 +65,26 @@ export const Page = ({
             <div className={styles.pageHeaderRight}>
               <div className={styles.pageHeaderActions}>
                 {
-                  primaryAction &&
+                  primaryAction && primaryAction.visible &&
                   <div className="primaryAction">
                     <Button
                       key={primaryAction.name}
                       onClick={primaryAction.onClick}
-                      className={primaryAction.className || 'btn btn-primary'}
                     >
                       {primaryAction.name}
                     </Button>
                   </div>
                 }
                 {
-                  seconDaryActions && seconDaryActions.length > 0 &&
+                  secondaryActions && secondaryActions.length > 0 &&
                   <div className={styles.secondaryActions}>
                     {
-                      seconDaryActions
-                        .filter(action => action.public)
+                      secondaryActions
+                        .filter(action => action.visible)
                         .map(action => (
                           <Button
                             key={action.name}
                             onClick={action.onClick}
-                            className={action.className || 'btn btn-primary'}
                           >
                             {action.name}
                           </Button>
@@ -98,6 +96,9 @@ export const Page = ({
             </div>
           </div>
           <div className={styles.pageHeaderBottom}>
+            <div className={styles.pageHeaderTitle}>
+              <h2>{title}</h2>
+            </div>
             {
               search &&
               <div className={styles.pageHeaderSearch}>

@@ -16,7 +16,11 @@ export const TabBar = ({ links }: Props) => {
 
   const [menuVisible, setMenuVisible] = useState(false)
 
-  const { pathname } = useRouter()
+  const { asPath } = useRouter()
+
+  const isActive = (path: string) => {
+    return asPath.startsWith(path)
+  }
 
   return (
     <div>
@@ -26,12 +30,11 @@ export const TabBar = ({ links }: Props) => {
         {
           firstFive.map(link => (
             <Link key={link.path}
-              className={
-                link.path.includes(pathname) ? `${styles.link} ${styles.active}` : styles.link}
+              className={isActive(link.path) ? `${styles.link} ${styles.active}` : styles.link}
               href={`${link.path}?page=1&limit=20`}
             >
               {
-                link.path.includes(pathname) ? link.selectedIcon : link.icon
+                isActive(link.path) ? link.selectedIcon : link.icon
               }
               <span>{link.name}</span>
             </Link>

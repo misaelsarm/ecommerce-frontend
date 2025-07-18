@@ -1,7 +1,8 @@
-import AddDiscount from '@/components/admin/discounts/DiscountModal'
+import { DiscountModal } from '@/components/admin/discounts/DiscountModal'
 import Layout from '@/components/admin/Layout'
 import { Chip, Page, Table } from '@/components/common'
 import { useDebouncedSearch } from '@/hooks/useDebouncedSearch'
+import { usePermissions } from '@/hooks/usePermissions'
 import { DiscountInterface } from '@/interfaces'
 import { getServerSideToken } from '@/utils/getServerSideToken'
 import { makeRequest } from '@/utils/makeRequest'
@@ -27,7 +28,7 @@ const DiscountsAdminPage = ({ discounts = [], page, limit, batchSize, totalRecor
 
   const [visible, setVisible] = useState(false)
 
-  const { push, query, replace } = useRouter()
+  const { push } = useRouter()
 
   const { searchTerm, setSearchTerm, handleSearch } = useDebouncedSearch({ url: 'discounts', limit })
 
@@ -67,6 +68,8 @@ const DiscountsAdminPage = ({ discounts = [], page, limit, batchSize, totalRecor
     }
   ]
 
+  const { canCreate } = usePermissions();
+
   return (
     <>
       {
@@ -81,7 +84,8 @@ const DiscountsAdminPage = ({ discounts = [], page, limit, batchSize, totalRecor
                 name: "Nuevo descuento",
                 onClick: () => {
                   setVisible(true)
-                }
+                },
+                visible: canCreate
               }}
               search={{
                 handleSearch: handleSearch,
@@ -103,13 +107,10 @@ const DiscountsAdminPage = ({ discounts = [], page, limit, batchSize, totalRecor
                 paramKey='_id'
               />
             </Page>
-            <AddDiscount
+            <DiscountModal
+              title='Nuevo descuento'
               visible={visible}
               setVisible={setVisible}
-              onOk={() => {
-                replace("/admin/discounts?page=1&limit=20")
-                setVisible(false)
-              }}
             />
           </>
       }

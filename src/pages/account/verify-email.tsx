@@ -30,7 +30,7 @@ const VerifyEmail = ({ errorCode }: Props) => {
       }
       <span>
         {
-          errorCode ? 'Este link de verificación no es válido o ya expiró.' : 'Tu correo electrónico se ha verificado. Ahora puedes iniciar sesión con tu nueva cuenta de Norday.'
+          errorCode ? 'Este link de verificación no es válido o ya expiró.' : 'Tu correo electrónico se ha verificado. Ahora puedes iniciar sesión con tu nueva cuenta.'
         }
       </span>
       {

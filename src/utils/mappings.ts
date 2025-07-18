@@ -166,3 +166,93 @@ export const fontMap: Record<number, string> = {
   9: "Muggsy",
   10: "Pillish"
 };
+
+
+export const productFieldMap = {
+  // a single property called name, with a type and a label
+
+  //common product props
+  name: { label: "Nombre del producto", type: "text" },
+  code: { label: "Código del producto", type: "text" },
+  description: { label: "Descripción", type: "text" },
+  keywords: { label: "Palabras clave", type: "text" },
+  price: { label: "Precio", type: "text" },
+  collections: { label: "Colecciones", type: "list", fields: ["_id", "name"] },
+  discount: { label: "Descuento", type: "object" },
+  active: { label: "Estado", type: "boolean", true: 'Activo', false: 'No activo' },
+  isCustomizable: { label: "Personalizable", type: "boolean", true: 'Sí', false: 'No' },
+  attributes: { label: "Atributos", type: "list", fields: ["_id", "shortName"] },
+  highlight: { label: "Destacado", type: "boolean", true: 'Sí', false: 'No' },
+  inventory: { label: "Inventario", type: "object" },
+  images: { label: "Imágenes", type: "list", render: "grid" },
+  createdAt: { label: "Creado el", type: "date" },
+  updatedAt: { label: "Actualizado el", type: "date" },
+  soldOut: { label: "Agotado", type: "boolean", true: 'Sí', false: 'No' },
+  specs: { label: "Especificaciones", type: "text" },
+
+
+  //store specific props
+  minDays: { label: "Días mínimos de entrega", type: "text" },
+};
+
+export const collectionFieldsMap = {
+
+  name: {
+
+  },
+  code: {
+
+  },
+  description: {
+
+  },
+  image: {
+
+  },
+  active: {
+
+  },
+  keywords: {
+
+  },
+  parentCollection: {
+
+  },
+
+  //nice to have
+  //products: {}
+}
+
+export const orderFielsdMap = {
+
+  //order base props
+  number: { label: "Número de pedido", type: "text" },
+  name: { label: "Nombre de cliente", type: "text" },
+  email: { label: "Correo electrónico", type: "text" },
+  phone: { label: "Teléfono de contacto", type: "text" },
+  status: { label: "Estado", type: "text" },
+  shippingAddress: { label: "Dirección de envío", type: "text" },
+  shippingFee: { label: "Costo de envío", type: "text" },
+  total: { label: "Total", type: "text" },
+  subTotal: { label: "Subtotal", type: "text" },
+  products: { label: "Productos", type: "text" },
+  type: { label: "Tipo de pedido", type: "text" },
+  paymentMethod: { label: "Método de pago", type: "text" },
+  paymentStatus: { label: "Estado del pago", type: "text" },
+  createdBy: { label: "Creado por", type: "text" },
+  createdAt: { label: "Creado el", type: "text" },
+  updatedAt: { label: "Actualizado el", type: "text" },
+  history: { label: "Historial", type: "text" },
+
+  //store specific 
+  shippingType: { label: "Tipo de envío", type: "text" },
+  receiverName: { label: "Quien recibe", type: "text" },
+  receiverPhone: { label: "Telefono de quien recibe", type: "text" },
+  anonymous: { label: "Anónimo", type: "text" },
+  deliveryDate: { label: "Fecha de entrega", type: "text" },
+  dedicationCardMessage: { label: "Mensaje de dedicatoria", type: "text" },
+  channel: { label: "Canal", type: "text" },
+  anticipo: { label: "Anticipo", type: "text" },
+  remaining: { label: "Restante", type: "text" },
+  image: { label: "Imagen de referencia", type: "text" },
+}

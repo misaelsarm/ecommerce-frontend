@@ -1,5 +1,5 @@
 import Layout from "@/components/admin/Layout"
-import AddValue, { ValueModal } from "@/components/admin/values/ValueModal"
+import { ValueModal } from "@/components/admin/values/ValueModal"
 import { useDebouncedSearch } from "@/hooks/useDebouncedSearch"
 import { ValueInterface } from "@/interfaces"
 import { GetServerSideProps } from "next"
@@ -10,6 +10,7 @@ import { getServerSideToken } from "@/utils/getServerSideToken"
 import { makeRequest } from "@/utils/makeRequest"
 import { valueTypesMap } from "@/utils/mappings"
 import { Chip, Modal, Page, Table } from "@/components/common"
+import { usePermissions } from "@/hooks/usePermissions"
 
 interface Props {
   values: ValueInterface[],
@@ -69,7 +70,9 @@ const ValuesAdminPage = ({ values = [], page, limit, batchSize, totalRecords, er
 
   const { searchTerm, setSearchTerm, handleSearch } = useDebouncedSearch({ url: 'values', limit })
 
-  const { push, query, replace, pathname } = useRouter()
+  const { push, replace } = useRouter()
+
+  const { canCreate } = usePermissions();
 
   return (
     <>
@@ -81,7 +84,8 @@ const ValuesAdminPage = ({ values = [], page, limit, batchSize, totalRecords, er
               name: "Nuevo valor",
               onClick: () => {
                 setVisible(true)
-              }
+              },
+              visible: canCreate
             }}
             search={{
               searchTerm,

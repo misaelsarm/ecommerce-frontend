@@ -19,6 +19,7 @@ interface Props {
   okText?: string,
   cancelText?: string
   closeOnOutsideClick?: boolean
+  footer?: ReactNode
 }
 
 const modalVariants = {
@@ -73,7 +74,8 @@ export const Modal = ({
   loadingState,
   okText = 'Aceptar',
   cancelText = 'Cancelar',
-  closeOnOutsideClick
+  closeOnOutsideClick,
+  footer
 }: Props) => {
   useEffect(() => {
     if (visible) {
@@ -83,7 +85,7 @@ export const Modal = ({
     }
 
     return () => {
-      document.documentElement.style.overflow = ""; // Cleanup on unmount
+      document.documentElement.style.overflow = "";
     };
   }, [visible]);
   return (
@@ -142,7 +144,7 @@ export const Modal = ({
                 {children}
               </div>
               {
-                showButtons &&
+                showButtons && !footer &&
                 <div className={styles.modalFooter}>
                   <Button
                     variant='secondary'
@@ -155,6 +157,12 @@ export const Modal = ({
                     onClick={onOk}>
                     {okText}
                   </Button>
+                </div>
+              }
+              {
+                footer &&
+                <div className={styles.modalFooter}>
+                  {footer}
                 </div>
               }
             </motion.div>

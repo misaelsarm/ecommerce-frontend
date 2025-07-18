@@ -13,6 +13,8 @@ interface InventoryInterface {
 
 export interface ProductInterface {
 
+  //common props
+
   _id: string
 
   name: string,
@@ -44,5 +46,9 @@ export interface ProductInterface {
   deleted: boolean
 
   createdAt: any
+
+
+  //store specific props
+  minDays?: number
 
 }

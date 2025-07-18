@@ -9,8 +9,8 @@ import React, { ReactElement, useState } from 'react'
 import toast from 'react-hot-toast'
 import { getServerSideToken } from '@/utils/getServerSideToken'
 import { makeRequest } from '@/utils/makeRequest'
-import { useAuthStore } from '@/store/auth'
 import { Chip, Modal, Page, Table } from '@/components/common'
+import { usePermissions } from '@/hooks/usePermissions'
 
 interface Props {
   collections: CollectionInterface[],
@@ -34,9 +34,9 @@ const CollectionsAdminPage = ({ collections = [], page, limit, batchSize, totalR
 
   const [visible, setVisible] = useState(false)
 
-  const { push, query, replace, pathname } = useRouter()
+  const { push, replace } = useRouter()
 
-  const user = useAuthStore((state) => state.user)
+  const { canCreate } = usePermissions();
 
   const columns = [
     {
@@ -92,7 +92,7 @@ const CollectionsAdminPage = ({ collections = [], page, limit, batchSize, totalR
         primaryAction={{
           name: 'Nueva colección',
           onClick: () => setVisible(true),
-          //className: 'btn btn-primary'
+          visible: canCreate
         }}
       >
         <Table

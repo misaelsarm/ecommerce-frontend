@@ -23,15 +23,19 @@ export const Checkbox = ({ register, name = 'name', label, onChange, required, i
           type="checkbox"
           id={id}
           //@ts-ignore
-          {...register(name, {
-            required: {
-              value: required || false,
-              message: 'Required'
-            },
-            onChange: (e) => {
-              onChange?.(e);
-            },
-          })}
+          {...register &&
+          {
+            ...register(name, {
+              required: {
+                value: required || false,
+                message: 'Required'
+              },
+              onChange: (e) => {
+                onChange?.(e);
+              },
+            })
+          }
+          }
         />
         <label htmlFor={id}>{label}</label>
       </div>

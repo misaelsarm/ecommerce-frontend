@@ -7,6 +7,7 @@ import { createServerSideFetcher } from "@/utils/serverSideFetcher"
 import { Card, CardItem, Chip, Page } from "@/components/common"
 import { AttributeModal } from "@/components/admin/attributes/AttributeModal"
 import { useRouter } from "next/router"
+import { usePermissions } from "@/hooks/usePermissions"
 
 interface Props {
   attribute: AttributeInterface,
@@ -22,6 +23,8 @@ const AttributeDetailsAdminPage = ({ attribute, error }: Props) => {
 
   const { replace } = useRouter()
 
+  const { canEdit } = usePermissions();
+
   if (error) {
     return <Page>{error.message}</Page>
   }
@@ -36,7 +39,8 @@ const AttributeDetailsAdminPage = ({ attribute, error }: Props) => {
           name: 'Editar',
           onClick: async () => {
             setEditing(true)
-          }
+          },
+          visible: canEdit
         }}
         backAction
       >

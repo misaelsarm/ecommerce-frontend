@@ -1,4 +1,5 @@
-import {Button, Card, CardItem, Chip, Input, Modal, Select, TextArea} from '@/components/common'
+import { ProductModal } from '@/components/admin/products/ProductModal'
+import { Button, Card, CardItem, Chip, Input, Modal, Page, Select, TextArea } from '@/components/common'
 import { useAuthStore } from '@/store/auth'
 import { useThemeStore } from '@/store/theme'
 import React, { useState } from 'react'
@@ -14,7 +15,6 @@ const Index = () => {
   const loading = useAuthStore((state) => state.loading)
 
   const setTheme = useThemeStore((state) => state.setTheme)
-
 
   const options = [
     {
@@ -32,24 +32,17 @@ const Index = () => {
   ]
 
   return (
-    <div
-      style={{
-        maxWidth: 800,
-        margin: 'auto',
-        padding: '50px 0'
-      }}
+    <Page
+      title='Componentes'
     >
-      <h1 className='mb-30'>Componentes </h1>
-      {
-        loading ? <h2>Loading...</h2> : <h2>¡Hola, {user.name}!</h2>
-      }
       <div className='mb-30'>
         <h3>Boton</h3>
-        <div className='d-flex'>
-          
+        <div className='d-flex flex-wrap'>
+
           <Button>Hello primary!</Button>
           <Button variant='primary'>Hello primary!</Button>
           <Button variant='secondary'>Hello secondary!</Button>
+          <Button variant='link' url='/admin/login'>This is a link</Button>
 
 
           {/* <button className='btn mr-10'>Hello world!</button>
@@ -60,7 +53,7 @@ const Index = () => {
       </div>
       <div className='mb-30'>
         <h3>Chips</h3>
-        <div className='d-flex'>
+        <div className='d-flex flex-wrap'>
           <Chip text='Default chip' />
           <Chip color='dark' text='Dark chip' />
           <Chip color='blue' text='Blue chip' />
@@ -92,9 +85,15 @@ const Index = () => {
         <div>
           <Card>
             <CardItem
-              title='Card title'
+              title='Card item title 1'
               content={<>
-                <span>This is the content</span>
+                <span>This is the first card item content</span>
+              </>}
+            />
+            <CardItem
+              title='Card item title 2'
+              content={<>
+                <span>This is the second card item content</span>
               </>}
             />
           </Card>
@@ -113,9 +112,9 @@ const Index = () => {
       <div className='mb-30'>
         <h3>Modal</h3>
         <div>
-          <button
+          <Button
             onClick={() => setVisible(true)}
-            className='btn btn-black'>Open Auth Modal</button>
+          >Open Modal</Button>
           <Modal
             wrapperStyle={{
               width: 500
@@ -128,13 +127,23 @@ const Index = () => {
             onClose={() => setVisible(false)}
             visible={visible as boolean}
             title='Modal title'
+            footer={
+              <>
+                <Button>Anterior</Button>
+                <Button>Siguiente</Button>
+              </>
+            }
           >
             <div>This is the modal body!</div>
           </Modal>
+
+          {/* <ProductModal
+            visible
+          /> */}
         </div>
         {/*  <Sortable items={items} label='' setItems={setItems} uploading={false} /> */}
       </div>
-    </div>
+    </Page>
   )
 }
 

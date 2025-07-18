@@ -96,7 +96,8 @@
     display: flex;
     justify-content: flex-end;
 
-    button {
+    button,
+    a {
       &:first-child {
         margin-right: 20px;
       }

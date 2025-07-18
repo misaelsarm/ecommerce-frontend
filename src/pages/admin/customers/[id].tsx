@@ -2,14 +2,13 @@ import Layout from "@/components/admin/Layout"
 import { UserInterface } from "@/interfaces"
 import { makeRequest } from "@/utils/makeRequest"
 import { GetServerSideProps } from "next"
-import { useRouter } from "next/router"
 import { ReactElement, useState } from "react"
-import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import moment from "moment"
 import { createServerSideFetcher } from "@/utils/serverSideFetcher"
-import useActions from "@/hooks/useActions"
-import { Card, CardItem, Checkbox, Chip, Input, Modal, Page } from "@/components/common"
+import {usePermissions} from "@/hooks/usePermissions"
+import { Button, Card, CardItem, Chip, Page } from "@/components/common"
+import { CustomerModal } from "@/components/admin/customers/CustomerModal"
 
 interface Props {
   user: UserInterface,
@@ -23,79 +22,40 @@ const CustomerDetailsAdminPage = ({ user, error }: Props) => {
 
   const [editing, setEditing] = useState(false)
 
-  const { replace, back, pathname } = useRouter()
-
-  const { canEdit } = useActions()
-
-  const { register, handleSubmit, control, formState: { errors } } = useForm<any>({
-    defaultValues: {
-      "name": user.name,
-      "email": user.email,
-      "active": user.active,
-    }
-  });
+  const { canEdit } = usePermissions()
 
   const [saving, setSaving] = useState(false)
 
-  const onSubmit = async (values: any) => {
-    //setSaving(true)
-
+  const requestPasswordReset = async () => {
     try {
-      const update = {
-        name: values.name,
-        "email": values.email,
-        "active": values.active,
-      }
-      await makeRequest('put', `/api/users/${user._id}`, update)
-      toast.success('Usuario actualizado')
+      setSaving(true)
+      await makeRequest('post', '/api/auth/recover', {
+        email: user.email
+      })
+      toast.success('Se envió un correo con las instrucciones para restablecer la contraseña', {
+        duration: 6000
+      })
       setSaving(false)
-      setEditing(false)
-      replace(`/admin/customers/${user._id}`)
     } catch (error: any) {
-      toast.error(error.response.data.message)
+      toast.error(error.response.data.message, {
+        duration: 6000
+      })
       setSaving(false)
     }
-  }
-
-  const renderForm = () => {
-    return (
-      <>
-        <Input
-          register={register}
-          label='Nombre'
-          name='name'
-          errors={errors}
-          required
-        />
-        <Input
-          type='email'
-          register={register}
-          label='Correo electrónico'
-          name='email'
-          errors={errors}
-          required
-        />
-        <Checkbox
-          register={register}
-          label='Activo'
-          id='active'
-          name='active'
-        />
-      </>
-    )
   }
 
   return (
     <>
       <Page
-        title={`Detalle de cliente: ${user.name}`}
+        title={`Cliente: ${user.name}`}
         fullWidth={false}
         maxwidth="700px"
         primaryAction={{
           name: "Editar",
           onClick: () => {
             setEditing(true)
-          }
+          },
+          visible: canEdit
         }}
         backAction
       >
@@ -114,26 +74,12 @@ const CustomerDetailsAdminPage = ({ user, error }: Props) => {
               <CardItem
                 title="Contraseña"
                 content={
-                  <button
+                  <Button
                     disabled={saving}
-                    onClick={async () => {
-                      try {
-                        setSaving(true)
-                        await makeRequest('post', '/api/auth/recover', {
-                          email: user.email
-                        })
-                        toast.success('Se envió un correo con las instrucciones para restablecer la contraseña', {
-                          duration: 6000
-                        })
-                        setSaving(false)
-                      } catch (error: any) {
-                        toast.error(error.response.data.message, {
-                          duration: 6000
-                        })
-                        setSaving(false)
-                      }
-                    }}
-                    className="btn btn-black mt-10">Restablecer contraseña</button>
+                    onClick={requestPasswordReset}
+                  >
+                    Restablecer contraseña
+                  </Button>
                 }
               />
             }
@@ -167,20 +113,12 @@ const CustomerDetailsAdminPage = ({ user, error }: Props) => {
           </Card>
         </>
       </Page >
-      <Modal
+      <CustomerModal
         visible={editing}
-        loadingState={saving /* || uploading */}
-        onOk={handleSubmit(onSubmit)}
-        onCancel={() => {
-          setEditing(false)
-        }}
-        title='Editar usuario'
-        onClose={() => {
-          setEditing(false)
-        }}
-      >
-        {renderForm()}
-      </Modal>
+        setVisible={setEditing}
+        title="Editar cliente"
+        user={user}
+      />
     </>
   )
 }

@@ -10,6 +10,7 @@ import { getServerSideToken } from "@/utils/getServerSideToken"
 import { makeRequest } from "@/utils/makeRequest"
 import { Chip, Modal, Page, Table } from "@/components/common"
 import { ProductModal } from "@/components/admin/products/ProductModal"
+import { usePermissions } from "@/hooks/usePermissions"
 
 interface Props {
   products: ProductInterface[],
@@ -83,6 +84,8 @@ const ProductsAdminPage = ({ products = [], page, limit, totalRecords, batchSize
 
   const { push, query, replace, pathname } = useRouter()
 
+  const { canCreate } = usePermissions();
+
   return (
     <>
       <Page
@@ -91,7 +94,8 @@ const ProductsAdminPage = ({ products = [], page, limit, totalRecords, batchSize
           name: "Nuevo producto",
           onClick: () => {
             setVisible(true)
-          }
+          },
+          visible: canCreate
         }}
         search={{
           handleSearch,

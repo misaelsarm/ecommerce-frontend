@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import styles from '@/styles/admin/Auth.module.scss'
 import { useState } from 'react';
-import { Input } from '@/components/common';
+import { Button, Input } from '@/components/common';
 import { makeRequest } from '@/utils/makeRequest';
 import Link from 'next/link';
 
@@ -55,8 +55,8 @@ const AdminLoginPage = () => {
             />
           </div>
           <div className={styles.actions}>
-            <button disabled={loading} className='btn btn-primary btn-block'>Confirm</button>
-            <Link className='btn btn-ghost btn-block' href='/admin/login'>¿Ya tienes cuenta? Inicia sesión</Link>
+            <Button disabled={loading} block>Aceptar</Button>
+            <Button url='/admin/login' variant='link'>¿Ya tienes cuenta? Inicia sesión</Button>
           </div>
         </form>
       </div>

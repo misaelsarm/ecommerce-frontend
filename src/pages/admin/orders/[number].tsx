@@ -1,5 +1,6 @@
 import Layout from '@/components/admin/Layout'
 import { Card, CardItem, CartItem, Chip, Modal, Page } from '@/components/common'
+import { usePermissions } from '@/hooks/usePermissions'
 import { OrderInterface } from '@/interfaces'
 import { formatCurrency } from '@/utils/formatCurrency'
 import { orderStatusColorMap } from '@/utils/mappings'
@@ -19,8 +20,22 @@ interface Props {
 const OrderDetailsPage = ({ order, error }: Props) => {
 
   const [editing, setEditing] = useState(false)
-  
+
+  if (error) {
+    return <Page>{error.message}</Page>
+  }
+
+  const propertiesToFilter = ['_id', 'deleted', '__v', 'favorite', 'collectionItem', 'whatsapp', 'hasDiscount', 'discountValue']
+
   const color = orderStatusColorMap[order.status];
+
+  const properties = Object.entries(order).filter(([key, value]) => !propertiesToFilter.includes(key))
+
+  const keys = Object.keys(order)
+
+  console.log({ keys })
+
+  const { canEdit } = usePermissions();
 
   return (
     <>
@@ -34,9 +49,8 @@ const OrderDetailsPage = ({ order, error }: Props) => {
           onClick: () => {
             setEditing(true)
           },
-          //disabled: !canCreateEdit,
+          visible: canEdit
         }}
-        
       >
         <Card>
           <>
@@ -162,7 +176,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 OrderDetailsPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <Layout title={`Pedidos | ${page.props.order.number}`}>
+    <Layout title={`Pedidos | ${page.props.order?.number}`}>
       {page}
     </Layout>
   );
