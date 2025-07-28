@@ -9,7 +9,8 @@
     width: 300px;
   }
 
-  span {
+  span,h4 {
     display: block;
+    color: var(--card-item-text-color);
   }
 }

@@ -1,6 +1,6 @@
 .sidebar {
   height: 100vh;
-  background-color: white;
+  background-color: var(--background-primary-bg);
   position: fixed;
   width: 235px;
   padding: 55px 30px;
@@ -38,8 +38,8 @@
         margin-right: 10px;
       }
       &.active {
-        background-color: var(--primary-bg);
-        color: var(--primary-color);
+        background-color: var(--action-primary-bg);
+        color: var(--action-primary-color);
       }
     }
     .sub {

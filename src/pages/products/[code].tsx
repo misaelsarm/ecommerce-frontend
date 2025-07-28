@@ -11,11 +11,9 @@ import Link from 'next/link'
 //import useFileUpload from '@/hooks/useFileUpload'
 import { AttributeInterface, CartInterface, ProductInterface } from '@/interfaces'
 import Notification from '@/components/online-store/Notification'
-import Modal from '@/components/common/Modal/Modal'
 import { makeRequest } from '@/utils/makeRequest'
 import { Layout } from '@/components/online-store/Layout'
 import { createServerSideFetcher } from '@/utils/serverSideFetcher'
-import Page from '@/components/common/Page/Page'
 import { RenderAttribute } from '@/components/RenderAttribute'
 import ProductGallery from '@/components/online-store/ProductGallery/ProductGallery'
 
@@ -100,7 +98,7 @@ const ProductDetailsPage = ({ product }: Props) => {
 
     setLoading(true)
     try {
-      const cartData = await makeRequest('post', '/api/cart', productAdded)
+      const cartData = await makeRequest('post', '/api/online-store/cart', productAdded)
 
       const cart = cartData.cart
 

@@ -2,17 +2,18 @@ import Image from 'next/image'
 import Link from 'next/link'
 import styles from './CartItem.module.scss'
 import { CartItemInterface } from '@/interfaces'
+import { formatCurrency } from '@/utils/formatCurrency'
 
 interface Props extends CartItemInterface {
   onRemove?: (e?: any) => void,
   showAttributes?: boolean,
-  original?: number,
+  priceWithDiscount?: number,
   wasCustomized?: boolean
   showImage?: boolean
   showPrice?: boolean
 }
 
-export const CartItem = ({ name, description, isCustomizable, price, images, code, onRemove, discount, showAttributes = true, attributes, original, showImage = true, showPrice = true }: Props) => {
+export const CartItem = ({ name, description, isCustomizable, price, images, code, onRemove, discount, showAttributes = true, attributes, priceWithDiscount, showImage = true, showPrice = true }: Props) => {
 
   const discountStyles = {
     textDecoration: 'line-through',
@@ -89,17 +90,11 @@ export const CartItem = ({ name, description, isCustomizable, price, images, cod
               flexDirection: 'column'
             }}
           >
-            {
-              original && (original !== price) && <span style={discountStyles}>$ {original} MXN</span>
-            }
             <span
-              style={
-                discount?.hasDiscount ? discountStyles : undefined
-              }
-            >${price} MXN</span>
+            style={priceWithDiscount ? discountStyles : {}}
+            >{formatCurrency(price)}</span>
             {
-              discount?.hasDiscount &&
-              <span>${discount.discountValue && price - discount.discountValue} MXN</span>
+              priceWithDiscount && <span>{formatCurrency(priceWithDiscount as number)}</span>
             }
           </div>
         }

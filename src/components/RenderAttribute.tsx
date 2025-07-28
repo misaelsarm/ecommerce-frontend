@@ -2,10 +2,8 @@
 import { AttributeInterface } from "@/interfaces"
 //import styles from '@/styles/ProductDetails.module.scss'
 import { Tooltip } from "react-tooltip"
+import { Input, Select, TextArea } from "./common"
 //import ReactSelect from 'react-select'
-import TextArea from "./common/TextArea/TextArea"
-import Input from "./common/Input/Input"
-import Select from "./common/Select/Select"
 
 interface Props {
 	attribute: AttributeInterface,

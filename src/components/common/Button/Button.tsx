@@ -20,6 +20,8 @@ export const Button = ({ onClick, disabled, children, variant = 'primary', block
     block && styles.block
   );
 
+  console.log({buttonClass})
+
   let buttonMarkup
 
   if (url) {

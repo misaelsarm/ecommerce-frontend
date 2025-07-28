@@ -2,11 +2,53 @@
 @import "./Inputs.scss";
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap");
 
+label {
+  color: var(--text-primary-color);
+}
+
+input,
+textarea {
+  background-color: var(--form-input-bg);
+  color: var(--text-primary-color);
+  border: 1px solid var(--form-input-border);
+
+  
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--form-input-placeholder);
+}
+
+input:focus,
+textarea:focus {
+  border-color: var(--form-input-focus-border);
+}
+
+input:disabled,
+textarea:disabled {
+  background-color: var(--form-input-disabled-bg);
+}
+
+
 * {
   font-family: "DM Sans", sans-serif;
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+body {
+  color: var(--text-primary-color);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--text-primary-color);
 }
 
 body {

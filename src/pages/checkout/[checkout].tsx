@@ -1,4 +1,4 @@
-import { UIContext } from "@/context/ui/UIContext";
+
 import { CartInterface } from "@/interfaces";
 import { makeRequest } from "@/utils/makeRequest";
 import { useRouter } from "next/router";
@@ -7,13 +7,10 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import styles from '@/styles/Checkout.module.scss'
 import statesData from '@/utils/states.json'
-import Input from "@/components/common/Input/Input";
-import Select from "@/components/common/Select/Select";
-import TextArea from "@/components/common/TextArea/TextArea";
-import Checkbox from "@/components/common/Checkbox/Checkbox";
 import { cfdiUsos } from "@/utils/cfdi";
-import CartSummary from "@/components/CartSummary";
+import { CartSummary } from "@/components/CartSummary";
 import { useAuthStore } from "@/store/auth";
+import { Button, Checkbox, Input, Select, TextArea } from "@/components/common";
 
 const Checkout = () => {
 
@@ -65,7 +62,7 @@ const Checkout = () => {
   const [invoiceRequired, setInvoiceRequired] = useState(false)
 
   const [data, setData] = useState({
-    customer: '',
+    name: '',
     email: '',
     phone: '',
     shippingAddress: {
@@ -110,12 +107,10 @@ const Checkout = () => {
 
   const user = useAuthStore((state) => state.user)
 
-  const { setVisible, setModalType } = useContext(UIContext)
-
   const fetchCart = async () => {
     //setPaypalVisible(false)
     try {
-      const data = await makeRequest('get', `/api/cart/${query.checkout}`)
+      const data = await makeRequest('get', `/api/public/cart/${query.checkout}`)
 
       if (data.cart.completed) {
         replace('/')
@@ -146,7 +141,7 @@ const Checkout = () => {
         ...data.shippingAddress,
       },
       shippingFee,
-      cart: cart._id,
+      cartId: cart._id,
       userId: user._id,
       invoiceRequired,
       tax: {
@@ -168,25 +163,13 @@ const Checkout = () => {
       }
     }
 
-    if (!user._id) {
-      //@ts-ignore
-      delete order.userId
-      //@ts-ignore
-      order.guestUser = {
-        name: data.customer,
-        email: data.email,
-        phone: data.phone
-      }
-    }
-
-
     try {
-      await makeRequest('post', '/api/online-store/orders/createOrder', order)
+      await makeRequest('post', '/api/online-store/orders/', order)
       setWaiting(false)
       localStorage.removeItem('cartId')
     } catch (error: any) {
       console.log({ error })
-      toast.error(error.reponse.data.message)
+      toast.error(error.response.data.message)
       setWaiting(false)
     }
   }
@@ -294,6 +277,7 @@ const Checkout = () => {
     setData({
       ...data,
       ...values,
+      cartId: cart,
       shippingAddress: {
         city: values.city?.value,
         street: values.street,
@@ -355,20 +339,20 @@ const Checkout = () => {
                 <span>Información de contacto</span>
                 {
                   !steps[0].editing &&
-                  <button
+                  <Button
                     onClick={() => {
                       const form = [...steps]
                       form[0].editing = true
                       setCurrent(0)
                       setSteps(form)
                     }}
-                    className='btn btn-white'>Cambiar</button>
+                  >Cambiar</Button>
                 }
               </div>
               {
                 !steps[0].editing &&
                 <div className={styles.stepInfo}>
-                  <span>{data.customer}</span>
+                  <span>{data.name}</span>
                   <span>{data.email}</span>
                   <span>{data.phone}</span>
                 </div>
@@ -377,7 +361,7 @@ const Checkout = () => {
                 current === 0 &&
                 <div className={styles.content}>
                   <Input
-                    name='customer'
+                    name='name'
                     errors={errors}
                     label='Nombre y apellido'
                     register={register}
@@ -407,7 +391,7 @@ const Checkout = () => {
                       setModalType('login')
                     }} className={styles.login}>¿Ya tienes cuenta? <span> Iniciar sesión</span></span>
                   } */}
-                  <button onClick={handleSubmit(onSubmit)} className='btn btn-black'>Continuar con envío</button>
+                  <Button onClick={handleSubmit(onSubmit)}>Continuar con envío</Button>
                 </div>
               }
             </div>
@@ -417,14 +401,14 @@ const Checkout = () => {
                 <span>Informacion de envío</span>
                 {
                   !steps[1].editing &&
-                  <button
+                  <Button
                     onClick={() => {
                       setCurrent(1)
                       const form = [...steps]
                       form[1].editing = true
                       setSteps(form)
                     }}
-                    className='btn btn-white'>Cambiar</button>
+                  >Cambiar</Button>
                 }
               </div>
               <span style={{ display: 'block', marginBottom: 20 }}>Para pedidos que incluyan productos personalizados, considera un tiempo de elaboración adicional de 1 a 3 días hábiles además del período de entrega estándar de 2 a 5 días hábiles.</span>
@@ -589,7 +573,7 @@ const Checkout = () => {
                               >
                                 <span>{fileName}</span>
                               </div>
-                              <button onClick={() => imageRef.current.click()} className='btn btn-block'>Elegir otro archivo</button>
+                              <Button onClick={() => imageRef.current.click()}>Elegir otro archivo</Button>
                             </div>
                           }
                           {
@@ -617,11 +601,11 @@ const Checkout = () => {
                       </div>
                     </div>
                   }
-                  <button /* disabled={waiting || uploading}  */ onClick={handleSubmit(onSubmit)} className='btn btn-black'>
+                  <Button /* disabled={waiting || uploading}  */ onClick={handleSubmit(onSubmit)} className='btn btn-black'>
                     {
                       waiting ? 'Espera...' : 'Continuar con método de pago'
                     }
-                  </button>
+                  </Button>
                 </div>
               }
             </div>
@@ -648,7 +632,7 @@ const Checkout = () => {
 
                   </>
 
-                  <button
+                  <Button
                     //disabled={waiting}
                     onClick={handleSubmit(onSubmit)}
                     className='btn btn-black'
@@ -656,7 +640,7 @@ const Checkout = () => {
                     {
                       waiting ? 'Completando orden. Espera...' : 'Completar compra'
                     }
-                  </button>
+                  </Button>
                 </div>
               }
             </div>

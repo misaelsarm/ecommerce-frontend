@@ -1,5 +1,7 @@
 import { OrderStatus, PaymentMethod } from "@/utils/types"
 import { CartInterface, CartItemInterface, UserInterface } from "."
+import { IShippingAddress } from "./IShippingAddress"
+
 export interface OrderInterface {
   _id: string
   number: string,
@@ -13,16 +15,7 @@ export interface OrderInterface {
   shippingFee: number
   paymentMethod: PaymentMethod,
   status: OrderStatus
-  shippingAddress: {
-    city: string,
-    state: string,
-    country: string,
-    postalCode: string,
-    street: string,
-    colonia: string
-    apartment: string,
-    deliveryInstructions: string
-  }
+  shippingAddress: IShippingAddress,
   products: CartItemInterface[]
   createdAt: Date
   createdBy: UserInterface,

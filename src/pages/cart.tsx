@@ -4,8 +4,8 @@ import Link from 'next/link'
 import { CartInterface, CartItemInterface } from '@/interfaces'
 import { makeRequest } from '@/utils/makeRequest'
 import styles from '@/styles/Cart.module.scss'
-import CartItem from '@/components/common/CartItem/CartItem'
 import { Layout } from '@/components/online-store/Layout'
+import { CartItem } from '@/components/common'
 
 const CartPage = () => {
 
@@ -21,7 +21,7 @@ const CartPage = () => {
 		try {
 			const cartId = localStorage.getItem('cartId')
 			if (cartId) {
-				const data = await makeRequest('get', `/api/cart/${cartId}`)
+				const data = await makeRequest('get', `/api/public/cart/${cartId}`)
 				setCart(data.cart)
 				setItems(data.items)
 				setSubTotal(data.originalTotal)

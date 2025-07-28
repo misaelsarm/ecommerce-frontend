@@ -44,26 +44,32 @@ export const DiscountModal = ({ visible, setVisible, title, discount }: Props) =
   }
 
   const fetchProducts = async () => {
-    try {
-      const data = await makeRequest('get', '/api/public/products?active=true')
-      setProducts(data.products)
-    } catch (error: any) {
-      toast.error(error.response.data.message)
-      console.log({ error })
+    if (products.length === 0) {
+      try {
+        const data = await makeRequest('get', '/api/public/products?active=true')
+        setProducts(data.products)
+      } catch (error: any) {
+        toast.error(error.response.data.message)
+        console.log({ error })
+      }
     }
   }
 
   const fetchCollections = async () => {
-    try {
-      const data = await makeRequest('get', '/api/public/collections?active=true')
-      setCollections(data.collections)
-    } catch (error: any) {
-      toast.error(error.response.data.message)
-      console.log({ error })
+    if (collections.length === 0) {
+      try {
+        const data = await makeRequest('get', '/api/public/collections?active=true')
+        setCollections(data.collections)
+      } catch (error: any) {
+        toast.error(error.response.data.message)
+        console.log({ error })
+      }
     }
   }
 
   const onSubmit = async (values: any) => {
+
+    console.log({ limitBy })
 
     try {
 
@@ -80,6 +86,7 @@ export const DiscountModal = ({ visible, setVisible, title, discount }: Props) =
         for (const product of products) {
 
           for (const col of product.collections) {
+
             if (selectedCollections.includes(col._id)) {
               foundProducts.push(product._id)
             }
@@ -134,32 +141,36 @@ export const DiscountModal = ({ visible, setVisible, title, discount }: Props) =
 
   useEffect(() => {
 
-    if (visible && discount) {
-      reset({
-        "name": discount.name,
-        "value": discount.value,
-        "active": discount.active,
-        "endDate": discount.endDate,
-        "applicableProducts": discount.applicableProducts?.map(item => ({
-          label: item.name,
-          value: item._id
-        })),
-        "applicableCollections": discount.applicableCollections?.map(item => ({
-          label: item.name,
-          value: item._id
-        })),
-        limitBy: {
-          label: discountLimitByMap[discount.limitBy],
-          value: discount.limitBy
-        },
-        type: {
-          label: discountTypesMap[discount.type],
-          value: discount.type
-        },
-        limited: discount.limited
-      })
-      fetchProducts()
+    if (visible) {
+      if (discount) {
+        reset({
+          "name": discount.name,
+          "value": discount.value,
+          "active": discount.active,
+          "endDate": discount.endDate,
+          "applicableProducts": discount.applicableProducts?.map(item => ({
+            label: item.name,
+            value: item._id
+          })),
+          "applicableCollections": discount.applicableCollections?.map(item => ({
+            label: item.name,
+            value: item._id
+          })),
+          limitBy: {
+            label: discountLimitByMap[discount.limitBy],
+            value: discount.limitBy
+          },
+          type: {
+            label: discountTypesMap[discount.type],
+            value: discount.type
+          },
+          limited: discount.limited
+        })
+      }
+
       fetchCollections()
+      fetchProducts()
+
     }
   }, [visible, discount])
 
@@ -235,6 +246,7 @@ export const DiscountModal = ({ visible, setVisible, title, discount }: Props) =
               id='limited'
               name='limited'
               onChange={(e) => {
+                console.log(e.target.checked)
                 setLimited(e.target.checked)
               }}
             />

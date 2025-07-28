@@ -16,6 +16,8 @@ const Index = () => {
 
   const setTheme = useThemeStore((state) => state.setTheme)
 
+  const currentTheme = useThemeStore((state) => state.theme)
+
   const options = [
     {
       label: 'opcion 1',
@@ -36,6 +38,12 @@ const Index = () => {
       title='Componentes'
     >
       <div className='mb-30'>
+
+
+        <button onClick={() => setTheme(currentTheme.name === 'light' ? 'dark' : 'light')}>
+          Switch to {currentTheme.name === 'light' ? 'Dark' : 'Light'} Mode
+        </button>
+
         <h3>Boton</h3>
         <div className='d-flex flex-wrap'>
 
@@ -129,7 +137,7 @@ const Index = () => {
             title='Modal title'
             footer={
               <>
-                <Button>Anterior</Button>
+                <Button variant='secondary'>Anterior</Button>
                 <Button>Siguiente</Button>
               </>
             }

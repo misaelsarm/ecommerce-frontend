@@ -50,11 +50,11 @@ export const ProductModal = ({ visible, setVisible, title, product }: Props) => 
   useEffect(() => {
     if (visible) {
       fetchCollections()
-      if(product?.isCustomizable) {
+      if (product?.isCustomizable) {
         fetchAttributes()
       }
     }
-  }, [visible])
+  }, [visible, product?.isCustomizable])
 
   const { register, handleSubmit, control, reset, formState: { errors } } = useForm();
 

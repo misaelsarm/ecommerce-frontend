@@ -2,13 +2,13 @@ import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import { AttributeInterface, ValueInterface } from "@/interfaces"
-import { attributeTypes } from "@/utils/attributeTypes"
 import { makeRequest } from "@/utils/makeRequest"
 import { Modal, Input, Select, Checkbox } from '@/components/common'
 import { AttributeType } from "@/utils/types"
 import { attributeTypesMap } from "@/utils/mappings"
 import { ModalBaseProps } from "@/interfaces/ModalBaseProps"
 import { useRouter } from "next/router"
+import { attributeTypes } from "@/utils/catalogs"
 
 interface Props extends ModalBaseProps {
   attribute?: AttributeInterface

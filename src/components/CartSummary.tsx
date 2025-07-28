@@ -3,7 +3,7 @@ import toast from 'react-hot-toast'
 import styles from '../styles/CartSummary.module.scss'
 import { CartInterface, CartItemInterface, DiscountInterface } from '@/interfaces'
 import { makeRequest } from '@/utils/makeRequest'
-import CartItem from './common/CartItem/CartItem'
+import { CartItem } from './common'
 import { formatCurrency } from '@/utils/formatCurrency'
 import { useRouter } from 'next/router'
 
@@ -18,7 +18,7 @@ interface Props {
   discountedAmount: number;
 }
 
-const CartSummary: FC<Props> = ({ cart, fetchCart, shippingFee, discount, items, originalTotal,
+export const CartSummary: FC<Props> = ({ cart, fetchCart, shippingFee, discount, items, originalTotal,
   total,
   discountedAmount
 }) => {
@@ -56,7 +56,7 @@ const CartSummary: FC<Props> = ({ cart, fetchCart, shippingFee, discount, items,
 
   const applyDiscount = async () => {
     try {
-      const data = await makeRequest('post', '/api/discounts/apply', {
+      const data = await makeRequest('post', '/api/online-store/discounts/apply', {
         cartId: cart._id,
         name
       })
@@ -70,7 +70,7 @@ const CartSummary: FC<Props> = ({ cart, fetchCart, shippingFee, discount, items,
 
   const removeDiscount = async () => {
     try {
-      await makeRequest('post', '/api/discounts/remove', {
+      await makeRequest('post', '/api/online-store/discounts/remove', {
         cartId: cart._id,
         name
       })
@@ -176,5 +176,3 @@ const CartSummary: FC<Props> = ({ cart, fetchCart, shippingFee, discount, items,
     </div>
   )
 }
-
-export default CartSummary

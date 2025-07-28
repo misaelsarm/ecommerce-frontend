@@ -18,8 +18,8 @@
 }
 
 .variantPrimary {
-  background-color: var(--primary-bg);
-  color: var(--primary-color);
+  background-color: var(--action-primary-bg);
+  color: var(--action-primary-color);
 
   // &:hover {
   //   background-color: var(--primary-bg-hover);
@@ -27,8 +27,8 @@
 }
 
 .variantSecondary {
-  background-color: var(--secondary-bg);
-  color: var(--secondary-color);
+  background-color: var(--action-secondary-bg);
+  color: var(--action-secondary-color);
 
   // &:hover {
   //   background-color: var(--secondary-bg-hover);
@@ -43,7 +43,6 @@
 .block {
   width: 100%;
 }
-
 
 // .btn-gradient {
 //   background: linear-gradient(to right, #81d1c6, #c0d594, #ead170, #b78553);

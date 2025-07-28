@@ -12,7 +12,7 @@
 }
 
 .modal {
-  background: #fff;
+  background-color: var(--background-primary-bg);
   border-radius: 10px;
   position: fixed;
   z-index: 11;
@@ -21,7 +21,7 @@
 .modalClose {
   height: 45px;
   width: 45px;
-  background-color: #f6f6f6;
+  background-color: var(--background-secondary-bg);
   border-radius: 45px;
   display: flex;
   justify-content: center;
@@ -38,6 +38,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 25px 25px 0 25px;
+  color: var(--text-primary-color);
 }
 
 .modalBody {
@@ -45,13 +46,14 @@
   overflow-y: auto;
   padding: 25px;
   overflow-x: hidden;
+  color: var(--text-primary-color);
 }
 
 .modalFooter {
   display: flex;
   padding: 25px;
   justify-content: flex-end;
-
+  color: var(--text-primary-color);
   button {
     &:first-child {
       margin-right: 15px;

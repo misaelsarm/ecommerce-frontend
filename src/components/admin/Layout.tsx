@@ -8,6 +8,7 @@ import { LinkInterface, links } from '@/utils/links'
 import { useAuthStore } from '@/store/auth'
 import { Sidebar, TabBar } from '../common'
 import { companyData } from '@/utils/companyData'
+import { useThemeStore } from '@/store/theme'
 
 
 interface Props {
@@ -16,6 +17,10 @@ interface Props {
 }
 
 const Layout = ({ children, title }: Props) => {
+
+  const setTheme = useThemeStore((state) => state.setTheme)
+
+  const currentTheme = useThemeStore((state) => state.theme)
 
   const [visible, setVisible] = useState(false)
 
@@ -51,7 +56,12 @@ const Layout = ({ children, title }: Props) => {
         windowWidth && windowWidth >= 768 ?
           <Sidebar links={filtered} /> : <TabBar links={filtered} />
       }
+
+
       <div className="topBar">
+        <button onClick={() => setTheme(currentTheme.name === 'light' ? 'dark' : 'light')}>
+          Switch to {currentTheme.name === 'light' ? 'Dark' : 'Light'} Mode
+        </button >
         <div className="menuWrapper">
           <div onClick={() => {
             setVisible(!visible)
