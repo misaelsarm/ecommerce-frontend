@@ -12,7 +12,7 @@
 }
 
 .modal {
-  background-color: var(--background-primary-bg);
+  background-color: var(--background-primary);
   border-radius: 10px;
   position: fixed;
   z-index: 11;
@@ -21,7 +21,7 @@
 .modalClose {
   height: 45px;
   width: 45px;
-  background-color: var(--background-secondary-bg);
+  background-color: var(--background-secondary);
   border-radius: 45px;
   display: flex;
   justify-content: center;

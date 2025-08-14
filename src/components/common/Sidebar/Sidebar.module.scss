@@ -1,10 +1,10 @@
 .sidebar {
   height: 100vh;
-  background-color: var(--background-primary-bg);
+  background-color: var(--background-primary);
   position: fixed;
   width: 235px;
   padding: 55px 30px;
-  border-right: 1px solid rgb(236, 236, 236);
+  border-right: 1px solid var(--background-tertiary) ;
   overflow-y: auto;
   .logo {
     margin-bottom: 30px;
@@ -17,7 +17,7 @@
   }
   .links {
     .link {
-      color: #949494;
+      color: var(--text-primary-color);
       text-decoration: none;
       padding: 5px;
       border-radius: 5px;
@@ -30,7 +30,7 @@
         width: 100%;
       }
       &:hover {
-        background-color: #dddddd;
+        background-color: var(--sidebar-hover-bg);
       }
       svg {
         width: 20px;
@@ -38,8 +38,8 @@
         margin-right: 10px;
       }
       &.active {
-        background-color: var(--action-primary-bg);
-        color: var(--action-primary-color);
+        background-color: var(--sidebar-active-bg);
+        color: var(--sidebar-active-color);
       }
     }
     .sub {

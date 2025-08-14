@@ -1,6 +1,6 @@
 .cardItem {
   &:not(:last-child) {
-    border-bottom: 1px solid rgb(226, 226, 226);
+    border-bottom: 1px solid var(--background-tertiary);
     padding-bottom: 20px;
     margin-bottom: 20px;
   }
@@ -9,8 +9,9 @@
     width: 300px;
   }
 
-  span,h4 {
+  span,
+  h4 {
     display: block;
-    color: var(--card-item-text-color);
+    color: var(--text-primary-color);
   }
 }

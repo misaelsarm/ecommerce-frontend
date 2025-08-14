@@ -12,7 +12,7 @@ textarea {
   color: var(--text-primary-color);
   border: 1px solid var(--form-input-border);
 
-  
+
 }
 
 input::placeholder,
@@ -691,7 +691,7 @@ body {
 }
 
 .topBar {
-  background-color: white;
+  background-color: var(--background-primary);
   position: fixed;
   top: 0;
   width: calc(100% - 235px);

@@ -18,21 +18,13 @@
 }
 
 .variantPrimary {
-  background-color: var(--action-primary-bg);
-  color: var(--action-primary-color);
-
-  // &:hover {
-  //   background-color: var(--primary-bg-hover);
-  // }
+  background-color: var(--button-primary-bg);
+  color: var(--button-primary-color);
 }
 
 .variantSecondary {
-  background-color: var(--action-secondary-bg);
-  color: var(--action-secondary-color);
-
-  // &:hover {
-  //   background-color: var(--secondary-bg-hover);
-  // }
+  background-color: var(--button-secondary-bg);
+  color: var(--button-secondary-color);
 }
 
 .variantLink {

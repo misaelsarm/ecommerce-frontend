@@ -1,0 +1,61 @@
+.iconBtn {
+
+  width: 42px;
+  height: 42px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: gainsboro;
+  border-radius: 42px;
+  cursor: pointer;
+
+  svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+}
+
+.form {
+  .field {
+    margin-bottom: 30px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid gainsboro;
+
+    .optionList {
+      display: flex;
+      flex-direction: column;
+
+
+      .option {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+
+        span {
+          width: 30px;
+        }
+
+        div {
+          &:nth-child(2) {
+            margin-bottom: 0;
+            flex: 1;
+            margin-right: 20px;
+          }
+        }
+      }
+    }
+
+    .options {
+      display: flex;
+      align-items: center;
+
+
+
+      >span {
+        margin-right: 20px;
+      }
+    }
+  }
+}

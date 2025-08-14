@@ -7,6 +7,7 @@ import { Checkbox, Input, Modal, Select, Sortable, TextArea } from "@/components
 import { useRouter } from "next/router"
 import { ModalBaseProps } from "@/interfaces/ModalBaseProps"
 import { generateSlug } from "@/utils/generateSlug"
+import { CustomFieldForm } from "../CustomFieldForm"
 
 interface Props extends ModalBaseProps {
   //only pass product if editing
@@ -113,6 +114,7 @@ export const ProductModal = ({ visible, setVisible, title, product }: Props) => 
       setImages([])
     }
   }
+
 
   const onSubmit = async (values: any) => {
 
@@ -396,6 +398,10 @@ export const ProductModal = ({ visible, setVisible, title, product }: Props) => 
           setUploading={setUploading}
           folder="products"
         />
+        <br />
+        <br />
+        <CustomFieldForm />
+
       </>
     </Modal>
   )
